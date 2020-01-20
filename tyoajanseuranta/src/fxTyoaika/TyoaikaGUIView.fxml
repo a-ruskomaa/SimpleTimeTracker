@@ -1,7 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-	
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
-	
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxTyoaika.TyoaikaGUIController">
-	<!-- TODO Add Nodes -->
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxTyoaika.TyoaikaGUIController">
+   <center>
+      <GridPane BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Valitse käyttäjä:" textAlignment="CENTER" />
+            <Label text="Valitse projekti:" GridPane.rowIndex="2" />
+            <Button mnemonicParsing="false" text="Uusi käyttäjä..." GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+               <GridPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </GridPane.margin>
+            </Button>
+            <Button mnemonicParsing="false" text="Uusi projekti..." GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </GridPane.margin>
+            </Button>
+            <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" />
+            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </BorderPane.margin>
+      </GridPane>
+   </center>
+   <bottom>
+      <BorderPane BorderPane.alignment="CENTER">
+         <center>
+            <Button mnemonicParsing="false" text="Ok" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </BorderPane.margin>
+               <padding>
+                  <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
+               </padding>
+            </Button>
+         </center>
+      </BorderPane>
+   </bottom>
 </BorderPane>

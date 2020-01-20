@@ -17,7 +17,7 @@ public class TyoaikaMain extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			BorderPane root = (BorderPane)FXMLLoader.load(getClass().getResource("TyoaikaGUIView.fxml"));
-			Scene scene = new Scene(root,400,400);
+			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("tyoaika.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -27,7 +27,7 @@ public class TyoaikaMain extends Application {
 	}
 	
 	/**
-	 * @param args ei käytössä
+	 * @param args ei kï¿½ytï¿½ssï¿½
 	 */
 	public static void main(String[] args) {
 		launch(args);
