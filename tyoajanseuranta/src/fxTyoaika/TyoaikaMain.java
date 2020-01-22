@@ -27,7 +27,7 @@ public class TyoaikaMain extends Application {
 	}
 	
 	/**
-	 * @param args ei k�yt�ss�
+	 * @param args ei käytössä
 	 */
 	public static void main(String[] args) {
 		launch(args);
