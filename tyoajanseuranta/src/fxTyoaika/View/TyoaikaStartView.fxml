@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxTyoaika.TyoaikaStartController">
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <GridPane BorderPane.alignment="CENTER">
         <columnConstraints>
@@ -26,18 +26,18 @@
          <children>
             <Label text="Valitse käyttäjä:" textAlignment="CENTER" />
             <Label text="Valitse projekti:" GridPane.rowIndex="2" />
-            <Button mnemonicParsing="false" text="Uusi käyttäjä..." GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+            <Button fx:id="newUserButton" mnemonicParsing="false" text="Uusi käyttäjä..." GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </GridPane.margin>
             </Button>
-            <Button mnemonicParsing="false" text="Uusi projekti..." GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+            <Button fx:id="newProjectButton" mnemonicParsing="false" text="Uusi projekti..." GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </GridPane.margin>
             </Button>
-            <ChoiceBox prefWidth="150.0" GridPane.columnIndex="1" />
-            <ComboBox prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ChoiceBox fx:id="userChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" />
+            <ChoiceBox fx:id="projectChoiceBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
          <BorderPane.margin>
             <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
@@ -47,7 +47,7 @@
    <bottom>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-            <Button mnemonicParsing="false" text="Ok" BorderPane.alignment="CENTER">
+            <Button fx:id="okButton" mnemonicParsing="false" onAction="#handleOkButton" text="Ok" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </BorderPane.margin>
