@@ -16,7 +16,7 @@ public class TyoaikaMain extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			BorderPane root = (BorderPane)FXMLLoader.load(getClass().getResource("TyoaikaGUIView.fxml"));
+			BorderPane root = (BorderPane)FXMLLoader.load(getClass().getResource("TyoaikaStartView.fxml"));
 			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("tyoaika.css").toExternalForm());
 			primaryStage.setScene(scene);
