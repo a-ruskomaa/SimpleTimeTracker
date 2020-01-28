@@ -4,10 +4,16 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 
+/**
+ * @author aleks
+ * @version 28 Jan 2020
+ *
+ */
 public class Timer {
     private Entry entry;
     private boolean running;
     private long duration;
+    
     
     public Timer() {
         // TODO Auto-generated constructor stub

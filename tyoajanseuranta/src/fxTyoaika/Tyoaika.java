@@ -13,14 +13,21 @@ import javafx.fxml.FXMLLoader;
  * @author roarusko
  * @version 16.1.2020
  *
- * Tämä ohjelma on yksinkertainen apuväline projekteihin käytetyn ajan hallinnoimiseksi
+ * Tämä ohjelma on yksinkertainen apuväline projekteihin käytetyn ajan hallinnoimiseksi.
  * 
  */
 public class Tyoaika extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
+		    /*
+		     * Luodaan modelAccess, jonka avulla ylläpidetään ohjelman tilaa.
+		     * ModelAccess hakee luonnin yhteydessä tietorakenteeseen/tietokantaan tallennetut tiedot ohjelman
+		     * käyttäjistä, projekteista sekä niihin tehdyistä merkinnöistä. Viitettä tähän olioon välitetään parametreina
+		     * ohjelman kaikille kontrollereille.
+		     */
 		    ModelAccess modelAccess = new ModelAccess();
+		    
 			BorderPane root;
 			FXMLLoader fxmlloader = new FXMLLoader();
 			

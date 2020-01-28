@@ -5,6 +5,11 @@ import java.util.List;
 
 import javafx.beans.property.SimpleStringProperty;
 
+/**
+ * @author aleks
+ * @version 28 Jan 2020
+ *
+ */
 public class User {
     
     //SimpleStringProperty name;

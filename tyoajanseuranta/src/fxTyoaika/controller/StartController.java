@@ -23,8 +23,7 @@ import javafx.stage.Stage;
  * @author roarusko
  * @version 16.1.2020
  *
- * Ohjelman ensimmäinen näkymä. Luo konstruktorissa ModelAccess-olion, jolla pidetään yllä valitun projektin tilaa.
- * Viite tähän olioon välitetään muiden kontrolleriluokkien konstruktoreiden avulla. Myöhemmin elegantimpi toteutus?
+ * Ohjelman ensimmäinen näkymä, jossa valitaan käyttäjä ja projekti.
  */
 public class StartController extends AbstractController {
 
@@ -47,7 +46,9 @@ public class StartController extends AbstractController {
     private Button okButton;
 
     /**
-     * @param modelAccess asd
+     * Luo uuden kontrollerin aloitusnäkymälle
+     * 
+     * @param modelAccess Pääohjelmassa luotu ModelAccess olio. Tätä välitetään parametreina muille kontrollereille.
      * 
      */
     public StartController(ModelAccess modelAccess) {
@@ -58,26 +59,29 @@ public class StartController extends AbstractController {
     /**
      * Alustaa kontrollerin ohjaaman näkymän. Hakee modelAccessin avulla listan ohjelmaan tallennetuista käyttäjistä.
      */
-
     public void initialize() {
         
-        System.out.println("kutsuttu initialize");
-
+        //Haetaan ohjelmaan tallennetut käyttäjät ja lisätään listalle
         userChoiceBox.setItems(
                 FXCollections.observableArrayList(modelAccess.getUserList()));
 
+        // Valitaan listan ensimmäinen käyttäjä. Myöhemmässä toteutuksessa valitaan edellinen ohjelmaa käyttänyt henkilö?
         userChoiceBox.getSelectionModel().select(0);
 
+        //Vaihdetaan käyttäjä valituksi myös modelAccessiin
         modelAccess.setSelectedUser(
                 userChoiceBox.getSelectionModel().getSelectedItem());
 
+        //Haetaan valitun käyttäjän projektit ja lisätään listalle
         projectChoiceBox.setItems(FXCollections.observableArrayList(
                 modelAccess.getSelectedUser().getProjects()));
 
+        //Valitaan listalta ensimmäinen projekti sekä vahvistetaan valinta modelAccessiin
         projectChoiceBox.getSelectionModel().select(0);
         modelAccess.setSelectedProject(
                 projectChoiceBox.getSelectionModel().getSelectedItem());
 
+        //Luodaan käsittelijä, joka vaihtaa projektilistan sisällön vastaamaan valittua käyttäjää sekä päivittää valinnan modelAccessiin
         userChoiceBox.setOnAction(e -> {
             modelAccess.setSelectedUser(
                     userChoiceBox.getSelectionModel().getSelectedItem());
@@ -86,6 +90,7 @@ public class StartController extends AbstractController {
             projectChoiceBox.getSelectionModel().select(0);
         });
 
+        //Luodaan vastaava käsittelijä projektin valinnalle
         projectChoiceBox.setOnAction(e -> {
             modelAccess.setSelectedProject(
                     projectChoiceBox.getSelectionModel().getSelectedItem());
@@ -93,32 +98,15 @@ public class StartController extends AbstractController {
     }
 
 
+    /**
+     * Avaa pääikkunan, sulkee aloitusikkunan
+     */
     @FXML
     private void handleOkButton() {
 
         Stage oldStage = (Stage) okButton.getScene().getWindow();
-        try {
-
-            BorderPane root;
-            FXMLLoader fxmlloader = new FXMLLoader();
-            fxmlloader.setLocation(getClass().getClassLoader()
-                    .getResource(FXML_LOCATION + "MainView.fxml"));
-
-            MainController controller = new MainController(this.modelAccess);
-
-            fxmlloader.setController(controller);
-
-            root = fxmlloader.load();
-            Scene scene = new Scene(root);
-            scene.getStylesheets()
-                    .add(getClass().getClassLoader()
-                            .getResource(FXML_LOCATION + "tyoaika.css")
-                            .toExternalForm());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         Stage secondStage = new Stage();
+        
         secondStage.setScene(ViewFactory.createMainView(this));
         secondStage.show();
         
@@ -126,19 +114,24 @@ public class StartController extends AbstractController {
     }
 
 
-    // TODO: vaihda popupiksi
+    /**
+     * Avaa näkymän uuden käyttäjän lisäämiseksi
+     */
     @FXML
     private void handleNewUserButton() {
+     // TODO: vaihda popupiksi
         Stage newUserDialog = new Stage();
         newUserDialog.initModality(Modality.APPLICATION_MODAL);
         newUserDialog.setScene(ViewFactory.createNewUserDialog(this));
         newUserDialog.show();
     }
 
-
-    // TODO: vaihda popupiksi
+    /**
+     * Avaa näkymän uuden projektin lisäämiseksi
+     */
     @FXML
     private void handleNewProjectButton() {
+        // TODO: vaihda popupiksi
         Stage newUserDialog = new Stage();
         newUserDialog.initModality(Modality.APPLICATION_MODAL);
         newUserDialog.setScene(ViewFactory.createNewProjectDialog(this));

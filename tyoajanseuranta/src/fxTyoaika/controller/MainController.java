@@ -23,14 +23,9 @@ import javafx.util.Callback;
  * @author aleks
  * @version 27 Jan 2020
  *
+ * Pääikkunan kontrolleriluokka.
  */
-public class MainController extends AbstractController implements Initializable  {
-    
-
-    // olio, jonka avulla ladataan tiedostosta / tietokannasta käyttäjien ja
-    // projektien tiedot
-    //private final ModelAccess modelAccess;
-
+public class MainController extends AbstractController  {
 
     @FXML
     private TextField timerStartField;
@@ -147,23 +142,33 @@ public class MainController extends AbstractController implements Initializable 
         }
     }
 
-    //TODO valinnan asetus modelaccessin kautta
     @FXML
     void projectEntryHandleClick(MouseEvent event) {
+        //TODO valinnan asetus modelaccessin kautta
         Entry entry = projectEntryList.getSelectionModel().getSelectedItem();
         viewEntryStartField.setText(entry.getStartTimeAsString());
         viewEntryiEndField.setText(entry.getEndTimeAsString());
         viewEntryDurationField.setText(entry.getDurationAsString());
     }
 
+    /**
+     * Pääikkunan kontrollerin konstruktori. Tallettaa viitteen modelaccessiin yläluokan kenttään.
+     * @param modelAccess viite pääohjelmassa luotuun modelAccessiin
+     */
     public MainController(ModelAccess modelAccess) {
         super(modelAccess);
     }
 
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    /**
+     * Alustaa pääikkunan näkymän. Asettaa valitun projektin merkinnät näkyville.
+     */
+    public void initialize() {
         
+        /*
+         * Lisätään alasvetovalikkoon valitun käyttäjän projektit, valitaan oikea projekti valmiiksi ja
+         * luodaan tapahtumankäsittelijä projektin vaihtamiselle
+         */
         projectChoiceBox.setItems(FXCollections.observableArrayList(modelAccess.getSelectedUser().getProjects()));
         
         projectChoiceBox.getSelectionModel().select(modelAccess.getSelectedProject());
@@ -173,6 +178,7 @@ public class MainController extends AbstractController implements Initializable 
             projectEntryList.setItems(FXCollections.observableArrayList(modelAccess.getSelectedProject().getEntries()));
         });
         
+        //Lisätään valitun projektin tallennetut merkinnät näkyville ListView-elementtiin
         projectEntryList.setItems(FXCollections.observableArrayList(modelAccess.getSelectedProject().getEntries()));
         
         
