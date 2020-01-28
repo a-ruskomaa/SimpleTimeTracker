@@ -33,7 +33,7 @@
                                           <Insets left="30.0" right="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField editable="false" />
+                                    <TextField fx:id="timerStartField" editable="false" />
                                  </children>
                               </HBox>
                               <HBox>
@@ -43,7 +43,7 @@
                                           <Insets left="30.0" right="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField editable="false" />
+                                    <TextField fx:id="timerEndField" editable="false" />
                                  </children>
                               </HBox>
                               <HBox>
@@ -53,25 +53,37 @@
                                           <Insets left="30.0" right="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField editable="false" text="0 min" />
+                                    <TextField fx:id="timerDurationField" editable="false" text="0 min" />
                                  </children>
                               </HBox>
-                              <Button fx:id="kaynnistaButton" mnemonicParsing="false" text="Käynnistä ajastin">
-                                 <padding>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </padding>
-                                 <VBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </VBox.margin>
-                              </Button>
-                              <Button disable="true" mnemonicParsing="false" text="Tallenna merkintä">
-                                 <padding>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </padding>
-                                 <VBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </VBox.margin>
-                              </Button>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Button fx:id="timerToggleButton" mnemonicParsing="false" onAction="#timerToggle" prefHeight="37.0" prefWidth="110.0" text="Käynnistä ajastin">
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                       <HBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="timerSaveButton" disable="true" mnemonicParsing="false" onAction="#timerHandleSave" text="Tallenna merkintä...">
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                       <HBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button fx:id="timerResetButton" disable="true" mnemonicParsing="false" onAction="#timerHandleReset" text="Nollaa ajstin...">
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                       <HBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
                            </children>
                            <BorderPane.margin>
                               <Insets />
@@ -99,7 +111,7 @@
                                           <Insets left="30.0" right="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField />
+                                    <TextField fx:id="manualStartField" promptText="dd.mm.yyyy hh:mm:ss" />
                                  </children>
                               </HBox>
                               <HBox>
@@ -109,7 +121,7 @@
                                           <Insets left="30.0" right="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField />
+                                    <TextField fx:id="manualEndField" promptText="dd.mm.yyyy hh:mm:ss" />
                                  </children>
                               </HBox>
                               <HBox>
@@ -119,10 +131,10 @@
                                           <Insets left="30.0" right="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField />
+                                    <TextField fx:id="manualDurationField" editable="false" />
                                  </children>
                               </HBox>
-                              <Button mnemonicParsing="false" text="Tallenna merkintä...">
+                              <Button fx:id="manualSaveButton" mnemonicParsing="false" onAction="#manualSaveHandle" text="Tallenna merkintä...">
                                  <padding>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </padding>
@@ -151,7 +163,7 @@
                <content>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <ListView prefHeight="200.0" prefWidth="200.0">
+                        <ListView fx:id="projectEntryList" onMouseReleased="#projectEntryHandleClick" prefHeight="200.0" prefWidth="200.0">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
@@ -165,7 +177,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField />
+                                    <TextField fx:id="viewEntryStartField" editable="false" />
                                  </children>
                               </HBox>
                               <HBox>
@@ -175,7 +187,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField />
+                                    <TextField fx:id="viewEntryiEndField" editable="false" />
                                  </children>
                               </HBox>
                               <HBox>
@@ -185,12 +197,12 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField />
+                                    <TextField fx:id="viewEntryDurationField" editable="false" />
                                  </children>
                               </HBox>
-                              <HBox prefHeight="100.0" prefWidth="200.0">
+                              <HBox prefHeight="100.0" prefWidth="380.0">
                                  <children>
-                                    <Button mnemonicParsing="false" text="Muokkaa...">
+                                    <Button fx:id="editEntryButton" mnemonicParsing="false" onAction="#entryEditHandle" text="Muokkaa...">
                                        <HBox.margin>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </HBox.margin>
@@ -198,13 +210,21 @@
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
                                     </Button>
-                                    <Button mnemonicParsing="false" text="Poista...">
+                                    <Button fx:id="removeEntryButton" mnemonicParsing="false" onAction="#entryRemoveHandle" text="Poista...">
                                        <HBox.margin>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </HBox.margin>
                                        <padding>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
+                                    </Button>
+                                    <Button fx:id="addEntryButton" mnemonicParsing="false" onAction="#entryAddHandle" text="Lisää uusi...">
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                       <HBox.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </HBox.margin>
                                     </Button>
                                  </children>
                               </HBox>
@@ -254,13 +274,13 @@
                   <Insets right="10.0" />
                </GridPane.margin>
             </Label>
-            <ChoiceBox prefWidth="150.0" GridPane.rowIndex="1">
+            <ChoiceBox fx:id="projectChoiceBox" prefWidth="150.0" GridPane.rowIndex="1">
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </GridPane.margin>
             </ChoiceBox>
-            <TextField text="0 min" GridPane.columnIndex="2" />
-            <TextField text="0 min" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="totalProjectEntriesField" editable="false" text="0 min" GridPane.columnIndex="2" />
+            <TextField fx:id="timerDurationTopField" editable="false" text="0 min" GridPane.columnIndex="2" GridPane.rowIndex="1" />
             <Label text="Valittu projekti:">
                <GridPane.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
