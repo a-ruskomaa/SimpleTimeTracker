@@ -1,6 +1,8 @@
 package fxTyoaika.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.ResourceBundle;
 
 import fxTyoaika.model.Entry;
@@ -178,9 +180,7 @@ public class MainController extends AbstractController  {
             projectEntryList.setItems(FXCollections.observableArrayList(modelAccess.getSelectedProject().getEntries()));
         });
         
-        //Lisätään valitun projektin tallennetut merkinnät näkyville ListView-elementtiin
-        projectEntryList.setItems(FXCollections.observableArrayList(modelAccess.getSelectedProject().getEntries()));
-        
+        updateView();
         
 //        projectEntryList.setCellFactory(new Callback<ListView<Entry>, ListCell<Entry>>(){
 // 
@@ -208,6 +208,24 @@ public class MainController extends AbstractController  {
 //            }
 //        });
 
+    }
+    
+    private void updateView() {
+
+        LinkedList<Entry> entries = (LinkedList<Entry>) modelAccess.getSelectedProject().getEntries();
+        
+        //Lisätään valitun projektin tallennetut merkinnät näkyville ListView-elementtiin
+        projectEntryList.setItems(FXCollections.observableArrayList(entries));
+        
+        long totalTime = 0L;
+        
+        for (Entry entry : entries) {
+            totalTime += entry.getDurationInSeconds();
+        }
+        
+        totalProjectEntriesField.setText(String.format("%dh %02dmin", totalTime / 3600, (totalTime % 3600) / 60));
+        
+        
     }
 
 }
