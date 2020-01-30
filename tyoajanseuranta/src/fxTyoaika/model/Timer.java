@@ -29,6 +29,11 @@ public class Timer {
         this.running = false;
     }
     
+    public void reset() {
+        this.running = false;
+        this.entry = new Entry();
+    }
+    
     public Entry getEntry() {
         return this.entry;
     }
@@ -37,13 +42,8 @@ public class Timer {
         return this.running;
     }
     
-    public long getDurationInSeconds() {
+    public long getTimeElapsed() {
         return Duration.between(entry.getStartTime(), LocalDateTime.now()).toSeconds();
-    }
-    
-    public void reset() {
-        this.running = false;
-        this.entry = new Entry();
     }
     
     

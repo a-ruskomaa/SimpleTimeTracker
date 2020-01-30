@@ -24,22 +24,30 @@ public class Project {
         this.user = user;
         this.entries = new LinkedList<>();
     }
+    
+    public int getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
     }
 
-    public int getId() {
-        return id;
+    public void setName(String name) {
+        this.name = name;
     }
     
     public void addEntry(Entry entry) {
         //laitetaan aluksi listan loppuun
         entries.add(entry);
     }
-
+    
     public void addEntry(String startTime, String endTime) {
         addEntry(new Entry(startTime, endTime));
+    }
+    
+    public void removeEntry(Entry entry) {
+        entries.remove(entry);
     }
 
     public List<Entry> getEntries() {

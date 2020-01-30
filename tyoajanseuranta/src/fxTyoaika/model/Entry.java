@@ -48,17 +48,17 @@ public class Entry {
     }
 
     /**
-     * @return palauttaa merkinnän loppuajan päivämäärän
-     */
-    public LocalDate getEndDate() {
-        return null;
-    }
-
-    /**
      * @return palauttaa merkinnän alkuajan
      */
     public LocalDateTime getStartTime() {
         return startTime;
+    }
+
+    /**
+     * @param startTime asettaa merkinnän alkuajan
+     */
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
     }
 
     /**
@@ -68,6 +68,20 @@ public class Entry {
         return endTime;
     }
     
+    /**
+     * @param endTime asettaa merkinnän loppuajan
+     */
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    /**
+     * @return palauttaa merkinnän loppuajan päivämäärän
+     */
+    public LocalDate getEndDate() {
+        return null;
+    }
+
     /**
      * @return palauttaa merkinnän keston sekunneissa
      */
@@ -84,21 +98,6 @@ public class Entry {
         return String.format("%dh %02dmin", seconds / 3600, (seconds % 3600) / 60);
     }
 
-    /**
-     * @param startTime asettaa merkinnän alkuajan
-     */
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    /**
-     * @param endTime asettaa merkinnän loppuajan
-     */
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-    
-    
     /**
      * @return palauttaa alkuajan muotoiltuna merkkijonona muodossa "dd.MM.yyyy hh:mm:ss"
      */
