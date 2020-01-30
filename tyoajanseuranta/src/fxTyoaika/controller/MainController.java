@@ -1,9 +1,6 @@
 package fxTyoaika.controller;
 
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.ResourceBundle;
 
 import fxTyoaika.model.Entry;
 import fxTyoaika.model.Project;
@@ -12,14 +9,11 @@ import fxTyoaika.view.ViewFactory;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
 
 /**
  * @author aleks
@@ -177,7 +171,7 @@ public class MainController extends AbstractController  {
         
         projectChoiceBox.setOnAction(e -> {
             modelAccess.setSelectedProject(projectChoiceBox.getSelectionModel().getSelectedItem());
-            projectEntryList.setItems(FXCollections.observableArrayList(modelAccess.getSelectedProject().getEntries()));
+            updateView();
         });
         
         updateView();
