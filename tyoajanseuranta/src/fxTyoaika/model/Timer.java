@@ -12,13 +12,11 @@ import java.time.LocalDateTime;
 public class Timer {
     private Entry entry;
     private boolean running;
-    private long duration;
     
     
     public Timer() {
         // TODO Auto-generated constructor stub
         this.entry = new Entry();
-        this.duration = 0L;
     }
     
     public void start() {
