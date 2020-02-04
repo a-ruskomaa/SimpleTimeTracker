@@ -36,6 +36,12 @@ public class ViewFactory {
     private static final String FXML_MAINVIEW_TIMERTAB_PATH = "fxTyoaika/view/mainTabs/TimerTabView.fxml";
     private static final String FXML_MAINVIEW_PROJECTTAB_PATH = "fxTyoaika/view/mainTabs/ProjectTabView.fxml";
 
+    /*
+     * Luodaan modelAccess, jonka avulla ylläpidetään ohjelman tilaa.
+     * ModelAccess hakee luonnin yhteydessä tietorakenteeseen/tietokantaan tallennetut tiedot ohjelman
+     * käyttäjistä, projekteista sekä niihin tehdyistä merkinnöistä. Viitettä tähän olioon välitetään parametreina
+     * ohjelman kaikille kontrollereille.
+     */
     private static final ModelAccess modelAccess = new ModelAccess();
     
     /**
