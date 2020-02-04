@@ -12,52 +12,76 @@
 	<children>
 		<VBox>
 			<children>
+            <Label text="Syötä työskentelyn alku- ja loppuajankohta muodossa pp.kk.vvvv tt:mm">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </Label>
 				<HBox>
 					<children>
-						<Label prefWidth="100.0" text="Aloitus">
+						<Label prefWidth="80.0" text="Aloitus">
 							<HBox.margin>
-								<Insets left="30.0" right="10.0" />
+								<Insets bottom="5.0" left="30.0" right="10.0" top="5.0" />
 							</HBox.margin>
 						</Label>
-						<TextField promptText="dd.mm.yyyy hh:mm:ss" />
+						<TextField fx:id="startDateField" prefHeight="25.0" prefWidth="80.0" promptText="dd.mm.yyyy">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin></TextField>
+                  <TextField fx:id="startTimeField" layoutX="150.0" layoutY="10.0" prefWidth="80.0" promptText="hh:mm">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </TextField>
 					</children>
 				</HBox>
 				<HBox>
 					<children>
-						<Label prefWidth="100.0" text="Lopetus:">
+						<Label prefWidth="80.0" text="Lopetus:">
 							<HBox.margin>
-								<Insets left="30.0" right="10.0" />
+								<Insets bottom="5.0" left="30.0" right="10.0" top="5.0" />
 							</HBox.margin>
 						</Label>
-						<TextField promptText="dd.mm.yyyy hh:mm:ss" />
+						<TextField fx:id="endDateField" prefWidth="80.0" promptText="dd.mm.yyyy">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin></TextField>
+                  <TextField fx:id="endTimeField" layoutX="150.0" layoutY="10.0" prefWidth="80.0" promptText="hh:mm">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </TextField>
 					</children>
 				</HBox>
 				<HBox>
 					<children>
-						<Label prefWidth="100.0" text="Kesto:">
+						<Label prefWidth="80.0" text="Kesto:">
 							<HBox.margin>
-								<Insets left="30.0" right="10.0" />
+								<Insets bottom="5.0" left="30.0" right="10.0" top="5.0" />
 							</HBox.margin>
 						</Label>
-						<TextField editable="false" text="0 min" />
+						<TextField fx:id="durationField" editable="false" prefHeight="25.0" prefWidth="170.0" text="0 min">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin></TextField>
 					</children>
 				</HBox>
 				<HBox prefHeight="28.0" prefWidth="289.0">
 					<children>
-						<Button fx:id="entryDialogSaveButton" disable="true" onAction="#entryDialogHandleSave" text="_Tallenna merkintä">
+						<Button fx:id="entryDialogSaveButton" onAction="#entryDialogHandleSave" text="_Tallenna merkintä">
 							<padding>
 								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 							</padding>
 							<HBox.margin>
-								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+								<Insets bottom="10.0" left="30.0" right="40.0" top="10.0" />
 							</HBox.margin>
 						</Button>
-						<Button mnemonicParsing="false" text="Peruuta">
+						<Button fx:id="cancelButton" mnemonicParsing="false" text="Peruuta">
 							<padding>
 								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 							</padding>
 							<HBox.margin>
-								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+								<Insets bottom="10.0" left="40.0" right="20.0" top="10.0" />
 							</HBox.margin>
 						</Button>
 					</children>

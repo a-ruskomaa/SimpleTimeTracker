@@ -1,5 +1,7 @@
 package fxTyoaika.controller;
 
+import fxTyoaika.model.ModelAccess;
+
 /**
  * @author aleks
  * @version 28 Jan 2020

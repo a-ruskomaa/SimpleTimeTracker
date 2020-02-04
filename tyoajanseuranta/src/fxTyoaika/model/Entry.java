@@ -40,7 +40,7 @@ public class Entry {
     public Entry(LocalDateTime startTime, LocalDateTime endTime) {
         this.startTime.set(startTime);
         this.endTime.set(endTime);
-        this.duration.set(calculateDuration());
+        updateDuration();
     }
     
     /**
@@ -51,7 +51,7 @@ public class Entry {
     public Entry(String startTime, String endTime) {
         this.startTime.set(LocalDateTime.parse(startTime, dateTimeFormatter));
         this.endTime.set(LocalDateTime.parse(endTime, dateTimeFormatter));
-        this.duration.set(calculateDuration());
+        updateDuration();
     }
 
     /**
@@ -60,26 +60,28 @@ public class Entry {
     public LocalDateTime getStartTime() {
         return startTime.get();
     }
+    
+    /**
+     * @return palauttaa merkinnän loppuajan
+     */
+    public LocalDateTime getEndTime() {
+        return endTime.get();
+    }
 
     /**
      * @param startTime asettaa merkinnän alkuajan
      */
     public void setStartTime(LocalDateTime startTime) {
         this.startTime.set(startTime);
+        updateDuration();
     }
     
     /**
-     * @return palauttaa merkinnän propertyna
+     * @param startTime asettaa merkinnän alkuajan
      */
-    public ObjectProperty<LocalDateTime> startTimeProperty() {
-        return this.startTime;
-    }
-
-    /**
-     * @return palauttaa merkinnän loppuajan
-     */
-    public LocalDateTime getEndTime() {
-        return endTime.get();
+    public void setStartTime(String startTime) {
+        this.startTime.set(LocalDateTime.parse(startTime, dateTimeFormatter));
+        updateDuration();
     }
     
     /**
@@ -87,6 +89,22 @@ public class Entry {
      */
     public void setEndTime(LocalDateTime endTime) {
         this.endTime.set(endTime);
+        updateDuration();
+    }
+    
+    /**
+     * @param endTime asettaa merkinnän loppuajan
+     */
+    public void setEndTime(String endTime) {
+        this.endTime.set(LocalDateTime.parse(endTime, dateTimeFormatter));
+        updateDuration();
+    }
+    
+    /**
+     * @return palauttaa merkinnän propertyna
+     */
+    public ObjectProperty<LocalDateTime> startTimeProperty() {
+        return this.startTime;
     }
     
     /**
@@ -104,10 +122,13 @@ public class Entry {
     }
 
     /**
-     * @param duration asetettava kesto
+     * Laskee keston (jos mahdollista) ja päivittää kentän
      */
-    public void setDuration(Long duration) {
-        this.duration.set(duration);
+    public void updateDuration() {
+        if (getStartTime() != null && getEndTime() != null) {
+            Long duration = calculateDuration();
+            this.duration.set(duration);
+        } else this.duration.set(0);
     }
     
     /**

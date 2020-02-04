@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import fxTyoaika.model.ModelAccess;
 import fxTyoaika.model.Project;
 import fxTyoaika.model.User;
 import fxTyoaika.view.ViewFactory;

@@ -10,8 +10,8 @@ import javafx.collections.ObservableList;
 
 public class TempUsers {
 
-    public static List<User> getUsers() {
-        ArrayList<User> list = new ArrayList<>();
+    public static ObservableList<User> getUsers() {
+        ObservableList<User> list = FXCollections.observableArrayList();
         
         User janne = new User(1, "Janne");
         User jonne = new User(2, "Jonne");

@@ -1,8 +1,10 @@
-package fxTyoaika.controller;
+package fxTyoaika.controller.mainTabs;
 
 import java.util.LinkedList;
 
+import fxTyoaika.controller.AbstractController;
 import fxTyoaika.model.Entry;
+import fxTyoaika.model.ModelAccess;
 import fxTyoaika.view.ViewFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,8 +52,18 @@ public class ProjectTabController extends AbstractController {
     }
     
     public void initialize() {
-        ObservableList<Entry> entries = modelAccess.getSelectedProject().getEntries();
         
+        loadEntries();
+        
+        modelAccess.selectedProjectProperty().addListener((e) -> {
+            loadEntries();
+        });
+        
+
+    }
+    
+    public void loadEntries() {
+        ObservableList<Entry> entries = modelAccess.getSelectedProject().getEntries();
         //Lisätään valitun projektin tallennetut merkinnät näkyville ListView-elementtiin
         projectEntryList.setItems(FXCollections.observableArrayList(entries));
     }

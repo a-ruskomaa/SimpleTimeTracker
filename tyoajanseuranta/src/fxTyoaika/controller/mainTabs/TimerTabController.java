@@ -1,5 +1,7 @@
-package fxTyoaika.controller;
+package fxTyoaika.controller.mainTabs;
 
+import fxTyoaika.controller.AbstractController;
+import fxTyoaika.model.ModelAccess;
 import fxTyoaika.model.Timer;
 import fxTyoaika.view.ViewFactory;
 import javafx.event.ActionEvent;

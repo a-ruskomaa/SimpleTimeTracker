@@ -2,7 +2,10 @@ package fxTyoaika.controller;
 
 import java.util.LinkedList;
 
+import fxTyoaika.controller.mainTabs.ProjectTabController;
+import fxTyoaika.controller.mainTabs.TimerTabController;
 import fxTyoaika.model.Entry;
+import fxTyoaika.model.ModelAccess;
 import fxTyoaika.model.Project;
 import fxTyoaika.model.Timer;
 import fxTyoaika.view.ViewFactory;
@@ -62,7 +65,6 @@ public class MainController extends AbstractController  {
      */
     public void initialize() {
         
-        
         timerTab.setContent(ViewFactory.createTimerTab());
         projectTab.setContent(ViewFactory.createProjecTab());
         
@@ -74,9 +76,11 @@ public class MainController extends AbstractController  {
         
         projectChoiceBox.getSelectionModel().select(modelAccess.getSelectedProject());
         
+        
         projectChoiceBox.setOnAction(e -> {
             modelAccess.setSelectedProject(projectChoiceBox.getSelectionModel().getSelectedItem());
             updateTotalTime();
+            System.out.println("YIP!");
         });
         
         updateTotalTime();

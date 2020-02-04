@@ -1,14 +1,11 @@
-package fxTyoaika.controller;
+package fxTyoaika.model;
 
 import java.util.List;
 
-import fxTyoaika.model.Entry;
-import fxTyoaika.model.Project;
-import fxTyoaika.model.TempUsers;
-import fxTyoaika.model.Timer;
-import fxTyoaika.model.User;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.ObservableList;
 
 /**
  * @author aleks
@@ -21,9 +18,9 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class ModelAccess {
     
-    private ObjectProperty<User> selectedUser;
-    private ObjectProperty<Project> selectedProject;
-    private ObjectProperty<Entry> selectedEntry;
+    private ObjectProperty<User> selectedUser = new SimpleObjectProperty<User>();
+    private ObjectProperty<Project> selectedProject = new SimpleObjectProperty<Project>();
+    private ObjectProperty<Entry> selectedEntry = new SimpleObjectProperty<Entry>();
     
     private Timer timer;
     private Entry tempEntry;
@@ -41,7 +38,7 @@ public class ModelAccess {
      * Lataa tallennetut käyttäjät. Toistaiseksi käytetään puhtaasti oliopohjaista ratkaisua datan ylläpitoon.
      * @return palauttaa käyttäjät listalla
      */
-    public List<User> loadUserData() {
+    public ObservableList<User> loadUserData() {
         return TempUsers.getUsers();
     }
     

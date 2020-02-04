@@ -5,7 +5,10 @@ import java.net.URL;
 
 import fxTyoaika.controller.*;
 import fxTyoaika.controller.mainDialogs.*;
+import fxTyoaika.controller.mainTabs.ProjectTabController;
+import fxTyoaika.controller.mainTabs.TimerTabController;
 import fxTyoaika.controller.startDialogs.*;
+import fxTyoaika.model.ModelAccess;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

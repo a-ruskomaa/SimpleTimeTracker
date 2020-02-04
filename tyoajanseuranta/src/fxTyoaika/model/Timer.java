@@ -4,8 +4,10 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 
@@ -17,6 +19,7 @@ import javafx.beans.property.SimpleObjectProperty;
 public class Timer {
     private ObjectProperty<Entry> entry = new SimpleObjectProperty<Entry>();
     private BooleanProperty running = new SimpleBooleanProperty(false);
+    private LongProperty elapsedTime = new SimpleLongProperty();
     
     
     public Timer() {
