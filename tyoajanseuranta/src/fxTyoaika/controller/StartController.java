@@ -61,9 +61,11 @@ public class StartController extends AbstractController {
      */
     public void initialize() {
         
+        System.out.println("alustetaan startcontroller");
+        
         //Haetaan ohjelmaan tallennetut käyttäjät ja lisätään listalle
         userChoiceBox.setItems(
-                FXCollections.observableArrayList(modelAccess.getUserList()));
+                FXCollections.observableArrayList(modelAccess.loadUserData()));
 
         // Valitaan listan ensimmäinen käyttäjä. Myöhemmässä toteutuksessa valitaan edellinen ohjelmaa käyttänyt henkilö?
         userChoiceBox.getSelectionModel().select(0);
@@ -107,7 +109,7 @@ public class StartController extends AbstractController {
         Stage oldStage = (Stage) okButton.getScene().getWindow();
         Stage secondStage = new Stage();
         
-        secondStage.setScene(ViewFactory.createMainView(this));
+        secondStage.setScene(ViewFactory.createMainView());
         secondStage.show();
         
         oldStage.close();
@@ -122,7 +124,7 @@ public class StartController extends AbstractController {
      // TODO: vaihda popupiksi
         Stage newUserDialog = new Stage();
         newUserDialog.initModality(Modality.APPLICATION_MODAL);
-        newUserDialog.setScene(ViewFactory.createNewUserDialog(this));
+        newUserDialog.setScene(ViewFactory.createNewUserDialog());
         newUserDialog.show();
     }
 
@@ -134,7 +136,7 @@ public class StartController extends AbstractController {
         // TODO: vaihda popupiksi
         Stage newUserDialog = new Stage();
         newUserDialog.initModality(Modality.APPLICATION_MODAL);
-        newUserDialog.setScene(ViewFactory.createNewProjectDialog(this));
+        newUserDialog.setScene(ViewFactory.createNewProjectDialog());
         newUserDialog.show();
     }
 

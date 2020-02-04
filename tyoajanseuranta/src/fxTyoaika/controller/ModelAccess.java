@@ -25,34 +25,26 @@ public class ModelAccess {
     private Project selectedProject;
     private Entry selectedEntry;
     
-    private List<User> userList;
-    
     private Timer timer;
+    private Entry timerEntry;
     
     /**
      * Olion luomisen yhteydessä hakee tiedot käyttäjistä "tietokannasta". Myöhempi toteutus vielä auki.
      * Luo myös uuden ajastimen.
      */
     public ModelAccess() {
-        this.userList = loadUsers();
         this.timer = new Timer();
+        System.out.println("modelAccess luotu!");
     }
 
     /**
      * Lataa tallennetut käyttäjät. Toistaiseksi käytetään puhtaasti oliopohjaista ratkaisua datan ylläpitoon.
-     * @return
+     * @return palauttaa käyttäjät listalla
      */
-    private List<User> loadUsers() {
+    public List<User> loadUserData() {
         return TempUsers.getUsers();
     }
     
-    /**
-     * Käyttäjälistan getteri
-     * @return palauttaa listan käyttäjistä
-     */
-    public List<User> getUserList() {
-        return this.userList;
-    }
     
     /**
      * Valitun käyttäjän getteri

@@ -2,6 +2,7 @@ package fxTyoaika;
 	
 import fxTyoaika.controller.ModelAccess;
 import fxTyoaika.controller.StartController;
+import fxTyoaika.view.ViewFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -26,19 +27,21 @@ public class Tyoaika extends Application {
 		     * käyttäjistä, projekteista sekä niihin tehdyistä merkinnöistä. Viitettä tähän olioon välitetään parametreina
 		     * ohjelman kaikille kontrollereille.
 		     */
-		    ModelAccess modelAccess = new ModelAccess();
+		    System.out.println("käynnistys");
+		    //ModelAccess modelAccess = new ModelAccess();
 		    
-			BorderPane root;
-			FXMLLoader fxmlloader = new FXMLLoader();
-			
-			fxmlloader.setLocation(getClass().getClassLoader().getResource("fxTyoaika/view/StartView.fxml"));
-			StartController controller = new StartController(modelAccess);
-			fxmlloader.setController(controller);
-			root = fxmlloader.load();
-			
-			Scene scene = new Scene(root);
-			scene.getStylesheets().add(getClass().getClassLoader().getResource("fxTyoaika/view/tyoaika.css").toExternalForm());
-			primaryStage.setScene(scene);
+//			BorderPane root;
+//			FXMLLoader fxmlloader = new FXMLLoader();
+//			
+//			fxmlloader.setLocation(getClass().getClassLoader().getResource("fxTyoaika/view/StartView.fxml"));
+//			StartController controller = new StartController(modelAccess);
+//			fxmlloader.setController(controller);
+//			root = fxmlloader.load();
+//			
+//			Scene scene = new Scene(root);
+//			scene.getStylesheets().add(getClass().getClassLoader().getResource("fxTyoaika/view/tyoaika.css").toExternalForm());
+//			primaryStage.setScene(scene);
+			primaryStage.setScene(ViewFactory.createStartView());
 			primaryStage.show();
 		} catch(Exception e) {
 			e.printStackTrace();
