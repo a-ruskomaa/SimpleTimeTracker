@@ -7,6 +7,7 @@ import fxTyoaika.model.Project;
 import fxTyoaika.model.Timer;
 import fxTyoaika.view.ViewFactory;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -110,7 +111,7 @@ public class MainController extends AbstractController  {
     
     private void updateTotalTime() {
 
-        LinkedList<Entry> entries = (LinkedList<Entry>) modelAccess.getSelectedProject().getEntries();
+        ObservableList<Entry> entries = modelAccess.getSelectedProject().getEntries();
         
         long totalTime = 0L;
         

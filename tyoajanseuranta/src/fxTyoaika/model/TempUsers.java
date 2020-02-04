@@ -3,6 +3,9 @@ package fxTyoaika.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 //import fxTyoaika.Model.*;
 
 public class TempUsers {
@@ -13,9 +16,9 @@ public class TempUsers {
         User janne = new User(1, "Janne");
         User jonne = new User(2, "Jonne");
         
-        ArrayList<Project> projectList1 = new ArrayList<>(Arrays.asList(new Project[] { new Project(1, "ohj2", janne), new Project(2, "tika", janne)}));
+        ObservableList<Project> projectList1 = FXCollections.observableArrayList(Arrays.asList(new Project[] { new Project(1, "ohj2", janne), new Project(2, "tika", janne)}));
         
-        ArrayList<Project> projectList2 = new ArrayList<>(Arrays.asList(new Project[] { new Project(3, "ohj1", jonne), new Project(4, "alg1", jonne)}));
+        ObservableList<Project> projectList2 = FXCollections.observableArrayList(Arrays.asList(new Project[] { new Project(3, "ohj1", jonne), new Project(4, "alg1", jonne)}));
         
         janne.setProjects(projectList1);
         jonne.setProjects(projectList2);

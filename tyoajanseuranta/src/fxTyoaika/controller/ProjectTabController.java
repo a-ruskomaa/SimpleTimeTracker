@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import fxTyoaika.model.Entry;
 import fxTyoaika.view.ViewFactory;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -49,7 +50,7 @@ public class ProjectTabController extends AbstractController {
     }
     
     public void initialize() {
-        LinkedList<Entry> entries = (LinkedList<Entry>) modelAccess.getSelectedProject().getEntries();
+        ObservableList<Entry> entries = modelAccess.getSelectedProject().getEntries();
         
         //Lisätään valitun projektin tallennetut merkinnät näkyville ListView-elementtiin
         projectEntryList.setItems(FXCollections.observableArrayList(entries));

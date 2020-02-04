@@ -1,6 +1,5 @@
 package fxTyoaika.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fxTyoaika.model.Entry;
@@ -8,6 +7,7 @@ import fxTyoaika.model.Project;
 import fxTyoaika.model.TempUsers;
 import fxTyoaika.model.Timer;
 import fxTyoaika.model.User;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 /**
@@ -21,12 +21,12 @@ import javafx.beans.property.SimpleStringProperty;
  */
 public class ModelAccess {
     
-    private User selectedUser;
-    private Project selectedProject;
-    private Entry selectedEntry;
+    private ObjectProperty<User> selectedUser;
+    private ObjectProperty<Project> selectedProject;
+    private ObjectProperty<Entry> selectedEntry;
     
     private Timer timer;
-    private Entry timerEntry;
+    private Entry tempEntry;
     
     /**
      * Olion luomisen yhteydessä hakee tiedot käyttäjistä "tietokannasta". Myöhempi toteutus vielä auki.
@@ -51,7 +51,7 @@ public class ModelAccess {
      * @return palauttaa valitun käyttäjän
      */
     public User getSelectedUser() {
-        return selectedUser;
+        return selectedUser.get();
     }
     
     /**
@@ -59,7 +59,7 @@ public class ModelAccess {
      * @return palauttaa ohjelmassa valitun projektin
      */
     public Project getSelectedProject() {
-        return this.selectedProject;
+        return this.selectedProject.get();
     }
 
     /**
@@ -67,7 +67,7 @@ public class ModelAccess {
      * @return palauttaa valitun merkinnän
      */
     public Entry getSelectedEntry() {
-        return selectedEntry;
+        return selectedEntry.get();
     }
     
     /**
@@ -75,7 +75,7 @@ public class ModelAccess {
      * @param selectedProject valittu projekti
      */
     public void setSelectedProject(Project selectedProject) {
-        this.selectedProject = selectedProject;
+        this.selectedProject.set(selectedProject);
     }
 
     /**
@@ -83,7 +83,7 @@ public class ModelAccess {
      * @param selectedUser käyttäjä joka on valittuna
      */
     public void setSelectedUser(User selectedUser) {
-        this.selectedUser = selectedUser;
+        this.selectedUser.set(selectedUser);
     }
 
 
@@ -92,7 +92,19 @@ public class ModelAccess {
      * @param selectedEntry valittu merkintä
      */
     public void setSelectedEntry(Entry selectedEntry) {
-        this.selectedEntry = selectedEntry;
+        this.selectedEntry.set(selectedEntry);
+    }
+    
+    public ObjectProperty<User> selectedUserProperty() {
+        return this.selectedUser;
+    }
+    
+    public ObjectProperty<Project> selectedProjectProperty() {
+        return this.selectedProject;
+    }
+    
+    public ObjectProperty<Entry> selectedEntryProperty() {
+        return this.selectedEntry;
     }
 
     /**

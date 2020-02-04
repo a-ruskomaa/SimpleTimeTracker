@@ -3,6 +3,11 @@ package fxTyoaika.model;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
 
 /**
  * @author aleks
@@ -10,40 +15,46 @@ import java.time.LocalDateTime;
  *
  */
 public class Timer {
-    private Entry entry;
-    private boolean running;
+    private ObjectProperty<Entry> entry = new SimpleObjectProperty<Entry>();
+    private BooleanProperty running = new SimpleBooleanProperty(false);
     
     
     public Timer() {
-        // TODO Auto-generated constructor stub
-        this.entry = new Entry();
     }
     
     public void start() {
-        this.entry.setStartTime(LocalDateTime.now());
-        this.running= true;
+        this.entry.get().setStartTime(LocalDateTime.now());
+        this.running.set(true);
     }
     
     public void stop() {
-        this.entry.setEndTime(LocalDateTime.now());
-        this.running = false;
+        this.entry.get().setEndTime(LocalDateTime.now());
+        this.running.set(false);
     }
     
     public void reset() {
-        this.running = false;
-        this.entry = new Entry();
+        this.running.set(false);
+        this.entry.set(new Entry());
     }
     
     public Entry getEntry() {
+        return this.entry.get();
+    }
+    
+    public ObjectProperty<Entry> entryProperty() {
         return this.entry;
     }
     
     public boolean isRunning() {
+        return this.running.get();
+    }
+    
+    public BooleanProperty runningProperty() {
         return this.running;
     }
     
     public long getTimeElapsed() {
-        return Duration.between(entry.getStartTime(), LocalDateTime.now()).toSeconds();
+        return Duration.between(entry.get().getStartTime(), LocalDateTime.now()).toSeconds();
     }
     
     

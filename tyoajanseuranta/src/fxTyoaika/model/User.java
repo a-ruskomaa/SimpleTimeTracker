@@ -3,7 +3,14 @@ package fxTyoaika.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 /**
  * @author aleks
@@ -11,36 +18,44 @@ import javafx.beans.property.SimpleStringProperty;
  *
  */
 public class User {
-    
-    //SimpleStringProperty name;
-    private int id;
-    private String name;
-    private List<Project> projects;
+    private IntegerProperty id = new SimpleIntegerProperty();
+    private StringProperty name = new SimpleStringProperty();
+    private ListProperty<Project> projects = new SimpleListProperty<Project>();
     
     public User(int id, String name) {
-        this.id = id;
-        this.name = name;
-        this.projects = new ArrayList<>();
+        this.id.set(id);
+        this.name.set(name);
+        this.projects.set(FXCollections.observableArrayList());
+    }
+    
+    public User(int id, String name, ObservableList<Project> projects) {
+        this.id.set(id);
+        this.name.set(name);
+        this.projects.set(projects);
     }
 
     public int getId() {
-        return id;
+        return id.get();
     }
     
     public String getName() {
-        return name;
+        return name.get();
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name.set(name);
     }
     
-    public List<Project> getProjects() {
-        return projects;
+    public StringProperty nameProperty() {
+        return this.name;
     }
     
-    public void setProjects(List<Project> projects) {
-        this.projects = projects;
+    public ObservableList<Project> getProjects() {
+        return projects.get();
+    }
+    
+    public void setProjects(ObservableList<Project> projects) {
+        this.projects.set(projects);
     }
 
     public void addProject(Project project) {
@@ -49,7 +64,7 @@ public class User {
     
     @Override
     public String toString() {
-        return this.name;
+        return this.name.get();
     }
     //
 }

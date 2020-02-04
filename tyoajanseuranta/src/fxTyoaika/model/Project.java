@@ -12,7 +12,9 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swt.FXCanvas;
 
 /**
  * @author aleks
@@ -29,6 +31,7 @@ public class Project {
         this.id.set(id);
         this.name.set(name);
         this.user.set(user);
+        this.entries.set(FXCollections.observableArrayList());
     }
     
     public Project(int id, String name, User user, ObservableList<Entry> entries) {
@@ -50,21 +53,37 @@ public class Project {
         this.name.set(name);
     }
     
+    public StringProperty nameProperty() {
+        return this.name;
+    }
+    
+    public User getUser() {
+        return user.get();
+    }
+    
+    public void setUser(User user) {
+        this.user.set(user);
+    }
+    
+    public ObjectProperty<User> userProperty() {
+        return this.user;
+    }
+    
     public void addEntry(Entry entry) {
         //laitetaan aluksi listan loppuun
-        entries.add(entry);
+        this.entries.add(entry);
     }
     
     public void addEntry(String startTime, String endTime) {
-        addEntry(new Entry(startTime, endTime));
+        this.addEntry(new Entry(startTime, endTime));
     }
     
     public void removeEntry(Entry entry) {
-        entries.remove(entry);
+        this.entries.remove(entry);
     }
 
-    public List<Entry> getEntries() {
-        return entries;
+    public ObservableList<Entry> getEntries() {
+        return this.entries;
     }
 
     public void setEntries(ObservableList<Entry> entries) {
