@@ -4,8 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import javafx.util.converter.LocalDateTimeStringConverter;
-
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import java.time.Duration;
 
 /**
@@ -16,8 +18,11 @@ import java.time.Duration;
  *
  */
 public class Entry {
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private ObjectProperty<LocalDateTime> startTime = new SimpleObjectProperty<LocalDateTime>(); 
+    private ObjectProperty<LocalDateTime> endTime = new SimpleObjectProperty<LocalDateTime>(); 
+    private LongProperty duration = new SimpleLongProperty();
+//    private LocalDateTime startTime;
+//    private LocalDateTime endTime;
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
     
@@ -33,8 +38,9 @@ public class Entry {
      * @param endTime loppuaika LocalDateTime-muodossa
      */
     public Entry(LocalDateTime startTime, LocalDateTime endTime) {
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startTime.set(startTime);
+        this.endTime.set(endTime);
+        this.duration.set(calculateDuration());
     }
     
     /**
@@ -43,50 +49,86 @@ public class Entry {
      * @param endTime loppuaika merkkijonomuodossa
      */
     public Entry(String startTime, String endTime) {
-        this.startTime = LocalDateTime.parse(startTime, dateTimeFormatter);
-        this.endTime = LocalDateTime.parse(endTime, dateTimeFormatter);
+        this.startTime.set(LocalDateTime.parse(startTime, dateTimeFormatter));
+        this.endTime.set(LocalDateTime.parse(endTime, dateTimeFormatter));
+        this.duration.set(calculateDuration());
     }
 
     /**
      * @return palauttaa merkinnän alkuajan
      */
     public LocalDateTime getStartTime() {
-        return startTime;
+        return startTime.get();
     }
 
     /**
      * @param startTime asettaa merkinnän alkuajan
      */
     public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
+        this.startTime.set(startTime);
+    }
+    
+    /**
+     * @return palauttaa merkinnän propertyna
+     */
+    public ObjectProperty<LocalDateTime> startTimeProperty() {
+        return this.startTime;
     }
 
     /**
      * @return palauttaa merkinnän loppuajan
      */
     public LocalDateTime getEndTime() {
-        return endTime;
+        return endTime.get();
     }
     
     /**
      * @param endTime asettaa merkinnän loppuajan
      */
     public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
+        this.endTime.set(endTime);
+    }
+    
+    /**
+     * @return palauttaa merkinnän propertyna
+     */
+    public ObjectProperty<LocalDateTime> endTimeProperty() {
+        return this.endTime;
+    }
+    
+    /**
+     * @return palauttaa keston sekunneissa
+     */
+    public Long getDuration() {
+        return this.duration.get();
     }
 
     /**
-     * @return palauttaa merkinnän loppuajan päivämäärän
+     * @param duration asetettava kesto
      */
-    public LocalDate getEndDate() {
-        return null;
+    public void setDuration(Long duration) {
+        this.duration.set(duration);
+    }
+    
+    /**
+     * @return palauttaa keston propertyna
+     */
+    public LongProperty durationProperty() {
+        return this.duration;
+    }
+
+    /**
+     * @return palauttaa merkinnän alkuajan päivämäärän
+     */
+    public LocalDate getDate() {
+        return startTime.get().toLocalDate();
     }
 
     /**
      * @return palauttaa merkinnän keston sekunneissa
      */
-    public long getDurationInSeconds() {
-        return Duration.between(startTime, endTime).toSeconds();
+    public Long calculateDuration() {
+        return Duration.between(startTime.get(), endTime.get()).toSeconds();
     }
     
     
@@ -94,7 +136,7 @@ public class Entry {
      * @return palauttaa merkinnän keston muotuiltuna merkkijonona muodossa "0h 00min"
      */
     public String getDurationAsString() {
-        Long seconds = getDurationInSeconds();
+        Long seconds = getDuration();
         return String.format("%dh %02dmin", seconds / 3600, (seconds % 3600) / 60);
     }
 
@@ -102,19 +144,19 @@ public class Entry {
      * @return palauttaa alkuajan muotoiltuna merkkijonona muodossa "dd.MM.yyyy hh:mm:ss"
      */
     public String getStartTimeAsString() {
-        return startTime.format(dateTimeFormatter);
+        return startTime.get().format(dateTimeFormatter);
     }
     
     /**
      * @return palauttaa loppuajan muotoiltuna merkkijonona muodossa "dd.MM.yyyy hh:mm:ss"
      */
     public String getEndTimeAsString() {
-        return endTime.format(dateTimeFormatter);
+        return endTime.get().format(dateTimeFormatter);
     }
     
     @Override
     public String toString() {
-        return endTime.format(dateFormatter) + " " + getDurationAsString();
+        return endTime.get().format(dateFormatter) + " " + getDurationAsString();
     }
 
 }

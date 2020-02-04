@@ -61,6 +61,7 @@ public class MainController extends AbstractController  {
      */
     public void initialize() {
         
+        
         timerTab.setContent(ViewFactory.createTimerTab());
         projectTab.setContent(ViewFactory.createProjecTab());
         
@@ -114,7 +115,7 @@ public class MainController extends AbstractController  {
         long totalTime = 0L;
         
         for (Entry entry : entries) {
-            totalTime += entry.getDurationInSeconds();
+            totalTime += entry.getDuration();
         }
         
         totalProjectEntriesField.setText(String.format("%dh %02dmin", totalTime / 3600, (totalTime % 3600) / 60));
