@@ -23,18 +23,18 @@ public class ModelAccess {
     private ObjectProperty<Entry> selectedEntry = new SimpleObjectProperty<Entry>();
     
     private Timer timer;
-    private Entry tempEntry = new Entry();
+    private Entry currentlyEditedEntry = new Entry();
     
-    public Entry getTempEntry() {
-        return tempEntry;
+    public Entry getCurrentlyEditedEntry() {
+        return currentlyEditedEntry;
     }
 
-    public void setTempEntry(Entry tempEntry) {
-        this.tempEntry = tempEntry;
+    public void setCurrentlyEditedEntry(Entry entry) {
+        this.currentlyEditedEntry = entry;
     }
     
-    public void resetTempEntry() {
-        this.tempEntry = new Entry();
+    public void resetCurrentlyEditedEntry() {
+        this.currentlyEditedEntry = new Entry();
     }
 
     /**

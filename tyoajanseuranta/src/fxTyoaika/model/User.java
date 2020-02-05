@@ -2,6 +2,7 @@ package fxTyoaika.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
@@ -18,6 +19,8 @@ import javafx.collections.ObservableList;
  *
  */
 public class User {
+    private static final AtomicInteger idGenerator = new AtomicInteger(1000);
+    
     private IntegerProperty id = new SimpleIntegerProperty();
     private StringProperty name = new SimpleStringProperty();
     private ListProperty<Project> projects = new SimpleListProperty<Project>();

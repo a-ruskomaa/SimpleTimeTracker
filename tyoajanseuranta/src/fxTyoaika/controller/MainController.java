@@ -9,7 +9,12 @@ import fxTyoaika.model.ModelAccess;
 import fxTyoaika.model.Project;
 import fxTyoaika.model.Timer;
 import fxTyoaika.view.ViewFactory;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -72,15 +77,24 @@ public class MainController extends AbstractController  {
          * Lisätään alasvetovalikkoon valitun käyttäjän projektit, valitaan oikea projekti valmiiksi ja
          * luodaan tapahtumankäsittelijä projektin vaihtamiselle
          */
-        projectChoiceBox.setItems(FXCollections.observableArrayList(modelAccess.getSelectedUser().getProjects()));
+        projectChoiceBox.setItems(modelAccess.getSelectedUser().getProjects());
         
         projectChoiceBox.getSelectionModel().select(modelAccess.getSelectedProject());
         
-        
-        projectChoiceBox.setOnAction(e -> {
-            modelAccess.setSelectedProject(projectChoiceBox.getSelectionModel().getSelectedItem());
+        projectChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+//            modelAccess.setSelectedProject(projectChoiceBox.getSelectionModel().getSelectedItem());
+            modelAccess.setSelectedProject(selected);
             updateTotalTime();
         });
+            
+        
+//        projectChoiceBox.setOnAction(e -> {
+//            modelAccess.setSelectedProject(projectChoiceBox.getSelectionModel().getSelectedItem());
+//            updateTotalTime();
+//        });
+        
+        
+        modelAccess.getSelectedProject().getEntries().addListener((ListChangeListener<Entry>) c ->  updateTotalTime());
         
         updateTotalTime();
         

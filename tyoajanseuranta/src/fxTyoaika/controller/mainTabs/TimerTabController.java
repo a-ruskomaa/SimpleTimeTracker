@@ -1,6 +1,9 @@
 package fxTyoaika.controller.mainTabs;
 
+import java.time.format.DateTimeFormatter;
+
 import fxTyoaika.controller.AbstractController;
+import fxTyoaika.model.Entries;
 import fxTyoaika.model.ModelAccess;
 import fxTyoaika.model.Timer;
 import fxTyoaika.view.ViewFactory;
@@ -52,18 +55,19 @@ public class TimerTabController extends AbstractController {
     @FXML
     void timerToggle(ActionEvent event) {
         Timer timer = modelAccess.getTimer();
+        DateTimeFormatter f = Entries.getDateTimeFormatter();
         
         if (!timer.isRunning()) {
             timer.start();
             timerToggleButton.setText("Pysäytä ajastin");
-            timerStartField.setText(timer.getEntry().getStartTimeAsString());
+            timerStartField.setText(timer.getEntry().getStartTime().format(f));
             timerEndField.clear();
             timerSaveButton.setDisable(true);
             timerResetButton.setDisable(true);
         } else {
             timer.stop();
             timerToggleButton.setText("Käynnistä ajastin");
-            timerEndField.setText(timer.getEntry().getEndTimeAsString());
+            timerEndField.setText(timer.getEntry().getEndTime().format(f));
             timerSaveButton.setDisable(false);
             timerResetButton.setDisable(false);
         }

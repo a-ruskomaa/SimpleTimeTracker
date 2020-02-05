@@ -1,8 +1,10 @@
 package fxTyoaika.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
@@ -22,6 +24,8 @@ import javafx.embed.swt.FXCanvas;
  *
  */
 public class Project {
+    private static final AtomicInteger idGenerator = new AtomicInteger(1000);
+    
     private IntegerProperty id = new SimpleIntegerProperty();
     private StringProperty name = new SimpleStringProperty();
     private ObjectProperty<User> user = new SimpleObjectProperty<User>();
@@ -73,9 +77,9 @@ public class Project {
         this.entries.add(entry);
     }
     
-    public void addEntry(String startTime, String endTime) {
-        this.addEntry(new Entry(startTime, endTime));
-    }
+//    public void addEntry(LocalDateTime startTime, LocalDateTime endTime) {
+//        this.addEntry(new Entry(startTime, endTime));
+//    }
     
     public void removeEntry(Entry entry) {
         this.entries.remove(entry);

@@ -2,12 +2,17 @@ package fxTyoaika.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 import java.time.Duration;
 
 /**
@@ -18,99 +23,71 @@ import java.time.Duration;
  *
  */
 public class Entry {
-    private ObjectProperty<LocalDateTime> startTime = new SimpleObjectProperty<LocalDateTime>(); 
-    private ObjectProperty<LocalDateTime> endTime = new SimpleObjectProperty<LocalDateTime>(); 
+    private static final AtomicInteger idGenerator = new AtomicInteger(1000);
+            
+    private int id;
+    private ObjectProperty<LocalDateTime> startDateTime = new SimpleObjectProperty<LocalDateTime>();
+    private ObjectProperty<LocalDateTime> endDateTime = new SimpleObjectProperty<LocalDateTime>();
     private LongProperty duration = new SimpleLongProperty();
-    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
-    private DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+   
     
     /**
-     * Luo "tyhjän" merkinnän. Tätä hyödynnetään Timer-luokassa.
+     * Luo "tyhjän" merkinnän. Tätä hyödynnetään mm. Timer-luokassa ja uusien merkintöjen luomisessa syötteestä.
      */
     public Entry() {
+        this(-1, LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC), LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC));
     }
+
+    
+    /**
+     * Luo uuden merkinnän annetulla alku- ja loppuajalla. Lisää merkinnälle seuraavan vapaan id:n.
+     * @param start alkuaika LocalDateTime-muodossa
+     * @param end loppuaika LocalDateTime-muodossa
+     */
+    public Entry(LocalDateTime start, LocalDateTime end) {
+        this(idGenerator.getAndIncrement(), start, end);
+    }
+    
     
     /**
      * Luo uuden merkinnän annetulla alku- ja loppuajalla
-     * @param startTime alkuaika LocalDateTime-muodossa
-     * @param endTime loppuaika LocalDateTime-muodossa
+     * @param id id
+     * @param start alkuaika LocalDateTime-muodossa
+     * @param end loppuaika LocalDateTime-muodossa
      */
-    public Entry(LocalDateTime startTime, LocalDateTime endTime) {
-        this.startTime.set(startTime);
-        this.endTime.set(endTime);
+    public Entry(int id, LocalDateTime start, LocalDateTime end) {
+        this.id = id;
+        this.startDateTime.set(start);
+        this.endDateTime.set(end);
+        
         updateDuration();
+        
+        this.startDateTime.addListener((e) -> {
+            updateDuration();
+        });
+        
+        this.endDateTime.addListener((e) -> {
+            updateDuration();
+        });
     }
     
-    /**
-     * Luo uuden merkinnän annetulla alku- ja loppuajalla. Kelpuuttaa parametreinaan merkkijonon muodossa "dd.MM.yyy HH:mm:ss".
-     * @param startTime alkuaika merkkijonomuodossa
-     * @param endTime loppuaika merkkijonomuodossa
-     */
-    public Entry(String startTime, String endTime) {
-        this.startTime.set(LocalDateTime.parse(startTime, dateTimeFormatter));
-        this.endTime.set(LocalDateTime.parse(endTime, dateTimeFormatter));
-        updateDuration();
-    }
+    // Getterit:
 
+    public int getId() {
+        return this.id;
+    }
     /**
      * @return palauttaa merkinnän alkuajan
      */
     public LocalDateTime getStartTime() {
-        return startTime.get();
+        return startDateTime.get();
     }
     
     /**
      * @return palauttaa merkinnän loppuajan
      */
     public LocalDateTime getEndTime() {
-        return endTime.get();
-    }
-
-    /**
-     * @param startTime asettaa merkinnän alkuajan
-     */
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime.set(startTime);
-        updateDuration();
-    }
-    
-    /**
-     * @param startTime asettaa merkinnän alkuajan
-     */
-    public void setStartTime(String startTime) {
-        this.startTime.set(LocalDateTime.parse(startTime, dateTimeFormatter));
-        updateDuration();
-    }
-    
-    /**
-     * @param endTime asettaa merkinnän loppuajan
-     */
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime.set(endTime);
-        updateDuration();
-    }
-    
-    /**
-     * @param endTime asettaa merkinnän loppuajan
-     */
-    public void setEndTime(String endTime) {
-        this.endTime.set(LocalDateTime.parse(endTime, dateTimeFormatter));
-        updateDuration();
-    }
-    
-    /**
-     * @return palauttaa merkinnän propertyna
-     */
-    public ObjectProperty<LocalDateTime> startTimeProperty() {
-        return this.startTime;
-    }
-    
-    /**
-     * @return palauttaa merkinnän propertyna
-     */
-    public ObjectProperty<LocalDateTime> endTimeProperty() {
-        return this.endTime;
+        return endDateTime.get();
     }
     
     /**
@@ -119,15 +96,48 @@ public class Entry {
     public Long getDuration() {
         return this.duration.get();
     }
+    
 
     /**
-     * Laskee keston (jos mahdollista) ja päivittää kentän
+     * @return palauttaa merkinnän alkuajan päivämäärän
      */
-    public void updateDuration() {
-        if (getStartTime() != null && getEndTime() != null) {
-            Long duration = calculateDuration();
-            this.duration.set(duration);
-        } else this.duration.set(0);
+    public LocalDate getDate() {
+        return startDateTime.get().toLocalDate();
+    }
+
+
+    // Setterit:
+    
+    /**
+     * @param startTime asettaa merkinnän alkuajan
+     */
+    public void setStartTime(LocalDateTime startTime) {
+        this.startDateTime.set(startTime);
+    }
+    
+    
+    /**
+     * @param endTime asettaa merkinnän loppuajan
+     */
+    public void setEndTime(LocalDateTime endTime) {
+        this.endDateTime.set(endTime);
+    }
+    
+    
+    // Propertyjen getterit:
+    
+    /**
+     * @return palauttaa alkumerkinnän propertyna
+     */
+    public ObjectProperty<LocalDateTime> startTimeProperty() {
+        return this.startDateTime;
+    }
+    
+    /**
+     * @return palauttaa loppumerkinnän propertyna
+     */
+    public ObjectProperty<LocalDateTime> endTimeProperty() {
+        return this.endDateTime;
     }
     
     /**
@@ -137,20 +147,24 @@ public class Entry {
         return this.duration;
     }
 
+    // Apumetodit:
+    
     /**
-     * @return palauttaa merkinnän alkuajan päivämäärän
+     * Laskee keston (jos mahdollista) ja päivittää kentän
      */
-    public LocalDate getDate() {
-        return startTime.get().toLocalDate();
+    private void updateDuration() {
+        if (getStartTime() != null && getEndTime() != null) {
+            Long d = calculateDuration();
+            this.duration.set(d);
+        } else this.duration.set(0);
     }
-
+    
     /**
      * @return palauttaa merkinnän keston sekunneissa
      */
     public Long calculateDuration() {
-        return Duration.between(startTime.get(), endTime.get()).toSeconds();
+        return Duration.between(startDateTime.get(), endDateTime.get()).toSeconds();
     }
-    
     
     /**
      * @return palauttaa merkinnän keston muotuiltuna merkkijonona muodossa "0h 00min"
@@ -159,38 +173,11 @@ public class Entry {
         Long seconds = getDuration();
         return String.format("%dh %02dmin", seconds / 3600, (seconds % 3600) / 60);
     }
-
-    /**
-     * @return palauttaa alkuajan muotoiltuna merkkijonona muodossa "dd.MM.yyyy hh:mm:ss"
-     */
-    public String getStartTimeAsString() {
-        return startTime.get().format(dateTimeFormatter);
-    }
     
-    /**
-     * @return palauttaa loppuajan muotoiltuna merkkijonona muodossa "dd.MM.yyyy hh:mm:ss"
-     */
-    public String getEndTimeAsString() {
-        return endTime.get().format(dateTimeFormatter);
-    }
-    
-    
-    
-    public DateTimeFormatter getDateFormatter() {
-        return dateFormatter;
-    }
-
-    public DateTimeFormatter getDateTimeFormatter() {
-        return dateTimeFormatter;
-    }
-
-    public DateTimeFormatter getTimeFormatter() {
-        return timeFormatter;
-    }
 
     @Override
     public String toString() {
-        return endTime.get().format(dateFormatter) + " " + getDurationAsString();
+        return endDateTime.get().format(Entries.getDateFormatter()) + " " + getDurationAsString();
     }
 
 }

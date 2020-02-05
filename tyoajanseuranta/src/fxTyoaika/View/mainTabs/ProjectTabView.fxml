@@ -13,7 +13,7 @@
    <center>
 	                  <HBox>
                      <children>
-                        <ListView fx:id="projectEntryList" onMouseReleased="#projectEntryHandleClick" prefHeight="200.0" prefWidth="200.0">
+                        <ListView fx:id="projectEntryList" prefHeight="200.0" prefWidth="200.0">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>

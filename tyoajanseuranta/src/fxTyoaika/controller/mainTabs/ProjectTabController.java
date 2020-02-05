@@ -1,11 +1,16 @@
 package fxTyoaika.controller.mainTabs;
 
+import java.time.format.DateTimeFormatter;
+import java.util.Formatter;
 import java.util.LinkedList;
 
 import fxTyoaika.controller.AbstractController;
 import fxTyoaika.model.Entry;
+import fxTyoaika.model.Entries;
 import fxTyoaika.model.ModelAccess;
 import fxTyoaika.view.ViewFactory;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -53,19 +58,28 @@ public class ProjectTabController extends AbstractController {
     
     public void initialize() {
         
-        loadEntries();
+        projectEntryList.setItems(modelAccess.getSelectedProject().getEntries());
         
         modelAccess.selectedProjectProperty().addListener((e) -> {
-            loadEntries();
+            projectEntryList.setItems(modelAccess.getSelectedProject().getEntries());
+//            projectEntryList.getSelectionModel().select(0);
+        });
+        
+        projectEntryList.getSelectionModel().selectedItemProperty().addListener((e) -> {
+            Entry entry = projectEntryList.getSelectionModel().getSelectedItem();
+//            Entry entry = modelAccess.getSelectedEntry();
+            DateTimeFormatter f = Entries.getDateTimeFormatter();
+          viewEntryStartField.textProperty().bind(Bindings.createStringBinding(() -> entry.getStartTime().format(f), entry.startTimeProperty()));
+          viewEntryiEndField.textProperty().bind(Bindings.createStringBinding(() -> entry.getEndTime().format(f), entry.endTimeProperty()));
+//          viewEntryStartField.textProperty().bind(modelAccess.getSelectedEntry().startTimeStringProperty());
+//          viewEntryiEndField.textProperty().bind(modelAccess.getSelectedEntry().endTimeStringProperty());
+          viewEntryDurationField.textProperty().bind(Bindings.createStringBinding(() -> entry.getDurationAsString(), entry.durationProperty()));
+          modelAccess.setSelectedEntry(entry);
         });
         
     }
     
     public void loadEntries() {
-//        modelAccess.getSelectedProject().entriesProperty().bindBidirectional(other);
-        
-//        projectEntryList.setItems(value);
-        
         //Lisätään valitun projektin tallennetut merkinnät näkyville ListView-elementtiin
         projectEntryList.setItems(modelAccess.getSelectedProject().getEntries());
     }
@@ -85,18 +99,5 @@ public class ProjectTabController extends AbstractController {
         ViewFactory.createDeleteEntryDialog();
     }
 
-    @FXML
-    void manualSaveHandle(ActionEvent event) {
-        ViewFactory.createSaveEntryDialog();
-    }
 
-
-    @FXML
-    void projectEntryHandleClick(MouseEvent event) {
-        //TODO valinnan asetus modelaccessin kautta
-        Entry entry = projectEntryList.getSelectionModel().getSelectedItem();
-        viewEntryStartField.setText(entry.getStartTimeAsString());
-        viewEntryiEndField.setText(entry.getEndTimeAsString());
-        viewEntryDurationField.setText(entry.getDurationAsString());
-    }
 }

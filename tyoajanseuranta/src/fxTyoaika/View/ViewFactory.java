@@ -108,7 +108,7 @@ public class ViewFactory {
         SaveEntryDialogController controller = new SaveEntryDialogController(modelAccess);
         Stage stage = createPopup(controller, FXML_MAINVIEW_SAVE_ENTRY_DIALOG_PATH);
         stage.setOnCloseRequest((event) -> {
-            modelAccess.resetTempEntry();
+            modelAccess.resetCurrentlyEditedEntry();
             System.out.println("temp entry reset");
             });
 
