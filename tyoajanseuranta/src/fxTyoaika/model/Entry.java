@@ -21,10 +21,9 @@ public class Entry {
     private ObjectProperty<LocalDateTime> startTime = new SimpleObjectProperty<LocalDateTime>(); 
     private ObjectProperty<LocalDateTime> endTime = new SimpleObjectProperty<LocalDateTime>(); 
     private LongProperty duration = new SimpleLongProperty();
-//    private LocalDateTime startTime;
-//    private LocalDateTime endTime;
     private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+    private DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     
     /**
      * Luo "tyhjän" merkinnän. Tätä hyödynnetään Timer-luokassa.
@@ -175,6 +174,20 @@ public class Entry {
         return endTime.get().format(dateTimeFormatter);
     }
     
+    
+    
+    public DateTimeFormatter getDateFormatter() {
+        return dateFormatter;
+    }
+
+    public DateTimeFormatter getDateTimeFormatter() {
+        return dateTimeFormatter;
+    }
+
+    public DateTimeFormatter getTimeFormatter() {
+        return timeFormatter;
+    }
+
     @Override
     public String toString() {
         return endTime.get().format(dateFormatter) + " " + getDurationAsString();

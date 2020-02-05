@@ -106,7 +106,13 @@ public class ViewFactory {
      */
     public static void createSaveEntryDialog() {
         SaveEntryDialogController controller = new SaveEntryDialogController(modelAccess);
-        createPopup(controller, FXML_MAINVIEW_SAVE_ENTRY_DIALOG_PATH);
+        Stage stage = createPopup(controller, FXML_MAINVIEW_SAVE_ENTRY_DIALOG_PATH);
+        stage.setOnCloseRequest((event) -> {
+            modelAccess.resetTempEntry();
+            System.out.println("temp entry reset");
+            });
+
+        stage.show();
     }
     
     /**
@@ -114,7 +120,9 @@ public class ViewFactory {
      */
     public static void createDeleteEntryDialog() {
         DeleteEntryDialogController controller = new DeleteEntryDialogController(modelAccess);
-        createPopup(controller, FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH);
+        Stage stage = createPopup(controller, FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH);
+
+        stage.show();
     }
     
 
@@ -149,7 +157,6 @@ public class ViewFactory {
         Scene scene = createView(controller, path);
         
         stage.setScene(scene);
-        stage.show();
         
         return stage;
     }

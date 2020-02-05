@@ -70,7 +70,6 @@ public class Project {
     }
     
     public void addEntry(Entry entry) {
-        //laitetaan aluksi listan loppuun
         this.entries.add(entry);
     }
     
@@ -88,6 +87,10 @@ public class Project {
 
     public void setEntries(ObservableList<Entry> entries) {
         this.entries.set(entries);
+    }
+    
+    public ListProperty<Entry> entriesProperty() {
+        return this.entries;
     }
     
     

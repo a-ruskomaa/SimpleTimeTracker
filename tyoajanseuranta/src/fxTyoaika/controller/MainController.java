@@ -80,7 +80,6 @@ public class MainController extends AbstractController  {
         projectChoiceBox.setOnAction(e -> {
             modelAccess.setSelectedProject(projectChoiceBox.getSelectionModel().getSelectedItem());
             updateTotalTime();
-            System.out.println("YIP!");
         });
         
         updateTotalTime();
@@ -124,8 +123,7 @@ public class MainController extends AbstractController  {
         }
         
         totalProjectEntriesField.setText(String.format("%dh %02dmin", totalTime / 3600, (totalTime % 3600) / 60));
-        
-        
+
     }
 
 }

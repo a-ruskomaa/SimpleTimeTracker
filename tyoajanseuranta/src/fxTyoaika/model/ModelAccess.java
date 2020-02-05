@@ -23,8 +23,20 @@ public class ModelAccess {
     private ObjectProperty<Entry> selectedEntry = new SimpleObjectProperty<Entry>();
     
     private Timer timer;
-    private Entry tempEntry;
+    private Entry tempEntry = new Entry();
     
+    public Entry getTempEntry() {
+        return tempEntry;
+    }
+
+    public void setTempEntry(Entry tempEntry) {
+        this.tempEntry = tempEntry;
+    }
+    
+    public void resetTempEntry() {
+        this.tempEntry = new Entry();
+    }
+
     /**
      * Olion luomisen yhteydessä hakee tiedot käyttäjistä "tietokannasta". Myöhempi toteutus vielä auki.
      * Luo myös uuden ajastimen.

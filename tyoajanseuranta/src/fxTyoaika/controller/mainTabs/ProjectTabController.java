@@ -59,13 +59,15 @@ public class ProjectTabController extends AbstractController {
             loadEntries();
         });
         
-
     }
     
     public void loadEntries() {
-        ObservableList<Entry> entries = modelAccess.getSelectedProject().getEntries();
+//        modelAccess.getSelectedProject().entriesProperty().bindBidirectional(other);
+        
+//        projectEntryList.setItems(value);
+        
         //Lisätään valitun projektin tallennetut merkinnät näkyville ListView-elementtiin
-        projectEntryList.setItems(FXCollections.observableArrayList(entries));
+        projectEntryList.setItems(modelAccess.getSelectedProject().getEntries());
     }
     
     @FXML
