@@ -6,8 +6,8 @@ import java.util.ResourceBundle;
 
 import fxTyoaika.model.ModelAccess;
 import fxTyoaika.model.Project;
+import fxTyoaika.model.TempUsers;
 import fxTyoaika.model.User;
-import fxTyoaika.view.ViewFactory;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -64,9 +64,12 @@ public class StartController extends AbstractController {
         
         System.out.println("alustetaan startcontroller");
         
-        //Haetaan ohjelmaan tallennetut käyttäjät ja lisätään listalle
-        userChoiceBox.setItems(
-                FXCollections.observableArrayList(modelAccess.loadUserData()));
+        
+        // Lataa tallennetut käyttäjät. Toistaiseksi käytetään puhtaasti oliopohjaista ratkaisua datan ylläpitoon.
+        modelAccess.setUsers(TempUsers.getUsers());
+        
+        //Haetaan ohjelmaan tallennetut käyttäjät ja lisätään valikkoon
+        userChoiceBox.setItems(modelAccess.getUsers());
 
         // Valitaan listan ensimmäinen käyttäjä. Myöhemmässä toteutuksessa valitaan edellinen ohjelmaa käyttänyt henkilö?
         userChoiceBox.getSelectionModel().select(0);
@@ -74,10 +77,12 @@ public class StartController extends AbstractController {
         //Vaihdetaan käyttäjä valituksi myös modelAccessiin
         modelAccess.setSelectedUser(
                 userChoiceBox.getSelectionModel().getSelectedItem());
+        
 
         //Haetaan valitun käyttäjän projektit ja lisätään listalle
-        projectChoiceBox.setItems(FXCollections.observableArrayList(
-                modelAccess.getSelectedUser().getProjects()));
+        projectChoiceBox.setItems(modelAccess.getSelectedUser().getProjects());
+        
+        // TODO null check käyttäjän ja projektin valintaan!, ok button disable jos jompi kumpi null
 
         //Valitaan listalta ensimmäinen projekti sekä vahvistetaan valinta modelAccessiin
         projectChoiceBox.getSelectionModel().select(0);
@@ -88,8 +93,7 @@ public class StartController extends AbstractController {
         userChoiceBox.setOnAction(e -> {
             modelAccess.setSelectedUser(
                     userChoiceBox.getSelectionModel().getSelectedItem());
-            projectChoiceBox.setItems(FXCollections.observableArrayList(
-                    modelAccess.getSelectedUser().getProjects()));
+            projectChoiceBox.setItems(modelAccess.getSelectedUser().getProjects());
             projectChoiceBox.getSelectionModel().select(0);
         });
 
@@ -122,10 +126,7 @@ public class StartController extends AbstractController {
      */
     @FXML
     private void handleNewUserButton() {
-     // TODO: vaihda popupiksi
-        Stage newUserDialog = new Stage();
-        newUserDialog.initModality(Modality.APPLICATION_MODAL);
-        newUserDialog.setScene(ViewFactory.createNewUserDialog());
+        Stage newUserDialog = ViewFactory.createNewUserDialog();
         newUserDialog.show();
     }
 
@@ -134,10 +135,7 @@ public class StartController extends AbstractController {
      */
     @FXML
     private void handleNewProjectButton() {
-        // TODO: vaihda popupiksi
-        Stage newUserDialog = new Stage();
-        newUserDialog.initModality(Modality.APPLICATION_MODAL);
-        newUserDialog.setScene(ViewFactory.createNewProjectDialog());
+        Stage newUserDialog = ViewFactory.createNewProjectDialog();
         newUserDialog.show();
     }
 

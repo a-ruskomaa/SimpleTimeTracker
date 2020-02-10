@@ -5,12 +5,15 @@ import java.util.Formatter;
 import java.util.LinkedList;
 
 import fxTyoaika.controller.AbstractController;
+import fxTyoaika.controller.ViewFactory;
 import fxTyoaika.model.Entry;
 import fxTyoaika.model.Entries;
 import fxTyoaika.model.ModelAccess;
-import fxTyoaika.view.ViewFactory;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.WeakChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,7 +21,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
 public class ProjectTabController extends AbstractController {
     
@@ -35,13 +40,16 @@ public class ProjectTabController extends AbstractController {
     private ListView<Entry> projectEntryList;
 
     @FXML
-    private TextField viewEntryStartField;
+    private TreeView<Entry> projectEntryTree;
+    
+    @FXML
+    private TextField entryStartField;
 
     @FXML
-    private TextField viewEntryiEndField;
+    private TextField entryEndField;
 
     @FXML
-    private TextField viewEntryDurationField;
+    private TextField entryDurationField;
 
     @FXML
     private Button editEntryButton;
@@ -51,52 +59,69 @@ public class ProjectTabController extends AbstractController {
 
     @FXML
     private Button addEntryButton;
-//
+
+    
+    /**
+     * @param modelAccess modelAccess
+     */
     public ProjectTabController(ModelAccess modelAccess) {
         super(modelAccess);
     }
     
+    /**
+     * 
+     */
     public void initialize() {
         
+        
         projectEntryList.setItems(modelAccess.getSelectedProject().getEntries());
         
-        modelAccess.selectedProjectProperty().addListener((e) -> {
+        InvalidationListener selectedProjectListener = (e -> {
             projectEntryList.setItems(modelAccess.getSelectedProject().getEntries());
-//            projectEntryList.getSelectionModel().select(0);
+            
+            // TODO poista valitun merkinnän kuuntelija ennen projektin vaihtoa
+            if (!projectEntryList.getItems().isEmpty()) {
+                projectEntryList.getSelectionModel().select(0);
+            }
         });
         
-        projectEntryList.getSelectionModel().selectedItemProperty().addListener((e) -> {
-            Entry entry = projectEntryList.getSelectionModel().getSelectedItem();
-//            Entry entry = modelAccess.getSelectedEntry();
+        modelAccess.selectedProjectProperty().addListener(selectedProjectListener);
+        
+        projectEntryList.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+            if (selected == null) return;
             DateTimeFormatter f = Entries.getDateTimeFormatter();
-          viewEntryStartField.textProperty().bind(Bindings.createStringBinding(() -> entry.getStartTime().format(f), entry.startTimeProperty()));
-          viewEntryiEndField.textProperty().bind(Bindings.createStringBinding(() -> entry.getEndTime().format(f), entry.endTimeProperty()));
-//          viewEntryStartField.textProperty().bind(modelAccess.getSelectedEntry().startTimeStringProperty());
-//          viewEntryiEndField.textProperty().bind(modelAccess.getSelectedEntry().endTimeStringProperty());
-          viewEntryDurationField.textProperty().bind(Bindings.createStringBinding(() -> entry.getDurationAsString(), entry.durationProperty()));
-          modelAccess.setSelectedEntry(entry);
+          entryStartField.textProperty().bind(Bindings.createStringBinding(() -> selected.getStartDateTime().format(f), selected.startTimeProperty(), selected.startDateProperty()));
+          entryEndField.textProperty().bind(Bindings.createStringBinding(() -> selected.getEndDateTime().format(f), selected.endTimeProperty(), selected.endDateProperty()));
+          
+          entryDurationField.textProperty().bind(Bindings.createStringBinding(() -> selected.getDurationAsString(), selected.durationProperty()));
+          modelAccess.setSelectedEntry(selected);
         });
         
     }
     
-    public void loadEntries() {
-        //Lisätään valitun projektin tallennetut merkinnät näkyville ListView-elementtiin
-        projectEntryList.setItems(modelAccess.getSelectedProject().getEntries());
-    }
     
     @FXML
-    void entryAddHandle(ActionEvent event) {
-        ViewFactory.createSaveEntryDialog();
+    void handleAddEntry(ActionEvent event) {
+        modelAccess.setCurrentlyEditedEntry(new Entry());
+        Stage stage = ViewFactory.createEditEntryDialog();
+        stage.show();
     }
 
     @FXML
-    void entryEditHandle(ActionEvent event) {
-        ViewFactory.createSaveEntryDialog();
+    void handleEditEntry(ActionEvent event) {
+        try {
+            modelAccess.setCurrentlyEditedEntry(projectEntryList.getSelectionModel().getSelectedItem().clone());
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        Stage stage = ViewFactory.createEditEntryDialog();
+        stage.show();
     }
 
     @FXML
-    void entryRemoveHandle(ActionEvent event) {
-        ViewFactory.createDeleteEntryDialog();
+    void handleRemoveEntry(ActionEvent event) {
+        Stage stage = ViewFactory.createDeleteEntryDialog();
+        stage.show();
     }
 
 

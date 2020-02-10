@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -18,6 +19,7 @@
                               <Insets />
                            </HBox.margin>
                         </ListView>
+            <TreeView fx:id="projectEntryTree" prefHeight="200.0" prefWidth="200.0" />
                         <VBox>
                            <children>
                               <HBox>
@@ -27,7 +29,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField fx:id="viewEntryStartField" editable="false" />
+                                    <TextField fx:id="entryStartField" editable="false" />
                                  </children>
                               </HBox>
                               <HBox>
@@ -37,7 +39,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField fx:id="viewEntryiEndField" editable="false" />
+                                    <TextField fx:id="entryEndField" editable="false" />
                                  </children>
                               </HBox>
                               <HBox>
@@ -47,12 +49,12 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField fx:id="viewEntryDurationField" editable="false" />
+                                    <TextField fx:id="entryDurationField" editable="false" />
                                  </children>
                               </HBox>
                               <HBox prefHeight="100.0" prefWidth="380.0">
                                  <children>
-                                    <Button fx:id="editEntryButton" mnemonicParsing="false" onAction="#entryEditHandle" text="Muokkaa...">
+                                    <Button fx:id="editEntryButton" mnemonicParsing="false" onAction="#handleEditEntry" text="Muokkaa...">
                                        <HBox.margin>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </HBox.margin>
@@ -60,7 +62,7 @@
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
                                     </Button>
-                                    <Button fx:id="removeEntryButton" mnemonicParsing="false" onAction="#entryRemoveHandle" text="Poista...">
+                                    <Button fx:id="removeEntryButton" mnemonicParsing="false" onAction="#handleRemoveEntry" text="Poista...">
                                        <HBox.margin>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </HBox.margin>
@@ -68,7 +70,7 @@
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
                                     </Button>
-                                    <Button fx:id="addEntryButton" mnemonicParsing="false" onAction="#entryAddHandle" text="Lisää uusi...">
+                                    <Button fx:id="addEntryButton" mnemonicParsing="false" onAction="#handleAddEntry" text="Lisää uusi...">
                                        <padding>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>

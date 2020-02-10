@@ -2,6 +2,7 @@ package fxTyoaika.model;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.LongProperty;
@@ -26,12 +27,12 @@ public class Timer {
     }
     
     public void start() {
-        this.entry.get().setStartTime(LocalDateTime.now());
+        this.entry.get().setStartDateTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         this.running.set(true);
     }
     
     public void stop() {
-        this.entry.get().setEndTime(LocalDateTime.now());
+        this.entry.get().setEndDateTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         this.running.set(false);
     }
     

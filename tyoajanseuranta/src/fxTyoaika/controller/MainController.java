@@ -8,14 +8,15 @@ import fxTyoaika.model.Entry;
 import fxTyoaika.model.ModelAccess;
 import fxTyoaika.model.Project;
 import fxTyoaika.model.Timer;
-import fxTyoaika.view.ViewFactory;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.beans.value.WeakChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.WeakListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -75,26 +76,47 @@ public class MainController extends AbstractController  {
         
         /*
          * Lisätään alasvetovalikkoon valitun käyttäjän projektit, valitaan oikea projekti valmiiksi ja
-         * luodaan tapahtumankäsittelijä projektin vaihtamiselle
+         * luodaan tapahtumankäsittelijä joka reagoi kun projektia vaihdetaan
          */
         projectChoiceBox.setItems(modelAccess.getSelectedUser().getProjects());
         
+        
+        
         projectChoiceBox.getSelectionModel().select(modelAccess.getSelectedProject());
         
+        // Reagoi jos listaan tehdään muutoksia
+        ListChangeListener<Entry> entryListChangeListener = new WeakListChangeListener<Entry>(c ->  updateTotalTime());
+        
+        
+        ChangeListener<Number> durationChangeListener = new WeakChangeListener<Number>((obs, old, selected) -> updateTotalTime());
+        
+        ChangeListener<Entry> entryChangeListener = new WeakChangeListener<Entry>((obs, old, selected) -> {
+            old.durationProperty().removeListener(durationChangeListener);
+            selected.durationProperty().addListener(durationChangeListener);
+        });
+        
+        // Tehdään jos valittu projekti vaihtuu
         projectChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
-//            modelAccess.setSelectedProject(projectChoiceBox.getSelectionModel().getSelectedItem());
             modelAccess.setSelectedProject(selected);
             updateTotalTime();
-        });
             
+            // TODO parempi null check
+            
+            modelAccess.setSelectedEntry(selected.getEntries().isEmpty() ? null : selected.getEntries().get(0));
+            
+            modelAccess.selectedEntryProperty().addListener(entryChangeListener);
+            
+            
+            old.getEntries().removeListener(entryListChangeListener);
+            // Jos valittuun projektiiin lisätään merkintöjä
+            selected.getEntries().addListener(entryListChangeListener);
+        });
+              
         
-//        projectChoiceBox.setOnAction(e -> {
-//            modelAccess.setSelectedProject(projectChoiceBox.getSelectionModel().getSelectedItem());
-//            updateTotalTime();
-//        });
+//        modelAccess.getSelectedEntry().durationProperty().add
         
-        
-        modelAccess.getSelectedProject().getEntries().addListener((ListChangeListener<Entry>) c ->  updateTotalTime());
+        // TODO lisää tapahtumankäsittelijä joka päivittää ajan jos jotain merkintää muokataan!
+        // kannattanee tehdä luomalla projektiin totalDurationProperty ja bindaamalla se
         
         updateTotalTime();
         

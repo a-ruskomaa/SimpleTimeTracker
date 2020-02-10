@@ -3,10 +3,10 @@ package fxTyoaika.controller.mainTabs;
 import java.time.format.DateTimeFormatter;
 
 import fxTyoaika.controller.AbstractController;
+import fxTyoaika.controller.ViewFactory;
 import fxTyoaika.model.Entries;
 import fxTyoaika.model.ModelAccess;
 import fxTyoaika.model.Timer;
-import fxTyoaika.view.ViewFactory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

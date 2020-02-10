@@ -2,7 +2,9 @@ package fxTyoaika.model;
 
 import java.util.List;
 
+import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
@@ -17,10 +19,11 @@ import javafx.collections.ObservableList;
  * käynnistyksen yhteydessä. Tällä hetkellä toimii ainoana rajapintana ohjelman käyttöliittymän sekä datan välillä.
  */
 public class ModelAccess {
-    
-    private ObjectProperty<User> selectedUser = new SimpleObjectProperty<User>();
-    private ObjectProperty<Project> selectedProject = new SimpleObjectProperty<Project>();
-    private ObjectProperty<Entry> selectedEntry = new SimpleObjectProperty<Entry>();
+
+    private final ListProperty<User> users = new SimpleListProperty<User>();
+    private final ObjectProperty<User> selectedUser = new SimpleObjectProperty<User>();
+    private final ObjectProperty<Project> selectedProject = new SimpleObjectProperty<Project>();
+    private final ObjectProperty<Entry> selectedEntry = new SimpleObjectProperty<Entry>();
     
     private Timer timer;
     private Entry currentlyEditedEntry = new Entry();
@@ -46,12 +49,9 @@ public class ModelAccess {
         System.out.println("modelAccess luotu!");
     }
 
-    /**
-     * Lataa tallennetut käyttäjät. Toistaiseksi käytetään puhtaasti oliopohjaista ratkaisua datan ylläpitoon.
-     * @return palauttaa käyttäjät listalla
-     */
-    public ObservableList<User> loadUserData() {
-        return TempUsers.getUsers();
+
+    public ObservableList<User> getUsers() {
+        return users.get();
     }
     
     
@@ -79,6 +79,10 @@ public class ModelAccess {
         return selectedEntry.get();
     }
     
+    public void setUsers(ObservableList<User> users) {
+        this.users.set(users);
+    }
+    
     /**
      * Asettaa parametrinaan saamansa projektin valituksi
      * @param selectedProject valittu projekti
@@ -94,7 +98,6 @@ public class ModelAccess {
     public void setSelectedUser(User selectedUser) {
         this.selectedUser.set(selectedUser);
     }
-
 
     /**
      * Asettaa parametrinaan saamansa merkinnän valituksi
@@ -116,6 +119,7 @@ public class ModelAccess {
         return this.selectedEntry;
     }
 
+    
     /**
      * Ajastimen getteri
      * @return palauttaa viitteen ohjelman ajastimeen
@@ -124,5 +128,7 @@ public class ModelAccess {
         return this.timer;
     }
     
-    //
+    public void addUser(User user) {
+        users.add(user);
+    }
 }

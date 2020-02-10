@@ -21,10 +21,10 @@ import javafx.collections.ObservableList;
 public class User {
     private static final AtomicInteger idGenerator = new AtomicInteger(1000);
     
-    private IntegerProperty id = new SimpleIntegerProperty();
-    private StringProperty name = new SimpleStringProperty();
-    private ListProperty<Project> projects = new SimpleListProperty<Project>();
-    
+    private final IntegerProperty id = new SimpleIntegerProperty();
+    private final StringProperty name = new SimpleStringProperty();
+    private final ListProperty<Project> projects = new SimpleListProperty<Project>();
+            
     public User(int id, String name) {
         this.id.set(id);
         this.name.set(name);

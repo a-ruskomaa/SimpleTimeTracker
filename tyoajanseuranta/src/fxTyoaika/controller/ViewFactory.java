@@ -1,4 +1,4 @@
-package fxTyoaika.view;
+package fxTyoaika.controller;
 
 import java.io.IOException;
 import java.net.URL;
@@ -34,6 +34,7 @@ public class ViewFactory {
     private static final String FXML_STARTVIEW_PROJECTDIALOG_PATH = "fxTyoaika/view/startDialogs/NewProjectDialogView.fxml";
 
     private static final String FXML_MAINVIEW_SAVE_ENTRY_DIALOG_PATH = "fxTyoaika/view/mainDialogs/SaveEntryDialog.fxml";
+    private static final String FXML_MAINVIEW_EDIT_ENTRY_DIALOG_PATH = "fxTyoaika/view/mainDialogs/EditEntryDialog.fxml";
     private static final String FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH = "fxTyoaika/view/mainDialogs/DeleteEntryDialog.fxml";
     
     private static final String FXML_MAINVIEW_TIMERTAB_PATH = "fxTyoaika/view/mainTabs/TimerTabView.fxml";
@@ -60,18 +61,18 @@ public class ViewFactory {
      * Luo uuden käyttäjän luomiseen käytettävän popup-dialogin
      * @return palauttaa Scene-olion
      */
-    public static Scene createNewUserDialog() {
+    public static Stage createNewUserDialog() {
         NewUserDialogController controller = new NewUserDialogController(modelAccess);
-        return createView(controller, FXML_STARTVIEW_USERDIALOG_PATH);
+        return createModalStage(controller, FXML_STARTVIEW_USERDIALOG_PATH);
     }
     
     /**
      * Luo uuden projektin luomiseen käytettävän popup-dialogin
      * @return palauttaa Scene-olion
      */
-    public static Scene createNewProjectDialog() {
+    public static Stage createNewProjectDialog() {
         NewProjectDialogController controller = new NewProjectDialogController(modelAccess);
-        return createView(controller, FXML_STARTVIEW_PROJECTDIALOG_PATH);
+        return createModalStage(controller, FXML_STARTVIEW_PROJECTDIALOG_PATH);
     }
     
     /**
@@ -103,28 +104,67 @@ public class ViewFactory {
 
     /**
      * Luo merkinnän muokkaamiseen käytettävän popup-dialogin
+     * @return palauttaa stage-olion
      */
-    public static void createSaveEntryDialog() {
+    public static Stage createSaveEntryDialog() {
         SaveEntryDialogController controller = new SaveEntryDialogController(modelAccess);
-        Stage stage = createPopup(controller, FXML_MAINVIEW_SAVE_ENTRY_DIALOG_PATH);
+        Stage stage = createModalStage(controller, FXML_MAINVIEW_SAVE_ENTRY_DIALOG_PATH);
         stage.setOnCloseRequest((event) -> {
             modelAccess.resetCurrentlyEditedEntry();
             System.out.println("temp entry reset");
             });
 
-        stage.show();
+        return stage;
+    }
+    
+    /**
+     * Luo merkinnän muokkaamiseen käytettävän popup-dialogin
+     * @return palauttaa stage-olion
+     */
+    public static Stage createEditEntryDialog() {
+        EditEntryDialogController controller = new EditEntryDialogController(modelAccess);
+        Stage stage = createModalStage(controller, FXML_MAINVIEW_EDIT_ENTRY_DIALOG_PATH);
+        stage.setOnCloseRequest((event) -> {
+            modelAccess.resetCurrentlyEditedEntry();
+            System.out.println("temp entry reset");
+        });
+        
+        return stage;
     }
     
     /**
      * Luo merkinnän poistamiseen käytettävän popup-dialogin
+     * @return palauttaa stage-olion
      */
-    public static void createDeleteEntryDialog() {
+    public static Stage createDeleteEntryDialog() {
         DeleteEntryDialogController controller = new DeleteEntryDialogController(modelAccess);
-        Stage stage = createPopup(controller, FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH);
+        Stage stage = createModalStage(controller, FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH);
 
-        stage.show();
+        return stage;
     }
     
+    
+    /**
+     * Lataa FXML-tiedostosta uuden Parent-solmun annetuilla parametreilla. Asettaa solmulle kontrollerin.
+     * @param controller Solmun kontrolleriluokka
+     * @param path Polku solmun sisällön määrittelevään FXML-tiedostoon
+     * @return
+     */
+    private static Parent createParent(AbstractController controller, String path) {
+        URL location = controller.getClass().getClassLoader()
+                .getResource(path);
+        FXMLLoader fxmlloader = new FXMLLoader();
+        fxmlloader.setLocation(location);
+        fxmlloader.setController(controller);
+        
+        try {
+            return fxmlloader.load();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * Asettaa näkymän scene-olioon.
@@ -150,7 +190,7 @@ public class ViewFactory {
      * @param path polku FXML-tiedostoon
      * @return palauttaa stage-olion
      */
-    private static Stage createPopup(AbstractController controller, String path) {
+    private static Stage createModalStage(AbstractController controller, String path) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
         
@@ -159,28 +199,6 @@ public class ViewFactory {
         stage.setScene(scene);
         
         return stage;
-    }
-    
-    /**
-     * Lataa FXML-tiedostosta uuden Parent-solmun annetuilla parametreilla. Asettaa solmulle kontrollerin.
-     * @param controller Solmun kontrolleriluokka
-     * @param path Polku solmun sisällön määrittelevään FXML-tiedostoon
-     * @return
-     */
-    private static Parent createParent(AbstractController controller, String path) {
-        URL location = controller.getClass().getClassLoader()
-                .getResource(path);
-        FXMLLoader fxmlloader = new FXMLLoader();
-        fxmlloader.setLocation(location);
-        fxmlloader.setController(controller);
-
-        try {
-            return fxmlloader.load();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
-        }
     }
     
     

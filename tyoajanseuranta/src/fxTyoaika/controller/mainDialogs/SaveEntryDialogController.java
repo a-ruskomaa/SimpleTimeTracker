@@ -1,5 +1,7 @@
 package fxTyoaika.controller.mainDialogs;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -21,12 +23,17 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import javafx.util.converter.DateTimeStringConverter;
 
 public class SaveEntryDialogController extends AbstractController {
     // private final String dateTimePattern =
@@ -41,6 +48,8 @@ public class SaveEntryDialogController extends AbstractController {
     private LocalDate endDate;
     private LocalTime startTime;
     private LocalTime endTime;
+    
+    private DatePicker dp = new DatePicker();
 
     @FXML
     private TextField startDateField;
@@ -56,6 +65,7 @@ public class SaveEntryDialogController extends AbstractController {
 
     @FXML
     private TextField durationField;
+    
 
     @FXML
     private Button saveButton;
@@ -63,24 +73,32 @@ public class SaveEntryDialogController extends AbstractController {
     @FXML
     private Button cancelButton;
 
+    @FXML
+    private DateTimePicker dpicker;
+    
     public SaveEntryDialogController(ModelAccess modelAccess) {
         super(modelAccess);
     }
 
 
-    public void initialize() {
+    public void initialize() throws ParseException {
+        
+        
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        startTimeField.setTextFormatter(new TextFormatter<>(new DateTimeStringConverter(format), format.parse("00:00:00")));
+
         this.entry = modelAccess.getCurrentlyEditedEntry();
         
-        startDate = entry.getStartTime().toLocalDate();
-        startTime = entry.getStartTime().toLocalTime();
-        endDate = entry.getEndTime().toLocalDate();
-        endTime = entry.getEndTime().toLocalTime();
+        startDate = entry.getStartDate();
+        startTime = entry.getStartTime();
+        endDate = entry.getEndDate();
+        endTime = entry.getEndTime();
         
         if (this.entry.getId() != -1) {
             startDateField.setText(Entries.getDateAsString(startDate));
-            startTimeField.setText(Entries.getTimeAsString(startTime));
+            startTimeField.setText(Entries.getTimeAsStringNoSeconds(startTime));
             endDateField.setText(Entries.getDateAsString(endDate));
-            endTimeField.setText(Entries.getTimeAsString(endTime));
+            endTimeField.setText(Entries.getTimeAsStringNoSeconds(endTime));
         }
 
         System.out.println(entry);
@@ -138,8 +156,8 @@ public class SaveEntryDialogController extends AbstractController {
             Entry newEntry = new Entry(startDateTime, endDateTime);
             modelAccess.getSelectedProject().addEntry(newEntry);
         } else {
-            entry.setStartTime(startDateTime);
-            entry.setEndTime(endDateTime);
+            entry.setStartDateTime(startDateTime);
+            entry.setEndDateTime(endDateTime);
         }
 
         exitStage(event);

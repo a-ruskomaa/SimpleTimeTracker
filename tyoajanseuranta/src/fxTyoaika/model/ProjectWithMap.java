@@ -26,24 +26,22 @@ import javafx.embed.swt.FXCanvas;
  * @version 28 Jan 2020
  *
  */
-public class Project {
+public class ProjectWithMap {
     private static final AtomicInteger idGenerator = new AtomicInteger(1000);
     
-    private final IntegerProperty id = new SimpleIntegerProperty();
-    private final StringProperty name = new SimpleStringProperty();
-    private final ObjectProperty<User> user = new SimpleObjectProperty<User>();
-    private final ListProperty<Entry> entries = new SimpleListProperty<Entry>();
+    private IntegerProperty id = new SimpleIntegerProperty();
+    private StringProperty name = new SimpleStringProperty();
+    private ObjectProperty<User> user = new SimpleObjectProperty<User>();
+    private MapProperty<Integer, Entry> entries = new SimpleMapProperty<Integer, Entry>();
     
-    public Project(int id, String name, User user) {
+    public ProjectWithMap(int id, String name, User user) {
         this.id.set(id);
         this.name.set(name);
         this.user.set(user);
-        this.entries.set(FXCollections.observableArrayList());
-        // TODO luo extractor
-//        this.entries.set(FXCollections.observableArrayList((p) -> )());
+        this.entries.set(FXCollections.observableHashMap());
     }
     
-    public Project(int id, String name, User user, ObservableList<Entry> entries) {
+    public ProjectWithMap(int id, String name, User user, ObservableMap<Integer, Entry> entries) {
         this.id.set(id);
         this.name.set(name);
         this.user.set(user);
@@ -79,7 +77,7 @@ public class Project {
     }
     
     public void addEntry(Entry entry) {
-        this.entries.add(entry);
+        this.entries.put(entry.getId(), entry);
     }
 
     
@@ -87,15 +85,15 @@ public class Project {
         this.entries.remove(entry);
     }
 
-    public ObservableList<Entry> getEntries() {
+    public ObservableMap<Integer, Entry> getEntries() {
         return this.entries;
     }
 
-    public void setEntries(ObservableList<Entry> entries) {
+    public void setEntries(ObservableMap<Integer, Entry> entries) {
         this.entries.set(entries);
     }
     
-    public ListProperty<Entry> entriesProperty() {
+    public MapProperty<Integer, Entry> entriesProperty() {
         return this.entries;
     }
     

@@ -1,8 +1,8 @@
 package fxTyoaika;
 	
 import fxTyoaika.controller.StartController;
+import fxTyoaika.controller.ViewFactory;
 import fxTyoaika.model.ModelAccess;
-import fxTyoaika.view.ViewFactory;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
