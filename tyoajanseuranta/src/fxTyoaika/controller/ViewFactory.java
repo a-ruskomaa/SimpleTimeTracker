@@ -3,16 +3,11 @@ package fxTyoaika.controller;
 import java.io.IOException;
 import java.net.URL;
 
-import fxTyoaika.controller.*;
-import fxTyoaika.controller.mainDialogs.*;
-import fxTyoaika.controller.mainTabs.ProjectTabController;
-import fxTyoaika.controller.mainTabs.TimerTabController;
-import fxTyoaika.controller.startDialogs.*;
-import fxTyoaika.model.ModelAccess;
+import fxTyoaika.controller.main.*;
+import fxTyoaika.controller.start.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -27,18 +22,17 @@ import javafx.stage.Stage;
 public class ViewFactory {
 
     private static final String FXML_BASE_LOCATION = "fxTyoaika/view/";
-    private static final String FXML_MAINVIEW_LOCATION = "fxTyoaika/view/MainView.fxml";
-    private static final String FXML_STARTVIEW_LOCATION = "fxTyoaika/view/StartView.fxml";
+    private static final String FXML_MAINVIEW_LOCATION = "fxTyoaika/view/main/MainView.fxml";
+    private static final String FXML_STARTVIEW_LOCATION = "fxTyoaika/view/start/StartView.fxml";
 
-    private static final String FXML_STARTVIEW_USERDIALOG_PATH = "fxTyoaika/view/startDialogs/NewUserDialogView.fxml";
-    private static final String FXML_STARTVIEW_PROJECTDIALOG_PATH = "fxTyoaika/view/startDialogs/NewProjectDialogView.fxml";
+    private static final String FXML_STARTVIEW_USERDIALOG_PATH = "fxTyoaika/view/start/NewUserDialogView.fxml";
+    private static final String FXML_STARTVIEW_PROJECTDIALOG_PATH = "fxTyoaika/view/start/NewProjectDialogView.fxml";
 
-    private static final String FXML_MAINVIEW_SAVE_ENTRY_DIALOG_PATH = "fxTyoaika/view/mainDialogs/SaveEntryDialog.fxml";
-    private static final String FXML_MAINVIEW_EDIT_ENTRY_DIALOG_PATH = "fxTyoaika/view/mainDialogs/EditEntryDialog.fxml";
-    private static final String FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH = "fxTyoaika/view/mainDialogs/DeleteEntryDialog.fxml";
+    private static final String FXML_MAINVIEW_EDIT_ENTRY_DIALOG_PATH = "fxTyoaika/view/main/EditEntryDialog.fxml";
+    private static final String FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH = "fxTyoaika/view/main/DeleteEntryDialog.fxml";
     
-    private static final String FXML_MAINVIEW_TIMERTAB_PATH = "fxTyoaika/view/mainTabs/TimerTabView.fxml";
-    private static final String FXML_MAINVIEW_PROJECTTAB_PATH = "fxTyoaika/view/mainTabs/ProjectTabView.fxml";
+    private static final String FXML_MAINVIEW_TIMERTAB_PATH = "fxTyoaika/view/main/TimerTabView.fxml";
+    private static final String FXML_MAINVIEW_PROJECTTAB_PATH = "fxTyoaika/view/main/ProjectTabView.fxml";
 
     /*
      * Luodaan modelAccess, jonka avulla ylläpidetään ohjelman tilaa.
@@ -95,27 +89,31 @@ public class ViewFactory {
     
     /**
      * Luo pääikkunan ajastinvälilehden
+     * @param timerTabController asd
+     * @return palauttaa 
+     */
+    public static Parent createTimerTab(TimerTabController timerTabController) {
+        return createParent(timerTabController, FXML_MAINVIEW_TIMERTAB_PATH);
+    }
+    
+    /**
+     * Luo pääikkunan ajastinvälilehden
      * @return palauttaa 
      */
     public static Parent createProjecTab() {
         ProjectTabController projectTabController = new ProjectTabController(modelAccess);
         return createParent(projectTabController, FXML_MAINVIEW_PROJECTTAB_PATH);
     }
-
+    
     /**
-     * Luo merkinnän muokkaamiseen käytettävän popup-dialogin
-     * @return palauttaa stage-olion
+     * Luo pääikkunan ajastinvälilehden
+     * @param projectTabController asd
+     * @return palauttaa 
      */
-    public static Stage createSaveEntryDialog() {
-        SaveEntryDialogController controller = new SaveEntryDialogController(modelAccess);
-        Stage stage = createModalStage(controller, FXML_MAINVIEW_SAVE_ENTRY_DIALOG_PATH);
-        stage.setOnCloseRequest((event) -> {
-            modelAccess.resetCurrentlyEditedEntry();
-            System.out.println("temp entry reset");
-            });
-
-        return stage;
+    public static Parent createProjecTab(ProjectTabController projectTabController) {
+        return createParent(projectTabController, FXML_MAINVIEW_PROJECTTAB_PATH);
     }
+
     
     /**
      * Luo merkinnän muokkaamiseen käytettävän popup-dialogin
@@ -124,10 +122,6 @@ public class ViewFactory {
     public static Stage createEditEntryDialog() {
         EditEntryDialogController controller = new EditEntryDialogController(modelAccess);
         Stage stage = createModalStage(controller, FXML_MAINVIEW_EDIT_ENTRY_DIALOG_PATH);
-        stage.setOnCloseRequest((event) -> {
-            modelAccess.resetCurrentlyEditedEntry();
-            System.out.println("temp entry reset");
-        });
         
         return stage;
     }

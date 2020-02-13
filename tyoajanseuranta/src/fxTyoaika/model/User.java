@@ -18,47 +18,46 @@ import javafx.collections.ObservableList;
  * @version 28 Jan 2020
  *
  */
-public class User {
-    private static final AtomicInteger idGenerator = new AtomicInteger(1000);
+public class User implements ParentObject {
     
-    private final IntegerProperty id = new SimpleIntegerProperty();
-    private final StringProperty name = new SimpleStringProperty();
-    private final ListProperty<Project> projects = new SimpleListProperty<Project>();
-            
-    public User(int id, String name) {
-        this.id.set(id);
-        this.name.set(name);
-        this.projects.set(FXCollections.observableArrayList());
+    private final int id;
+    private String name;
+    private List<Project> projects;
+    
+    public User(String name) {
+        this(-1, name, new ArrayList<Project>());
     }
     
-    public User(int id, String name, ObservableList<Project> projects) {
-        this.id.set(id);
-        this.name.set(name);
-        this.projects.set(projects);
+    public User(int id, String name) {
+        this(id, name, new ArrayList<Project>());
     }
 
+    public User(int id, String name, List<Project> projects) {
+        this.id = id;
+        this.name = name;
+        this.projects = projects;
+    }
+
+    @Override
     public int getId() {
-        return id.get();
+        return id;
     }
     
+    @Override
     public String getName() {
-        return name.get();
+        return name;
     }
 
     public void setName(String name) {
-        this.name.set(name);
+        this.name = name;
+    }
+
+    public List<Project> getProjects() {
+        return projects;
     }
     
-    public StringProperty nameProperty() {
-        return this.name;
-    }
-    
-    public ObservableList<Project> getProjects() {
-        return projects.get();
-    }
-    
-    public void setProjects(ObservableList<Project> projects) {
-        this.projects.set(projects);
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
     }
 
     public void addProject(Project project) {
@@ -67,7 +66,7 @@ public class User {
     
     @Override
     public String toString() {
-        return this.name.get();
+        return this.name;
     }
     //
 }

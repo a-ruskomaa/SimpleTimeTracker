@@ -1,7 +1,7 @@
-package fxTyoaika.controller.mainDialogs;
+package fxTyoaika.controller.main;
 
 import fxTyoaika.controller.AbstractController;
-import fxTyoaika.model.ModelAccess;
+import fxTyoaika.controller.ModelAccess;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

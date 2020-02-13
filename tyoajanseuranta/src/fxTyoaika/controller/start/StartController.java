@@ -1,14 +1,18 @@
-package fxTyoaika.controller;
+package fxTyoaika.controller.start;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import fxTyoaika.model.ModelAccess;
+import fxTyoaika.SampleData;
+import fxTyoaika.controller.AbstractController;
+import fxTyoaika.controller.ModelAccess;
+import fxTyoaika.controller.ViewFactory;
 import fxTyoaika.model.Project;
-import fxTyoaika.model.TempUsers;
 import fxTyoaika.model.User;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -27,6 +31,8 @@ import javafx.stage.Stage;
  * Ohjelman ensimmäinen näkymä, jossa valitaan käyttäjä ja projekti.
  */
 public class StartController extends AbstractController {
+
+    private ObservableList<User> users;
 
     // private final ModelAccess modelAccess;
     private final String FXML_LOCATION = "fxTyoaika/view/";
@@ -61,47 +67,66 @@ public class StartController extends AbstractController {
      * Alustaa kontrollerin ohjaaman näkymän. Hakee modelAccessin avulla listan ohjelmaan tallennetuista käyttäjistä.
      */
     public void initialize() {
-        
+
         System.out.println("alustetaan startcontroller");
-        
-        
-        // Lataa tallennetut käyttäjät. Toistaiseksi käytetään puhtaasti oliopohjaista ratkaisua datan ylläpitoon.
-        modelAccess.setUsers(TempUsers.getUsers());
-        
-        //Haetaan ohjelmaan tallennetut käyttäjät ja lisätään valikkoon
-        userChoiceBox.setItems(modelAccess.getUsers());
 
-        // Valitaan listan ensimmäinen käyttäjä. Myöhemmässä toteutuksessa valitaan edellinen ohjelmaa käyttänyt henkilö?
-        userChoiceBox.getSelectionModel().select(0);
+        // Lataa tallennetut käyttäjät. Toistaiseksi käytetään puhtaasti
+        // oliopohjaista ratkaisua datan ylläpitoon.
+        users = FXCollections
+                .observableArrayList(modelAccess.getUserDAO().list());
 
-        //Vaihdetaan käyttäjä valituksi myös modelAccessiin
-        modelAccess.setSelectedUser(
-                userChoiceBox.getSelectionModel().getSelectedItem());
-        
+        // Haetaan ohjelmaan tallennetut käyttäjät ja lisätään valikkoon
+        userChoiceBox.setItems(users);
 
-        //Haetaan valitun käyttäjän projektit ja lisätään listalle
-        projectChoiceBox.setItems(modelAccess.getSelectedUser().getProjects());
-        
-        // TODO null check käyttäjän ja projektin valintaan!, ok button disable jos jompi kumpi null
+        modelAccess.selectedUserProperty().bind(userChoiceBox.valueProperty());
 
-        //Valitaan listalta ensimmäinen projekti sekä vahvistetaan valinta modelAccessiin
-        projectChoiceBox.getSelectionModel().select(0);
-        modelAccess.setSelectedProject(
-                projectChoiceBox.getSelectionModel().getSelectedItem());
 
-        //Luodaan käsittelijä, joka vaihtaa projektilistan sisällön vastaamaan valittua käyttäjää sekä päivittää valinnan modelAccessiin
-        userChoiceBox.setOnAction(e -> {
-            modelAccess.setSelectedUser(
-                    userChoiceBox.getSelectionModel().getSelectedItem());
-            projectChoiceBox.setItems(modelAccess.getSelectedUser().getProjects());
-            projectChoiceBox.getSelectionModel().select(0);
+        // Luodaan käsittelijä, joka vaihtaa projektilistan sisällön vastaamaan
+        // valittua käyttäjää
+        modelAccess.selectedUserProperty()
+        .addListener((prop, old, selected) -> {
+            if (old != null) {
+                old.setProjects(null);
+            }
+            
+            ObservableList<Project> projects = FXCollections
+                    .observableArrayList(
+                            modelAccess.getProjectDAO().list(selected));
+            
+            selected.setProjects(projects);
+            
+            projectChoiceBox.setItems(projects);
+            
+            
+            if (!projectChoiceBox.getItems().isEmpty()) {
+                projectChoiceBox.getSelectionModel().select(0);
+            }
         });
+        
+        
+        if (!userChoiceBox.getItems().isEmpty()) {
+            userChoiceBox.getSelectionModel().select(0);
+        }
+        
+//        // Valitaan listan ensimmäinen käyttäjä. Myöhemmässä toteutuksessa
+//        // valitaan edellinen ohjelmaa käyttänyt henkilö?
+//        if (!userChoiceBox.getItems().isEmpty()) {
+//            userChoiceBox.getSelectionModel().select(0);
+//        }
+//
+//        // Haetaan valitun käyttäjän projektit ja lisätään listalle
+//        projectChoiceBox.setItems(modelAccess.getSelectedUser().getProjects());
+//
+//        if (!projectChoiceBox.getItems().isEmpty()) {
+//            projectChoiceBox.getSelectionModel().select(0);
+//        }
 
-        //Luodaan vastaava käsittelijä projektin valinnalle
-        projectChoiceBox.setOnAction(e -> {
-            modelAccess.setSelectedProject(
-                    projectChoiceBox.getSelectionModel().getSelectedItem());
-        });
+        // TODO ok button disable jos jompi kumpi null
+
+        modelAccess.selectedProjectProperty()
+                .bind(projectChoiceBox.valueProperty());
+
+
     }
 
 
@@ -113,10 +138,10 @@ public class StartController extends AbstractController {
 
         Stage oldStage = (Stage) okButton.getScene().getWindow();
         Stage secondStage = new Stage();
-        
+
         secondStage.setScene(ViewFactory.createMainView());
         secondStage.show();
-        
+
         oldStage.close();
     }
 
@@ -130,6 +155,7 @@ public class StartController extends AbstractController {
         newUserDialog.show();
     }
 
+
     /**
      * Avaa näkymän uuden projektin lisäämiseksi
      */
@@ -138,6 +164,5 @@ public class StartController extends AbstractController {
         Stage newUserDialog = ViewFactory.createNewProjectDialog();
         newUserDialog.show();
     }
-
 
 }

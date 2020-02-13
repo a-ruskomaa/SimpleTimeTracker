@@ -1,4 +1,4 @@
-package fxTyoaika.controller.mainDialogs;
+package fxTyoaika.controller.main;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

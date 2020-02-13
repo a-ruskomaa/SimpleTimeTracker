@@ -37,12 +37,11 @@ public class Entries {
         return timeFormatter;
     }
     
-    
-    public static Entry parseEntryFromStrings(String start, String end) {
-        LocalDateTime startTime = LocalDateTime.parse(start, dateTimeFormatter);
-        LocalDateTime endTime = LocalDateTime.parse(end, dateTimeFormatter);
-        return new Entry(startTime, endTime);
-    }
+//    public static Entry parseEntryFromStrings(String start, String end) {
+//        LocalDateTime startTime = LocalDateTime.parse(start, dateTimeFormatter);
+//        LocalDateTime endTime = LocalDateTime.parse(end, dateTimeFormatter);
+//        return new Entry(-1, startTime, endTime);
+//    }
     
     public static String getDateAsString(LocalDateTime t) {
         return t.toLocalDate().format(dateFormatter);

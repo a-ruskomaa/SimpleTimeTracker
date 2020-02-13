@@ -1,11 +1,11 @@
-package fxTyoaika.controller.mainTabs;
+package fxTyoaika.controller.main;
 
 import java.time.format.DateTimeFormatter;
 
 import fxTyoaika.controller.AbstractController;
+import fxTyoaika.controller.ModelAccess;
 import fxTyoaika.controller.ViewFactory;
 import fxTyoaika.model.Entries;
-import fxTyoaika.model.ModelAccess;
 import fxTyoaika.model.Timer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,6 +13,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 public class TimerTabController extends AbstractController {
+
+    private MainController parentController;
     
     @FXML
     private TextField timerStartField;
@@ -36,6 +38,11 @@ public class TimerTabController extends AbstractController {
         super(modelAccess);
     }
     
+    public TimerTabController(ModelAccess modelAccess, MainController parentController) {
+        super(modelAccess);
+        this.parentController = parentController;
+    }
+    
 
     @FXML
     void timerHandleReset(ActionEvent event) {
@@ -49,7 +56,8 @@ public class TimerTabController extends AbstractController {
 
     @FXML
     void timerHandleSave(ActionEvent event) {
-        ViewFactory.createSaveEntryDialog();
+        modelAccess.setSelectedEntry(modelAccess.getTimer().getEntry());
+        ViewFactory.createEditEntryDialog();
     }
 
     @FXML
@@ -60,14 +68,14 @@ public class TimerTabController extends AbstractController {
         if (!timer.isRunning()) {
             timer.start();
             timerToggleButton.setText("Pysäytä ajastin");
-            timerStartField.setText(timer.getEntry().getStartTime().format(f));
+            timerStartField.setText(timer.getEntry().getStartDateTime().format(f));
             timerEndField.clear();
             timerSaveButton.setDisable(true);
             timerResetButton.setDisable(true);
         } else {
             timer.stop();
             timerToggleButton.setText("Käynnistä ajastin");
-            timerEndField.setText(timer.getEntry().getEndTime().format(f));
+            timerEndField.setText(timer.getEntry().getEndDateTime().format(f));
             timerSaveButton.setDisable(false);
             timerResetButton.setDisable(false);
         }

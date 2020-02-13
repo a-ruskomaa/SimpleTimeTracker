@@ -1,7 +1,7 @@
-package fxTyoaika.controller.startDialogs;
+package fxTyoaika.controller.start;
 
 import fxTyoaika.controller.AbstractController;
-import fxTyoaika.model.ModelAccess;
+import fxTyoaika.controller.ModelAccess;
 
 public class NewUserDialogController extends AbstractController {
     

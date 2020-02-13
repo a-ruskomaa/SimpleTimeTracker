@@ -1,30 +1,20 @@
-package fxTyoaika.controller;
+package fxTyoaika.controller.main;
 
-import java.util.LinkedList;
 
-import fxTyoaika.controller.mainTabs.ProjectTabController;
-import fxTyoaika.controller.mainTabs.TimerTabController;
+import java.util.ArrayList;
+
+import fxTyoaika.controller.AbstractController;
+import fxTyoaika.controller.ModelAccess;
+import fxTyoaika.controller.ViewFactory;
 import fxTyoaika.model.Entry;
-import fxTyoaika.model.ModelAccess;
 import fxTyoaika.model.Project;
-import fxTyoaika.model.Timer;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.beans.value.WeakChangeListener;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.WeakListChangeListener;
-import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 
 /**
  * @author aleks
@@ -71,45 +61,66 @@ public class MainController extends AbstractController  {
      */
     public void initialize() {
         
-        timerTab.setContent(ViewFactory.createTimerTab());
-        projectTab.setContent(ViewFactory.createProjecTab());
+        Project selectedProject = modelAccess.getSelectedProject();
+        
+        ObservableList<Project> projects = FXCollections.observableArrayList(modelAccess.getSelectedUser().getProjects());
+        
+        projectChoiceBox.setItems(projects);
+        projectChoiceBox.getSelectionModel().select(selectedProject);
+        
+        modelAccess.selectedProjectProperty().bind(projectChoiceBox.getSelectionModel().selectedItemProperty());
+        
+        modelAccess.getEntryDAO().list(selectedProject);
+        
+        this.timerTabController = new TimerTabController(modelAccess, this);
+        this.projectTabController = new ProjectTabController(modelAccess, this);
+
+        timerTab.setContent(ViewFactory.createTimerTab(this.timerTabController));
+        projectTab.setContent(ViewFactory.createProjecTab(this.projectTabController));
         
         /*
          * Lisätään alasvetovalikkoon valitun käyttäjän projektit, valitaan oikea projekti valmiiksi ja
          * luodaan tapahtumankäsittelijä joka reagoi kun projektia vaihdetaan
          */
-        projectChoiceBox.setItems(modelAccess.getSelectedUser().getProjects());
         
         
         
-        projectChoiceBox.getSelectionModel().select(modelAccess.getSelectedProject());
         
-        // Reagoi jos listaan tehdään muutoksia
-        ListChangeListener<Entry> entryListChangeListener = new WeakListChangeListener<Entry>(c ->  updateTotalTime());
-        
-        
-        ChangeListener<Number> durationChangeListener = new WeakChangeListener<Number>((obs, old, selected) -> updateTotalTime());
-        
-        ChangeListener<Entry> entryChangeListener = new WeakChangeListener<Entry>((obs, old, selected) -> {
-            old.durationProperty().removeListener(durationChangeListener);
-            selected.durationProperty().addListener(durationChangeListener);
+        projectTab.getContent().addEventHandler(UpdateEvent.UPDATE_EVENT, new EventHandler<UpdateEvent>() {
+
+            @Override
+            public void handle(UpdateEvent event) {
+                // TODO Auto-generated method stub
+                System.out.println("Event handled: " + event.toString());
+                updateTotalTime();
+            }
         });
         
+       
+        // Reagoi jos listaan tehdään muutoksia
+//        ListChangeListener<Entry> entryListChangeListener = new WeakListChangeListener<Entry>(c ->  updateTotalTime());
+        
+        
+//        ChangeListener<Number> durationChangeListener = new WeakChangeListener<Number>((obs, old, selected) -> updateTotalTime());
+        
+//        ChangeListener<Entry> entryChangeListener = new WeakChangeListener<Entry>((obs, old, selected) -> {
+//            old.durationProperty().removeListener(durationChangeListener);
+//            selected.durationProperty().addListener(durationChangeListener);
+//        });
+        
         // Tehdään jos valittu projekti vaihtuu
-        projectChoiceBox.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
-            modelAccess.setSelectedProject(selected);
+        modelAccess.selectedProjectProperty().addListener((obs, old, selected) -> {
             updateTotalTime();
             
-            // TODO parempi null check
             
-            modelAccess.setSelectedEntry(selected.getEntries().isEmpty() ? null : selected.getEntries().get(0));
+
             
-            modelAccess.selectedEntryProperty().addListener(entryChangeListener);
+//            modelAccess.selectedEntryProperty().addListener(entryChangeListener);
             
             
-            old.getEntries().removeListener(entryListChangeListener);
-            // Jos valittuun projektiiin lisätään merkintöjä
-            selected.getEntries().addListener(entryListChangeListener);
+//            old.getEntries().removeListener(entryListChangeListener);
+//            // Jos valittuun projektiiin lisätään merkintöjä
+//            selected.getEntries().addListener(entryListChangeListener);
         });
               
         
@@ -150,7 +161,7 @@ public class MainController extends AbstractController  {
     
     private void updateTotalTime() {
 
-        ObservableList<Entry> entries = modelAccess.getSelectedProject().getEntries();
+        ArrayList<Entry> entries = (ArrayList<Entry>) modelAccess.getSelectedProject().getEntries();
         
         long totalTime = 0L;
         

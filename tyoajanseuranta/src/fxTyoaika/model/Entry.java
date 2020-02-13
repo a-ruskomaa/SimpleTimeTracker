@@ -1,18 +1,11 @@
 package fxTyoaika.model;
 
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
 import java.time.Duration;
 
@@ -26,103 +19,91 @@ import java.time.Duration;
  * TODO mieti kannattaisiko luoda EntryBeanWrapper, joka toimisi wrapperina entryn ympärillä. Säästäisi paljon resursseja kun joka entrystä ei tarvitsisi luoda propertyja, tapahtumankäsittelijöitä, jne
  *
  */
-public class Entry implements Cloneable {
+public class Entry implements ChildObject {
     private static final AtomicInteger idGenerator = new AtomicInteger(1000);
 
     private final int id;
-    private final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<LocalDate>();
-    private final ObjectProperty<LocalTime> startTime = new SimpleObjectProperty<LocalTime>();
-    private final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<LocalDate>();
-    private final ObjectProperty<LocalTime> endTime = new SimpleObjectProperty<LocalTime>();
-    private final LongProperty duration = new SimpleLongProperty();
+    private Project project;
+    private LocalDate startDate;
+    private LocalTime startTime;
+    private LocalDate endDate;
+    private LocalTime endTime;
 
+//    /**
+//     * Luo "tyhjän" merkinnän. Tätä hyödynnetään mm. Timer-luokassa ja uusien merkintöjen luomisessa syötteestä.
+//     */
+//    public Entry() {
+//        this(-1, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
+//                LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+//    }
+    
     /**
      * Luo "tyhjän" merkinnän. Tätä hyödynnetään mm. Timer-luokassa ja uusien merkintöjen luomisessa syötteestä.
+     * @param project asd
      */
-    public Entry() {
-        this(-1, LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
-                LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC));
+    public Entry(Project project) {
+        this(-1, project, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
+                LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
     }
 
 
-    /**
-     * Luo uuden merkinnän annetulla alku- ja loppuajalla. Lisää merkinnälle seuraavan vapaan id:n.
-     * @param start alkuaika LocalDateTime-muodossa
-     * @param end loppuaika LocalDateTime-muodossa
-     */
-    public Entry(LocalDateTime start, LocalDateTime end) {
-        this(idGenerator.getAndIncrement(), start.toLocalDate(), start.toLocalTime(), end.toLocalDate(),
-                end.toLocalTime());
-    }
-
-
+    
     /**
      * Luo uuden merkinnän annetulla alku- ja loppuajalla
      * @param id id
+     * @param project asdasd
      * @param start alkuaika LocalDateTime-muodossa
      * @param end loppuaika LocalDateTime-muodossa
      */
-    public Entry(int id, LocalDateTime start, LocalDateTime end) {
-        this(id, start.toLocalDate(), start.toLocalTime(), end.toLocalDate(),
+    public Entry(int id, Project project, LocalDateTime start, LocalDateTime end) {
+        this(id, project, start.toLocalDate(), start.toLocalTime(), end.toLocalDate(),
                 end.toLocalTime());
-    }
-    
-    public Entry(LocalDate startDate, LocalTime startTime,
-            LocalDate endDate, LocalTime endTime) {
-        this(idGenerator.getAndIncrement(), startDate, startTime, endDate, endTime);
     }
 
 
     public Entry(int id, LocalDate startDate, LocalTime startTime,
             LocalDate endDate, LocalTime endTime) {
         this.id = id;
-        this.startDate.set(startDate);
-        this.startTime.set(startTime);
-        this.endDate.set(endDate);
-        this.endTime.set(endTime);
-        
-        // TODO muuta bindaukseksi
-
-        updateDuration();
-
-        this.startDate.addListener((o, oldValue, newValue) -> {
-            updateDuration();
-            System.out.println(
-                    "StartDate changed: " + oldValue + " -> " + newValue);
-        });
-
-        this.startTime.addListener((o, oldValue, newValue) -> {
-            updateDuration();
-            System.out.println(
-                    "startTime changed: " + oldValue + " -> " + newValue);
-        });
-
-        this.endDate.addListener((o, oldValue, newValue) -> {
-            updateDuration();
-            System.out.println(
-                    "endDate changed: " + oldValue + " -> " + newValue);
-        });
-
-        this.endTime.addListener((o, oldValue, newValue) -> {
-            updateDuration();
-            System.out.println(
-                    "endTime changed: " + oldValue + " -> " + newValue);
-        });
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
+    }
+    
+    public Entry(int id, Project project, LocalDate startDate, LocalTime startTime,
+            LocalDate endDate, LocalTime endTime) {
+        this.id = id;
+        this.project = project;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.endDate = endDate;
+        this.endTime = endTime;
     }
 
     // Getterit:
 
 
+    @Override
     public int getId() {
         return this.id;
     }
 
 
     /**
+     * @return the project
+     */
+    @Override
+    public Project getOwner() {
+        return project;
+    }
+
+
+
+    /**
      * @return palauttaa merkinnän alkuajan
      */
     public LocalDate getStartDate() {
-        return startDate.get();
+        return this.startDate;
     }
 
 
@@ -130,7 +111,7 @@ public class Entry implements Cloneable {
      * @return palauttaa merkinnän alkuajan
      */
     public LocalTime getStartTime() {
-        return startTime.get();
+        return this.startTime;
     }
 
 
@@ -146,7 +127,7 @@ public class Entry implements Cloneable {
      * @return palauttaa merkinnän loppuajan
      */
     public LocalDate getEndDate() {
-        return endDate.get();
+        return this.endDate;
     }
 
 
@@ -154,7 +135,7 @@ public class Entry implements Cloneable {
      * @return palauttaa merkinnän loppuajan
      */
     public LocalTime getEndTime() {
-        return endTime.get();
+        return this.endTime;
     }
 
 
@@ -170,17 +151,35 @@ public class Entry implements Cloneable {
      * @return palauttaa keston sekunneissa
      */
     public Long getDuration() {
-        return this.duration.get();
+        {
+            try {
+            LocalDateTime startDateTime = LocalDateTime.of(this.getStartDate(),
+                    this.getStartTime());
+            LocalDateTime endDateTime = LocalDateTime.of(this.getEndDate(),
+                    this.getEndTime());
+            return Duration.between(startDateTime, endDateTime).toSeconds();
+            } catch (NullPointerException e) {
+                return 0L;
+            }
+        }
     }
 
     // Setterit:
+    
+    /**
+     * @param project the project to set
+     */
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
 
 
     /**
      * @param date asettaa merkinnän alkuajan
      */
     public void setStartDate(LocalDate date) {
-        this.startDate.set(date);
+        this.startDate = date;
     }
 
 
@@ -188,7 +187,7 @@ public class Entry implements Cloneable {
      * @param time asettaa merkinnän alkuajan
      */
     public void setStartTime(LocalTime time) {
-        this.startTime.set(time);
+        this.startTime = time;
     }
 
 
@@ -196,8 +195,8 @@ public class Entry implements Cloneable {
      * @param time asettaa merkinnän alkuajan
      */
     public void setStartDateTime(LocalDateTime time) {
-        this.startTime.set(time.toLocalTime());
-        this.startDate.set(time.toLocalDate());
+        this.startTime = time.toLocalTime();
+        this.startDate = time.toLocalDate();
     }
 
 
@@ -205,7 +204,7 @@ public class Entry implements Cloneable {
      * @param date asettaa merkinnän loppuajan
      */
     public void setEndDate(LocalDate date) {
-        this.endDate.set(date);
+        this.endDate = date;
     }
 
 
@@ -213,7 +212,7 @@ public class Entry implements Cloneable {
      * @param time asettaa merkinnän loppuajan
      */
     public void setEndTime(LocalTime time) {
-        this.endTime.set(time);
+        this.endTime = time;
     }
 
 
@@ -221,77 +220,12 @@ public class Entry implements Cloneable {
      * @param time asettaa merkinnän alkuajan
      */
     public void setEndDateTime(LocalDateTime time) {
-        this.endTime.set(time.toLocalTime());
-        this.endDate.set(time.toLocalDate());
+        this.endTime = time.toLocalTime();
+        this.endDate = time.toLocalDate();
     }
 
-    // Propertyjen getterit:
-
-
-    /**
-     * @return palauttaa alkumerkinnän propertyna
-     */
-    public ObjectProperty<LocalDate> startDateProperty() {
-        return this.startDate;
-    }
-
-
-    /**
-     * @return palauttaa alkumerkinnän propertyna
-     */
-    public ObjectProperty<LocalTime> startTimeProperty() {
-        return this.startTime;
-    }
-
-
-    /**
-     * @return palauttaa loppumerkinnän propertyna
-     */
-    public ObjectProperty<LocalDate> endDateProperty() {
-        return this.endDate;
-    }
-
-
-    /**
-     * @return palauttaa loppumerkinnän propertyna
-     */
-    public ObjectProperty<LocalTime> endTimeProperty() {
-        return this.endTime;
-    }
-
-
-    /**
-     * @return palauttaa keston propertyna
-     */
-    public LongProperty durationProperty() {
-        return this.duration;
-    }
 
     // Apumetodit:
-
-
-    /**
-     * Laskee keston (jos mahdollista) ja päivittää kentän
-     */
-    private void updateDuration() {
-        if (getStartTime() != null && getEndTime() != null) {
-            Long d = calculateDuration();
-            this.duration.set(d);
-        } else
-            this.duration.set(0);
-    }
-
-
-    /**
-     * @return palauttaa merkinnän keston sekunneissa
-     */
-    private Long calculateDuration() {
-        LocalDateTime startDateTime = LocalDateTime.of(this.getStartDate(),
-                this.getStartTime());
-        LocalDateTime endDateTime = LocalDateTime.of(this.getEndDate(),
-                this.getEndTime());
-        return Duration.between(startDateTime, endDateTime).toSeconds();
-    }
 
 
     /**
@@ -306,26 +240,26 @@ public class Entry implements Cloneable {
 
     @Override
     public String toString() {
-        return startDate.get().format(Entries.getDateFormatter()) + " "
+        return startDate.format(Entries.getDateFormatter()) + " "
                 + getDurationAsString();
     }
 
 
-    /**
-     * Luo kopion tästä merkinnästä samalla id:llä ja samalla alku- sekä loppuajalla kuin alkuperäinen merkintä.
-     * Luo uudet propertyt alku- ja loppuajalle jotta vältetään tilanne jossa kaksi erillistä Entryn instanssia viittaavat
-     * samoihin properteihin.
-     */
-    @Override
-    public Entry clone() throws CloneNotSupportedException {
-
-        Entry clonedEntry = new Entry(this.id,
-                LocalDate.from(this.getStartDate()),
-                LocalTime.from(this.getStartTime()),
-                LocalDate.from(this.getEndDate()),
-                LocalTime.from(this.getEndTime()));
-
-        return clonedEntry;
-    }
+//    /**
+//     * Luo kopion tästä merkinnästä samalla id:llä ja samalla alku- sekä loppuajalla kuin alkuperäinen merkintä.
+//     * Luo uudet propertyt alku- ja loppuajalle jotta vältetään tilanne jossa kaksi erillistä Entryn instanssia viittaavat
+//     * samoihin properteihin.
+//     */
+//    @Override
+//    public Entry clone() throws CloneNotSupportedException {
+//
+//        Entry clonedEntry = new Entry(this.id,
+//                LocalDate.from(this.getStartDate()),
+//                LocalTime.from(this.getStartTime()),
+//                LocalDate.from(this.getEndDate()),
+//                LocalTime.from(this.getEndTime()));
+//
+//        return clonedEntry;
+//    }
 
 }

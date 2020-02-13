@@ -1,4 +1,4 @@
-package fxTyoaika.controller;
+package fxTyoaika.controller.main;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
