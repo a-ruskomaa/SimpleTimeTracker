@@ -6,14 +6,18 @@ import fxTyoaika.controller.AbstractController;
 import fxTyoaika.controller.ModelAccess;
 import fxTyoaika.controller.ViewFactory;
 import fxTyoaika.model.Entries;
+import fxTyoaika.model.Entry;
 import fxTyoaika.model.Timer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class TimerTabController extends AbstractController {
-
+    
+    private Timer timer;
+    
     private MainController parentController;
     
     @FXML
@@ -34,20 +38,19 @@ public class TimerTabController extends AbstractController {
     @FXML
     private Button timerResetButton;
 //
-    public TimerTabController(ModelAccess modelAccess) {
-        super(modelAccess);
+    public TimerTabController(ModelAccess modelAccess, Stage stage) {
+        super(modelAccess, stage);
     }
     
-    public TimerTabController(ModelAccess modelAccess, MainController parentController) {
-        super(modelAccess);
+    public TimerTabController(ModelAccess modelAccess, Stage stage, MainController parentController) {
+        super(modelAccess, stage);
         this.parentController = parentController;
+        timer = parentController.getTimer();
     }
     
 
     @FXML
     void timerHandleReset(ActionEvent event) {
-        Timer timer = modelAccess.getTimer();
-        
         if (timer.isRunning()) {
             timer.stop();
             timer.reset();
@@ -56,13 +59,13 @@ public class TimerTabController extends AbstractController {
 
     @FXML
     void timerHandleSave(ActionEvent event) {
-        modelAccess.setSelectedEntry(modelAccess.getTimer().getEntry());
+        Entry entry = timer.getEntry();
+        modelAccess.editEntry(entry);
         ViewFactory.createEditEntryDialog();
     }
 
     @FXML
     void timerToggle(ActionEvent event) {
-        Timer timer = modelAccess.getTimer();
         DateTimeFormatter f = Entries.getDateTimeFormatter();
         
         if (!timer.isRunning()) {

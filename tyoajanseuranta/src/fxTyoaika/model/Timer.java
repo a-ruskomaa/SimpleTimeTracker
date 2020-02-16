@@ -20,42 +20,41 @@ import javafx.beans.property.SimpleObjectProperty;
  */
 public class Timer {
     ModelAccess modelAccess;
-    private ObjectProperty<Entry> entry = new SimpleObjectProperty<Entry>();
+    
     private ObjectProperty<LocalDateTime> timerStart = new SimpleObjectProperty<LocalDateTime>();
     private ObjectProperty<LocalDateTime> timerStop = new SimpleObjectProperty<LocalDateTime>();
+
     private BooleanProperty running = new SimpleBooleanProperty(false);
     private LongProperty elapsedTime = new SimpleLongProperty();
+    private Entry entry;
     
     
     public Timer(ModelAccess modelAccess) {
         this.modelAccess = modelAccess;
-        this.entry.set(new Entry(this.modelAccess.getSelectedProject()));
+        this.entry = modelAccess.getNewEntry();
     }
     
     public void start() {
         this.timerStart.set(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         this.running.set(true);
-        this.entry.get().setStartDateTime(timerStart.get());
+        this.entry.setStartDateTime(timerStart.get());
     }
     
     public void stop() {
         this.timerStop.set(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         this.running.set(false);
-        this.entry.get().setEndDateTime(timerStop.get());
+        this.entry.setEndDateTime(timerStop.get());
     }
     
     public void reset() {
         this.running.set(false);
-        this.entry.set(new Entry(this.modelAccess.getSelectedProject()));
+        this.entry = modelAccess.getNewEntry();
     }
     
     public Entry getEntry() {
-        return this.entry.get();
-    }
-    
-    public ObjectProperty<Entry> entryProperty() {
         return this.entry;
     }
+    
     
     public boolean isRunning() {
         return this.running.get();
@@ -66,7 +65,7 @@ public class Timer {
     }
     
     public long getTimeElapsed() {
-        return Duration.between(entry.get().getStartTime(), LocalDateTime.now()).toSeconds();
+        return Duration.between(entry.getStartTime(), LocalDateTime.now()).toSeconds();
     }
     
     

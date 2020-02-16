@@ -7,6 +7,8 @@ public class IdGenerator {
     private static final AtomicInteger projectIdGenerator = new AtomicInteger(1000);
     private static final AtomicInteger entryIdGenerator = new AtomicInteger(1000);
     
+    private IdGenerator() {
+    }
     
     public static int getNewUserId() {
         return userIdGenerator.getAndIncrement();

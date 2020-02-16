@@ -16,5 +16,5 @@ public interface DAO <K, T> {
     
     public boolean delete(K key);
     
-    public List<T> list(Class<T> clazz);
+    public List<T> list();
 }

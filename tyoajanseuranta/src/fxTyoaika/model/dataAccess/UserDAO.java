@@ -29,6 +29,7 @@ public class UserDAO extends AbstractDAO<User> {
         return (ArrayList<User>) SampleData.getData(User.class);
     }
     
+    @Override
     public List<User> list() {
         return list(User.class);
     }

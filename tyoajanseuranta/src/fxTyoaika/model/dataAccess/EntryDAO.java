@@ -31,6 +31,7 @@ public class EntryDAO extends AbstractDAO<Entry> {
         return (ArrayList<Entry>) SampleData.getData(Entry.class);
     }
     
+    @Override
     public List<Entry> list() {
         return list(Entry.class);
     }

@@ -74,19 +74,21 @@ public class ProjectTabController extends AbstractController {
 
     /**
      * @param modelAccess modelAccess
+     * @param stage stage jota kontrolloidaan
      */
-    public ProjectTabController(ModelAccess modelAccess) {
-        super(modelAccess);
+    public ProjectTabController(ModelAccess modelAccess, Stage stage) {
+        super(modelAccess, stage);
     }
 
 
     /**
      * @param modelAccess modelAccess
+     * @param stage stage jota kontrolloidaan
      * @param parentController asd
      */
-    public ProjectTabController(ModelAccess modelAccess,
+    public ProjectTabController(ModelAccess modelAccess, Stage stage,
             MainController parentController) {
-        super(modelAccess);
+        super(modelAccess, stage);
         this.parentController = parentController;
     }
 
@@ -96,8 +98,10 @@ public class ProjectTabController extends AbstractController {
      */
     public void initialize() {
 
+//        ObservableList<Entry> entries = FXCollections.observableArrayList(
+//                modelAccess.getSelectedProject().getEntries());
         ObservableList<Entry> entries = FXCollections.observableArrayList(
-                modelAccess.getSelectedProject().getEntries());
+                modelAccess.getCurrentEntries());
 
         // haetaan valitun projektin merkinnät listalle
         projectEntryList.setItems(entries);
@@ -225,12 +229,15 @@ public class ProjectTabController extends AbstractController {
     void handleAddEntry() {
         modelAccess.selectedEntryProperty().unbind();
 
-        modelAccess
-                .setSelectedEntry(new Entry(modelAccess.getSelectedProject()));
-        Stage stage = ViewFactory.createEditEntryDialog();
+//        modelAccess
+//                .setSelectedEntry(new Entry(modelAccess.getSelectedProject()));
+        modelAccess.newEditedEntry();
+        
+        WindowController wc = ViewFactory.createEditEntryDialog();
 
         stage.show();
 
+        // TODO tämä uusiksi! Kaksisuuntainen bindaus valinnan välille? Muutoksen validointi boolean isChanged tjsp?
         stage.setOnCloseRequest((e) -> {
             Entry selectedEntry = modelAccess.getSelectedEntry();
             if (selectedEntry.getId() != -1) {

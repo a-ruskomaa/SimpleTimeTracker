@@ -8,6 +8,7 @@ import fxTyoaika.controller.ModelAccess;
 import fxTyoaika.controller.ViewFactory;
 import fxTyoaika.model.Entry;
 import fxTyoaika.model.Project;
+import fxTyoaika.model.Timer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -15,6 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 /**
  * @author aleks
@@ -26,6 +28,7 @@ public class MainController extends AbstractController  {
     
     private TimerTabController timerTabController;
     private ProjectTabController projectTabController;
+    private Timer timer;
     
     @FXML
     private Tab timerTab;
@@ -50,9 +53,11 @@ public class MainController extends AbstractController  {
     /**
      * Pääikkunan kontrollerin konstruktori. Tallettaa viitteen modelaccessiin yläluokan kenttään.
      * @param modelAccess viite pääohjelmassa luotuun modelAccessiin
+     * @param stage stage jota kontrolloidaan
      */
-    public MainController(ModelAccess modelAccess) {
-        super(modelAccess);
+    public MainController(ModelAccess modelAccess, Stage stage) {
+        super(modelAccess, stage);
+        this.timer = new Timer(modelAccess);
     }
 
 
@@ -61,6 +66,7 @@ public class MainController extends AbstractController  {
      */
     public void initialize() {
         
+        // TODO nämä toisin päin: ensin ladataan käyttäjän projektit, sitten asetetaan valinta. projektien haku model accessin metodiksi! 
         Project selectedProject = modelAccess.getSelectedProject();
         
         ObservableList<Project> projects = FXCollections.observableArrayList(modelAccess.getSelectedUser().getProjects());
@@ -71,12 +77,9 @@ public class MainController extends AbstractController  {
         modelAccess.selectedProjectProperty().bind(projectChoiceBox.getSelectionModel().selectedItemProperty());
         
         modelAccess.getEntryDAO().list(selectedProject);
-        
-        this.timerTabController = new TimerTabController(modelAccess, this);
-        this.projectTabController = new ProjectTabController(modelAccess, this);
 
-        timerTab.setContent(ViewFactory.createTimerTab(this.timerTabController));
-        projectTab.setContent(ViewFactory.createProjecTab(this.projectTabController));
+        timerTab.setContent(ViewFactory.createTimerTab(this));
+        projectTab.setContent(ViewFactory.createProjecTab(this));
         
         /*
          * Lisätään alasvetovalikkoon valitun käyttäjän projektit, valitaan oikea projekti valmiiksi ja
@@ -172,5 +175,15 @@ public class MainController extends AbstractController  {
         totalProjectEntriesField.setText(String.format("%dh %02dmin", totalTime / 3600, (totalTime % 3600) / 60));
 
     }
+    
+    
+    /**
+     * Ajastimen getteri
+     * @return palauttaa viitteen ohjelman ajastimeen
+     */
+    public Timer getTimer() {
+        return this.timer;
+    }
+
 
 }

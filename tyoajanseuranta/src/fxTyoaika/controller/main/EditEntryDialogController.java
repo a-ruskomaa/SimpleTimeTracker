@@ -22,6 +22,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import javafx.util.converter.LocalDateStringConverter;
@@ -36,7 +37,6 @@ import javafx.util.converter.LocalTimeStringConverter;
 public class EditEntryDialogController extends AbstractController {
 
     private Entry editedEntry;
-    private Project entryProject;
     private DateTimeFormatter dateFormatter = Entries.getDateFormatter();
     private DateTimeFormatter timeFormatter = Entries.getTimeFormatter();
     private LocalDateStringConverter dateConverter = new LocalDateStringConverter(
@@ -74,11 +74,14 @@ public class EditEntryDialogController extends AbstractController {
     /**
      * 
      * @param modelAccess Olio, jonka avulla pidetään ohjelman tilaa yllä ja välitetään valittuja olioita luokalta toiselle.
+     * @param stage stage johon kontrolleri liittyy
      */
-    public EditEntryDialogController(ModelAccess modelAccess) {
-        super(modelAccess);
-        this.editedEntry = modelAccess.getSelectedEntry();
-        this.entryProject = editedEntry.getOwner();
+    public EditEntryDialogController(ModelAccess modelAccess, Stage stage) {
+        super(modelAccess, stage);
+        
+        // TODO kannattaisiko tämä välittää parametrina?
+        // TODO tarvitseeko olla propertyna?
+        this.editedEntry = modelAccess.editedEntryProperty().get();
     }
 
 
@@ -132,18 +135,7 @@ public class EditEntryDialogController extends AbstractController {
 
     @FXML
     void handleSaveButton(ActionEvent event) {
-        if (this.editedEntry.getId() == -1) {
-            Entry newEntry = modelAccess.getEntryDAO().create(editedEntry);
-            modelAccess.setSelectedEntry(newEntry);
-            modelAccess.getSelectedProject().addEntry(newEntry);
-        } else if (this.editedEntry.getId() == modelAccess.getSelectedEntry().getId()) { 
-            this.editedEntry.setStartDate(this.startDate.get());
-            this.editedEntry.setStartTime(this.startTime.get());
-            this.editedEntry.setEndDate(this.endDate.get());
-            this.editedEntry.setEndTime(this.endTime.get());
-        } else {
-            System.out.println("Entry not saved!");
-        }
+        modelAccess.commitEntry();
 
         exitStage(event);
     }

@@ -80,6 +80,14 @@ public class Project implements ParentObject, ChildObject {
         this.entries.remove(entry);
     }
     
+    public void updateEntry(Entry entry) {
+        for (int i = 0; i < this.entries.size(); i++) {
+            if (this.entries.get(i).getId() == entry.getId()) {
+                this.entries.set(i, entry);
+            }
+        }
+    }
+    
     @Override
     public String toString() {
         return this.name;

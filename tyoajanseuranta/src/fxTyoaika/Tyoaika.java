@@ -23,8 +23,7 @@ public class Tyoaika extends Application {
 		try {
 		    System.out.println("käynnistys");
 
-			primaryStage.setScene(ViewFactory.createStartView());
-			primaryStage.show();
+			ViewFactory.createStartView(primaryStage);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

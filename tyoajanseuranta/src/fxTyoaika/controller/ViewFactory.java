@@ -15,9 +15,10 @@ import javafx.stage.Stage;
  * @author aleks
  * @version 28 Jan 2020
  *
- * Luokka sisältää staattisia metodeja uusien ikkunoiden avaamiseksi. Fxml-tiedostojen polku on tallennettuna luokan vakioihin.
- * Uusia näkymiä luovat metodit hakevat vanhan näkymän kontrollerista viitteen pääohjelmassa luotuun ModelAccessiin, jolla varmistetaan
- * että ohjelma säilyttää tilan.
+ * Luokka sisältää staattisia metodeja uusien ikkunoiden avaamiseksi. Kaikki ikkunoita avaavat metodit
+ * palauttavat viitteen luotua ikkunaa hallinnoivaan kontrolleriin. Kontrollerin yksityiseksi attribuutiksi on tallennettu viite stageen, jota
+ * kontrolloidaan.
+ * Fxml-tiedostojen polku on tallennettuna luokan vakioihin.
  */
 public class ViewFactory {
 
@@ -44,107 +45,108 @@ public class ViewFactory {
     
     /**
      * Luo käynnistysikkunan.
-     * @return palauttaa Scene-olion
+     * @param stage ohjelman stage
+     * @return palauttaa luodun ikkunan kontrolleriluokan
      */
-    public static Scene createStartView() {
-        StartController controller = new StartController(modelAccess);
-        return createView(controller, FXML_STARTVIEW_LOCATION);
+    public static StartController createStartView(Stage stage) {
+        StartController controller = new StartController(modelAccess, stage);
+        createAndShowWindow(controller, FXML_STARTVIEW_LOCATION, stage, false);
+        return controller;
     }
     
     /**
-     * Luo uuden käyttäjän luomiseen käytettävän popup-dialogin
-     * @return palauttaa Scene-olion
+     * Luo uuden käyttäjän luomiseen käytettävän modaalisen popup-dialogin
+     * @return palauttaa luodun ikkunan kontrolleriluokan
      */
-    public static Stage createNewUserDialog() {
-        NewUserDialogController controller = new NewUserDialogController(modelAccess);
-        return createModalStage(controller, FXML_STARTVIEW_USERDIALOG_PATH);
+    public static NewUserDialogController createNewUserDialog() {
+        Stage stage = new Stage();
+        NewUserDialogController controller = new NewUserDialogController(modelAccess, stage);
+        createAndShowWindow(controller, FXML_STARTVIEW_USERDIALOG_PATH, stage, true);
+        return controller;
     }
     
     /**
-     * Luo uuden projektin luomiseen käytettävän popup-dialogin
-     * @return palauttaa Scene-olion
+     * Luo uuden projektin luomiseen käytettävän modaalisen popup-dialogin
+     * @return palauttaa luodun ikkunan kontrolleriluokan
      */
-    public static Stage createNewProjectDialog() {
-        NewProjectDialogController controller = new NewProjectDialogController(modelAccess);
-        return createModalStage(controller, FXML_STARTVIEW_PROJECTDIALOG_PATH);
+    public static NewProjectDialogController createNewProjectDialog() {
+        Stage stage = new Stage();
+        NewProjectDialogController controller = new NewProjectDialogController(modelAccess, stage);
+        createAndShowWindow(controller, FXML_STARTVIEW_PROJECTDIALOG_PATH, stage, true);
+        return controller;
     }
     
     /**
      * Luo pääikkunan.
-     * @return palauttaa Scene-olion
+     * @return palauttaa luodun ikkunan kontrolleriluokan
      */
-    public static Scene createMainView() {
-        MainController parentController = new MainController(modelAccess);
-        return createView(parentController, FXML_MAINVIEW_LOCATION);
+    public static MainController createMainView() {
+        Stage stage = new Stage();
+        MainController controller = new MainController(modelAccess, stage);
+        createAndShowWindow(controller, FXML_MAINVIEW_LOCATION, stage, false);
+        return controller;
     }
     
-    /**
-     * Luo pääikkunan ajastinvälilehden
-     * @return palauttaa 
-     */
-    public static Parent createTimerTab() {
-        TimerTabController timerTabController = new TimerTabController(modelAccess);
-        return createParent(timerTabController, FXML_MAINVIEW_TIMERTAB_PATH);
-    }
+    
     
     /**
-     * Luo pääikkunan ajastinvälilehden
-     * @param timerTabController asd
-     * @return palauttaa 
+     * Luo merkinnän muokkaamiseen käytettävän modaalisen popup-dialogin
+     * @return palauttaa luodun ikkunan kontrolleriluokan
      */
-    public static Parent createTimerTab(TimerTabController timerTabController) {
-        return createParent(timerTabController, FXML_MAINVIEW_TIMERTAB_PATH);
-    }
-    
-    /**
-     * Luo pääikkunan ajastinvälilehden
-     * @return palauttaa 
-     */
-    public static Parent createProjecTab() {
-        ProjectTabController projectTabController = new ProjectTabController(modelAccess);
-        return createParent(projectTabController, FXML_MAINVIEW_PROJECTTAB_PATH);
-    }
-    
-    /**
-     * Luo pääikkunan ajastinvälilehden
-     * @param projectTabController asd
-     * @return palauttaa 
-     */
-    public static Parent createProjecTab(ProjectTabController projectTabController) {
-        return createParent(projectTabController, FXML_MAINVIEW_PROJECTTAB_PATH);
-    }
-
-    
-    /**
-     * Luo merkinnän muokkaamiseen käytettävän popup-dialogin
-     * @return palauttaa stage-olion
-     */
-    public static Stage createEditEntryDialog() {
-        EditEntryDialogController controller = new EditEntryDialogController(modelAccess);
-        Stage stage = createModalStage(controller, FXML_MAINVIEW_EDIT_ENTRY_DIALOG_PATH);
+    public static EditEntryDialogController createEditEntryDialog() {
+        Stage stage = new Stage();
+        EditEntryDialogController controller = new EditEntryDialogController(modelAccess, stage);
+        createAndShowWindow(controller, FXML_MAINVIEW_EDIT_ENTRY_DIALOG_PATH, stage, true);
         
-        return stage;
+        return controller;
+    }
+    
+    
+    /**
+     * Luo merkinnän poistamiseen käytettävän modaalisen popup-dialogin
+     * @return palauttaa luodun ikkunan kontrolleriluokan
+     */
+    public static DeleteEntryDialogController createDeleteEntryDialog() {
+        Stage stage = new Stage();
+        DeleteEntryDialogController controller = new DeleteEntryDialogController(modelAccess, stage);
+        createAndShowWindow(controller, FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH, stage, true);
+
+        return controller;
+    }
+    
+    
+    /**
+     * Luo pääikkunan ajastinvälilehden
+     * @param parentController luotavan kontrollerin vanhempi
+     * @return palauttaa Parent-muotoisen olion
+     */
+    public static Parent createTimerTab(MainController parentController) {
+        Stage stage = parentController.getStage();
+        TimerTabController timerTabController = new TimerTabController(modelAccess, stage, parentController);
+        
+        return createParentNode(timerTabController, FXML_MAINVIEW_TIMERTAB_PATH);
     }
     
     /**
-     * Luo merkinnän poistamiseen käytettävän popup-dialogin
-     * @return palauttaa stage-olion
+     * Luo pääikkunan projektivälilehden
+     * @param parentController luotavan kontrollerin vanhempi
+     * @return palauttaa Parent-muotoisen olion
      */
-    public static Stage createDeleteEntryDialog() {
-        DeleteEntryDialogController controller = new DeleteEntryDialogController(modelAccess);
-        Stage stage = createModalStage(controller, FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH);
-
-        return stage;
+    public static Parent createProjecTab(MainController parentController) {
+        Stage stage = parentController.getStage();
+        ProjectTabController projectTabController = new ProjectTabController(modelAccess, stage, parentController);
+        
+        return createParentNode(projectTabController, FXML_MAINVIEW_PROJECTTAB_PATH);
     }
     
     
     /**
      * Lataa FXML-tiedostosta uuden Parent-solmun annetuilla parametreilla. Asettaa solmulle kontrollerin.
-     * @param controller Solmun kontrolleriluokka
+     * @param controller Solmulle asetettava kontrolleriluokka
      * @param path Polku solmun sisällön määrittelevään FXML-tiedostoon
-     * @return
+     * @return 
      */
-    private static Parent createParent(AbstractController controller, String path) {
+    private static Parent createParentNode(WindowController controller, String path) {
         URL location = controller.getClass().getClassLoader()
                 .getResource(path);
         FXMLLoader fxmlloader = new FXMLLoader();
@@ -161,13 +163,13 @@ public class ViewFactory {
     }
 
     /**
-     * Asettaa näkymän scene-olioon.
+     * Luo annetussa polussa olevasta FXML-tiedostosta scene-olion.
      * @param controller Näkymään liitettävä kontrolleriluokka
      * @param path polku FXML-tiedostoon
      * @return palauttaa scene-olion
      */
-    private static Scene createView(AbstractController controller, String path) {
-        Parent root = createParent(controller, path);
+    private static Scene createView(WindowController controller, String path) {
+        Parent root = createParentNode(controller, path);
         Scene scene = new Scene(root);
         scene.getStylesheets()
                 .add(controller.getClass().getClassLoader()
@@ -178,22 +180,58 @@ public class ViewFactory {
     }
     
     /**
-     * Käytetään modaalisen popup-dialogin luomiseen. Lataa FXML-tiedostosta uuden näkymän annetuilla parametreilla.
-     * Asettaa näkymälle kontrollerin. Asettaa näkymän scene-olioon. Palauttaa stage-olion, mutta asettaa myös uuden ikkunan suoraan näkyviin.
-     * @param controller Näkymään liitettävä kontrolleriluokka
+     * Luo annetussa polussa olevan näkymän, yhdistää näkymän stageen ja näyttää stagen.
+     * 
+     * @param controller Näkymään liitettävä kontrolleriluokka, joka välitetään parametrina ketjun seuraavalle metodille
      * @param path polku FXML-tiedostoon
-     * @return palauttaa stage-olion
+     * @param stage stage, johon luotava näkymä liitetään.
+     * @param modal Halutaanko näytettävästä ikkunasta modaalinen
      */
-    private static Stage createModalStage(AbstractController controller, String path) {
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
+    private static void createAndShowWindow(WindowController controller, String path, Stage stage, boolean modal) {
         
-        Scene scene = createView(controller, path);
-        
+        // TODO parametriksi voisi lisätä halutaanko kutsua showAndWait()?
+        Parent root = createParentNode(controller, path);
+        Scene scene = new Scene(root);
+        scene.getStylesheets()
+        .add(controller.getClass().getClassLoader()
+                .getResource("fxTyoaika/view/tyoaika.css")
+                .toExternalForm());
         stage.setScene(scene);
+        if (modal) {            
+            stage.initModality(Modality.APPLICATION_MODAL);
+        }
         
-        return stage;
+        stage.show();
     }
+    
+//    /**
+//     * Käytetään modaalisen popup-dialogin luomiseen. Lataa FXML-tiedostosta uuden näkymän annetuilla parametreilla.
+//     * Asettaa näkymälle kontrollerin. Asettaa näkymän scene-olioon. Palauttaa stage-olion, mutta asettaa myös uuden ikkunan suoraan näkyviin.
+//     * @param controller Näkymään liitettävä kontrolleriluokka
+//     * @param path polku FXML-tiedostoon
+//     * @return palauttaa stage-olion
+//     */
+//    private static Stage createModalStage(WindowController controller, String path) {
+//        Stage stage = new Stage();
+//        stage.initModality(Modality.APPLICATION_MODAL);
+//        
+//        Scene scene = createView(controller, path);
+//        
+//        stage.setScene(scene);
+//        
+//        return stage;
+//    }
+//    
+//    /**
+//     * Käytetään modaalisen popup-dialogin luomiseen.
+//     * @return palauttaa stage-olion
+//     */
+//    private static Stage createModalStage() {
+//        Stage stage = new Stage();
+//        stage.initModality(Modality.APPLICATION_MODAL);
+//        
+//        return stage;
+//    }
     
     
 

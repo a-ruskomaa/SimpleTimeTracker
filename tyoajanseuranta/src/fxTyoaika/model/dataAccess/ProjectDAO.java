@@ -23,12 +23,13 @@ public class ProjectDAO extends AbstractDAO<Project> {
         return project;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Project> getData() {
-        // TODO Auto-generated method stub
         return (ArrayList<Project>) SampleData.getData(Project.class);
     }
     
+    @Override
     public List<Project> list() {
         return list(Project.class);
     }

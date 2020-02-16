@@ -5,6 +5,7 @@ import fxTyoaika.controller.ModelAccess;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
 public class DeleteEntryDialogController extends AbstractController {
 
@@ -17,8 +18,8 @@ public class DeleteEntryDialogController extends AbstractController {
         //
     }
     
-    public DeleteEntryDialogController(ModelAccess modelAccess) {
-        super(modelAccess);
+    public DeleteEntryDialogController(ModelAccess modelAccess, Stage stage) {
+        super(modelAccess, stage);
     }
     
     

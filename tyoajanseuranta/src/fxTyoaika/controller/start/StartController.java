@@ -56,10 +56,11 @@ public class StartController extends AbstractController {
      * Luo uuden kontrollerin aloitusnäkymälle
      * 
      * @param modelAccess Pääohjelmassa luotu ModelAccess olio. Tätä välitetään parametreina muille kontrollereille.
+     * @param stage stage jota kontrolloidaan
      * 
      */
-    public StartController(ModelAccess modelAccess) {
-        super(modelAccess);
+    public StartController(ModelAccess modelAccess, Stage stage) {
+        super(modelAccess, stage);
     }
 
 
