@@ -227,7 +227,6 @@ public class ProjectTabController extends AbstractController {
      */
     @FXML
     void handleAddEntry() {
-        modelAccess.selectedEntryProperty().unbind();
 
 //        modelAccess
 //                .setSelectedEntry(new Entry(modelAccess.getSelectedProject()));
@@ -246,9 +245,6 @@ public class ProjectTabController extends AbstractController {
             } else {
                 projectEntryList.getSelectionModel().select(0);
             }
-
-            modelAccess.selectedEntryProperty().bind(projectEntryList
-                    .getSelectionModel().selectedItemProperty());
 
             projectEntryList.fireEvent(new UpdateEvent());
         });

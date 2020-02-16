@@ -9,6 +9,7 @@ import fxTyoaika.controller.ViewFactory;
 import fxTyoaika.model.Entry;
 import fxTyoaika.model.Project;
 import fxTyoaika.model.Timer;
+import fxTyoaika.model.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -29,6 +30,9 @@ public class MainController extends AbstractController  {
     private TimerTabController timerTabController;
     private ProjectTabController projectTabController;
     private Timer timer;
+    private User user;
+    private ObservableList<Project> projects;
+    private ObservableList<Entry> entries;
     
     @FXML
     private Tab timerTab;
@@ -58,6 +62,7 @@ public class MainController extends AbstractController  {
     public MainController(ModelAccess modelAccess, Stage stage) {
         super(modelAccess, stage);
         this.timer = new Timer(modelAccess);
+        this.user = modelAccess.getSelectedUser();
     }
 
 
@@ -65,18 +70,18 @@ public class MainController extends AbstractController  {
      * Alustaa pääikkunan näkymän. Asettaa valitun projektin merkinnät näkyville.
      */
     public void initialize() {
+
+        this.projects = modelAccess.loadProjects();
         
-        // TODO nämä toisin päin: ensin ladataan käyttäjän projektit, sitten asetetaan valinta. projektien haku model accessin metodiksi! 
         Project selectedProject = modelAccess.getSelectedProject();
         
-        ObservableList<Project> projects = FXCollections.observableArrayList(modelAccess.getSelectedUser().getProjects());
-        
         projectChoiceBox.setItems(projects);
+        
         projectChoiceBox.getSelectionModel().select(selectedProject);
         
         modelAccess.selectedProjectProperty().bind(projectChoiceBox.getSelectionModel().selectedItemProperty());
         
-        modelAccess.getEntryDAO().list(selectedProject);
+        this.entries = modelAccess.loadEntries();
 
         timerTab.setContent(ViewFactory.createTimerTab(this));
         projectTab.setContent(ViewFactory.createProjecTab(this));

@@ -203,36 +203,6 @@ public class ViewFactory {
         
         stage.show();
     }
-    
-//    /**
-//     * Käytetään modaalisen popup-dialogin luomiseen. Lataa FXML-tiedostosta uuden näkymän annetuilla parametreilla.
-//     * Asettaa näkymälle kontrollerin. Asettaa näkymän scene-olioon. Palauttaa stage-olion, mutta asettaa myös uuden ikkunan suoraan näkyviin.
-//     * @param controller Näkymään liitettävä kontrolleriluokka
-//     * @param path polku FXML-tiedostoon
-//     * @return palauttaa stage-olion
-//     */
-//    private static Stage createModalStage(WindowController controller, String path) {
-//        Stage stage = new Stage();
-//        stage.initModality(Modality.APPLICATION_MODAL);
-//        
-//        Scene scene = createView(controller, path);
-//        
-//        stage.setScene(scene);
-//        
-//        return stage;
-//    }
-//    
-//    /**
-//     * Käytetään modaalisen popup-dialogin luomiseen.
-//     * @return palauttaa stage-olion
-//     */
-//    private static Stage createModalStage() {
-//        Stage stage = new Stage();
-//        stage.initModality(Modality.APPLICATION_MODAL);
-//        
-//        return stage;
-//    }
-    
-    
+
 
 }

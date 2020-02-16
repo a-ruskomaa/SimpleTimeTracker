@@ -9,8 +9,10 @@ import fxTyoaika.SampleData;
 import fxTyoaika.controller.AbstractController;
 import fxTyoaika.controller.ModelAccess;
 import fxTyoaika.controller.ViewFactory;
+import fxTyoaika.controller.main.WindowController;
 import fxTyoaika.model.Project;
 import fxTyoaika.model.User;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -73,12 +75,12 @@ public class StartController extends AbstractController {
 
         // Lataa tallennetut käyttäjät. Toistaiseksi käytetään puhtaasti
         // oliopohjaista ratkaisua datan ylläpitoon.
-        users = FXCollections
-                .observableArrayList(modelAccess.getUserDAO().list());
+        users = modelAccess.loadUsers();
 
         // Haetaan ohjelmaan tallennetut käyttäjät ja lisätään valikkoon
         userChoiceBox.setItems(users);
 
+        // Luovutetaan kontrolleriluokalle valitun käyttäjän hallinta
         modelAccess.selectedUserProperty().bind(userChoiceBox.valueProperty());
 
 
@@ -90,15 +92,12 @@ public class StartController extends AbstractController {
                 old.setProjects(null);
             }
             
-            ObservableList<Project> projects = FXCollections
-                    .observableArrayList(
-                            modelAccess.getProjectDAO().list(selected));
-            
-            selected.setProjects(projects);
+            ObservableList<Project> projects = modelAccess.loadProjects();
             
             projectChoiceBox.setItems(projects);
             
             
+            // TODO tätä pitää miettiä? kumpi vaihtaa valinnan, kontrolleri vai modelaccess
             if (!projectChoiceBox.getItems().isEmpty()) {
                 projectChoiceBox.getSelectionModel().select(0);
             }
@@ -109,24 +108,11 @@ public class StartController extends AbstractController {
             userChoiceBox.getSelectionModel().select(0);
         }
         
-//        // Valitaan listan ensimmäinen käyttäjä. Myöhemmässä toteutuksessa
-//        // valitaan edellinen ohjelmaa käyttänyt henkilö?
-//        if (!userChoiceBox.getItems().isEmpty()) {
-//            userChoiceBox.getSelectionModel().select(0);
-//        }
-//
-//        // Haetaan valitun käyttäjän projektit ja lisätään listalle
-//        projectChoiceBox.setItems(modelAccess.getSelectedUser().getProjects());
-//
-//        if (!projectChoiceBox.getItems().isEmpty()) {
-//            projectChoiceBox.getSelectionModel().select(0);
-//        }
-
-        // TODO ok button disable jos jompi kumpi null
 
         modelAccess.selectedProjectProperty()
                 .bind(projectChoiceBox.valueProperty());
-
+        
+        okButton.disableProperty().bind(Bindings.isNull(projectChoiceBox.valueProperty()));
 
     }
 
@@ -138,10 +124,8 @@ public class StartController extends AbstractController {
     private void handleOkButton() {
 
         Stage oldStage = (Stage) okButton.getScene().getWindow();
-        Stage secondStage = new Stage();
 
-        secondStage.setScene(ViewFactory.createMainView());
-        secondStage.show();
+        ViewFactory.createMainView();
 
         oldStage.close();
     }
@@ -152,8 +136,8 @@ public class StartController extends AbstractController {
      */
     @FXML
     private void handleNewUserButton() {
-        Stage newUserDialog = ViewFactory.createNewUserDialog();
-        newUserDialog.show();
+//        WindowController controller = ViewFactory.createNewUserDialog();
+        ViewFactory.createNewUserDialog();
     }
 
 
@@ -162,8 +146,8 @@ public class StartController extends AbstractController {
      */
     @FXML
     private void handleNewProjectButton() {
-        Stage newUserDialog = ViewFactory.createNewProjectDialog();
-        newUserDialog.show();
+//        WindowController controller = ViewFactory.createNewProjectDialog();
+        ViewFactory.createNewProjectDialog();
     }
 
 }

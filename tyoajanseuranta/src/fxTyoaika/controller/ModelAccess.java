@@ -1,5 +1,7 @@
 package fxTyoaika.controller;
 
+import java.util.List;
+
 import org.junit.jupiter.params.shadow.com.univocity.parsers.common.DataValidationException;
 
 import fxTyoaika.model.Entry;
@@ -13,6 +15,8 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
@@ -32,7 +36,9 @@ public class ModelAccess {
 
     private final ListProperty<User> allUsers = new SimpleListProperty<User>();
     private final ObjectProperty<User> selectedUser = new SimpleObjectProperty<User>();
+    private final ListProperty<Project> selectedUserProjects = new SimpleListProperty<Project>();
     private final ObjectProperty<Project> selectedProject = new SimpleObjectProperty<Project>();
+    private final ListProperty<Entry> selectedProjectEntries = new SimpleListProperty<Entry>();
     private final ObjectProperty<Entry> selectedEntry = new SimpleObjectProperty<Entry>();
     private final ObjectProperty<Entry> editedEntry = new SimpleObjectProperty<Entry>();
     
@@ -65,23 +71,27 @@ public class ModelAccess {
         System.out.println("modelAccess luotu!");
         
         
-//        ChangeListener<Project> projectChangeListener = (observable, oldProject, newProject) -> {
-//            System.out.println("Project changed");
-//            ObservableList<Entry> entries = newProject.getEntries();
-//            this.selectedEntry.set(entries.isEmpty() ? null : entries.get(0));
-//        };
-//        
-//        selectedProject.addListener(projectChangeListener);
-//        
-//        ChangeListener<User> userChangeListener = (observable, oldUser, newUser) -> {
-//            System.out.println("User changed");
-//            selectedProject.removeListener(projectChangeListener);
-//            ObservableList<Project> projects = newUser.getProjects();
-//            this.selectedProject.set(projects.isEmpty() ? null : projects.get(0));
-//            
-//            selectedProject.addListener(projectChangeListener);
-//        };
-//        selectedUser.addListener(userChangeListener);
+        // Pro
+        ChangeListener<Project> projectChangeListener = (observable, oldProject, newProject) -> {
+            System.out.println("Project changed");
+            List<Entry> entries = loadEntries();
+            this.selectedEntry.set(entries.isEmpty() ? null : entries.get(0));
+        };
+        
+        selectedProject.addListener(projectChangeListener);
+        
+        ChangeListener<User> userChangeListener = (observable, oldUser, newUser) -> {
+            System.out.println("User changed");
+            selectedProject.removeListener(projectChangeListener);
+            
+            List<Project> projects = loadProjects();
+            
+            selectedProject.addListener(projectChangeListener);
+            
+            this.selectedProject.set(projects.isEmpty() ? null : projects.get(0));
+            
+        };
+        selectedUser.addListener(userChangeListener);
     };
     
     
@@ -101,7 +111,7 @@ public class ModelAccess {
         _selectedUser.addProject(newProject);
     }
     
-    public Entry getNewEntry() {
+    public Entry newEntry() {
         Project _selectedProject = getSelectedProject();
         Entry newEntry = new Entry(_selectedProject);
         return newEntry;
@@ -113,7 +123,7 @@ public class ModelAccess {
     }
 
     
-    public void commitEntry() {
+    public void commitEntry(Entry entry) {
         Entry edited = editedEntry.get();
         Project _selectedProject = edited.getOwner();
         if (edited.getId() == -1) {
@@ -126,22 +136,34 @@ public class ModelAccess {
     }
 
     
-    public ObservableList<User> getUsers() {
-        ObservableList<User> users = (ObservableList<User>) this.userDAO.list();
+    /**
+     * Hakee kaikkien käyttäjien tiedot tietokannasta ja tallentaa ne listalle
+     * @return palauttaa käyttäjät ObservableList:llä
+     */
+    public ObservableList<User> loadUsers() {
+        ObservableList<User> users = FXCollections.observableArrayList(this.userDAO.list());
         this.allUsers.set(users);
         return allUsers;
     }
     
-    public ObservableList<Project> getProjects() {
+    /**
+     * Hakee valittuna olevan käyttäjän kaikkien projektien tiedot tietokannasta. Tallentaa projektit listalle käyttäjäolioon.
+     * @return palauttaa projektit ObservableList:llä
+     */
+    public ObservableList<Project> loadProjects() {
         User _selectedUser = getSelectedUser();
-        ObservableList<Project> projects = (ObservableList<Project>) this.projectDAO.list(_selectedUser);
+        ObservableList<Project> projects = FXCollections.observableArrayList(this.projectDAO.list(_selectedUser));
         _selectedUser.setProjects(projects);
         return projects;
     }
     
-    public ObservableList<Entry> getEntries() {
+    /**
+     * Hakee valittuna olevan projektin kaikkien merkintöjen tiedot tietokannasta. Tallentaa merkinnät listalle projektiolioon.
+     * @return palauttaa merkinnät ObservableList:llä
+     */
+    public ObservableList<Entry> loadEntries() {
         Project _selectedProject = getSelectedProject();
-        ObservableList<Entry> entries = (ObservableList<Entry>) this.entryDAO.list(_selectedProject);
+        ObservableList<Entry> entries = FXCollections.observableArrayList(this.entryDAO.list(_selectedProject));
         _selectedProject.setEntries(entries);
         return entries;
     }
@@ -152,7 +174,7 @@ public class ModelAccess {
      * Valitun käyttäjän getteri
      * @return palauttaa valitun käyttäjän
      */
-    private User getSelectedUser() {
+    public User getSelectedUser() {
         return selectedUser.get();
     }
     
@@ -160,7 +182,7 @@ public class ModelAccess {
      * Valitun projektin getteri
      * @return palauttaa ohjelmassa valitun projektin
      */
-    private Project getSelectedProject() {
+    public Project getSelectedProject() {
         return this.selectedProject.get();
     }
 
@@ -168,7 +190,7 @@ public class ModelAccess {
      * Valitun merkinnän getteri
      * @return palauttaa valitun merkinnän
      */
-    private Entry getSelectedEntry() {
+    public Entry getSelectedEntry() {
         return selectedEntry.get();
     }
 

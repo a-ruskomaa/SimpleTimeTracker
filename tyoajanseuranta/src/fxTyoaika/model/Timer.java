@@ -31,7 +31,7 @@ public class Timer {
     
     public Timer(ModelAccess modelAccess) {
         this.modelAccess = modelAccess;
-        this.entry = modelAccess.getNewEntry();
+        this.entry = modelAccess.newEntry();
     }
     
     public void start() {
@@ -48,7 +48,7 @@ public class Timer {
     
     public void reset() {
         this.running.set(false);
-        this.entry = modelAccess.getNewEntry();
+        this.entry = modelAccess.newEntry();
     }
     
     public Entry getEntry() {

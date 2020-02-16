@@ -71,7 +71,6 @@ public abstract class AbstractDAO<T extends DataObject> implements DAO<Integer, 
      * @param object haettujen alkioiden "omistaja", eli projektilla käyttäjä ja merkinnällä projekti
      * @return palauttaa kaikki tietylle omistajalle kuuluvat alkiot listalla.
      */
-    @SuppressWarnings("unchecked")
     protected List<T> list(Class<T> clazz, ParentObject object) {
         // TODO tätä pitää miettiä, mihin castaus?
         return (List<T>) SampleData.getData(clazz).stream().filter(e -> ((ChildObject) e).getOwner().equals(object)).collect(Collectors.toList());
