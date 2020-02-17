@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import fxTyoaika.controller.AbstractController;
 import fxTyoaika.controller.ModelAccess;
 import fxTyoaika.controller.ViewFactory;
+import fxTyoaika.controller.WindowController;
 import fxTyoaika.model.Entry;
 import fxTyoaika.model.Entries;
 import fxTyoaika.model.Project;
@@ -98,17 +99,9 @@ public class ProjectTabController extends AbstractController {
      */
     public void initialize() {
 
-//        ObservableList<Entry> entries = FXCollections.observableArrayList(
-//                modelAccess.getSelectedProject().getEntries());
-        ObservableList<Entry> entries = FXCollections.observableArrayList(
-                modelAccess.getCurrentEntries());
-
         // haetaan valitun projektin merkinnät listalle
-        projectEntryList.setItems(entries);
+        projectEntryList.setItems(modelAccess.selectedProjectEntriesProperty());
 
-        // sidotaan modelAccessin valittu merkintä listan valintaan
-        modelAccess.selectedEntryProperty().bind(
-                projectEntryList.getSelectionModel().selectedItemProperty());
 
         // luodaan kuuntelija reagoimaan valitun merkinnän vaihtumiseen
         ChangeListener<Entry> selectedEntryListener = ((obs, old, selected) -> {
@@ -119,6 +112,9 @@ public class ProjectTabController extends AbstractController {
                 System.out.println("No entry selected");
                 return;
             }
+            
+            modelAccess.setSelectedEntry(selected);
+            
             // TODO näiden asetus muualle, päivitys kun merkintä muuttuu
             startDate.set(selected.getStartDate());
             startTime.set(selected.getStartTime());
@@ -130,32 +126,33 @@ public class ProjectTabController extends AbstractController {
         projectEntryList.getSelectionModel().selectedItemProperty()
                 .addListener(selectedEntryListener);
 
-        // luodaan kuuntelija reagoimaan valitun projektin vaihtumiseen
-        ChangeListener<Project> selectedProjectListener = ((obs, old,
-                selected) -> {
-            if (selected == null) {
-                System.out.println("No project selected");
-                return;
-            }
-
-            // poistetaan kuuntelija listan päivityksen ajaksi, voi olla turha?
-            projectEntryList.getSelectionModel().selectedItemProperty()
-                    .removeListener(selectedEntryListener);
-
-            // päivitetään uuden projektin merkinnät listalle
-            ObservableList<Entry> newEntries = FXCollections.observableArrayList(modelAccess.getEntryDAO().list(selected));
-            projectEntryList.setItems(newEntries);
-
-            // palautetaan kuuntelija paikalleen
-            projectEntryList.getSelectionModel().selectedItemProperty()
-                    .addListener(selectedEntryListener);
-        });
-
-        // asetetaan äsken luotu kuuntelija model accessiin
-        modelAccess.selectedProjectProperty()
-                .addListener(selectedProjectListener);
+//        // luodaan kuuntelija reagoimaan valitun projektin vaihtumiseen
+//        ChangeListener<Project> selectedProjectListener = ((obs, old,
+//                selected) -> {
+//            if (selected == null) {
+//                System.out.println("No project selected");
+//                return;
+//            }
+//
+//            // poistetaan kuuntelija listan päivityksen ajaksi, voi olla turha?
+//            projectEntryList.getSelectionModel().selectedItemProperty()
+//                    .removeListener(selectedEntryListener);
+//
+//            // päivitetään uuden projektin merkinnät listalle
+//            ObservableList<Entry> newEntries = FXCollections.observableArrayList(modelAccess.getEntryDAO().list(selected));
+//            projectEntryList.setItems(newEntries);
+//
+//            // palautetaan kuuntelija paikalleen
+//            projectEntryList.getSelectionModel().selectedItemProperty()
+//                    .addListener(selectedEntryListener);
+//        });
+//
+//        // asetetaan äsken luotu kuuntelija model accessiin
+//        modelAccess.selectedProjectProperty()
+//                .addListener(selectedProjectListener);
 
         // sidotaan tekstikentän sisältö valitun merkinnän aikaleimojen dataan
+        
         entryStartField.textProperty().bind(new StringBinding() {
 
             {
@@ -228,24 +225,16 @@ public class ProjectTabController extends AbstractController {
     @FXML
     void handleAddEntry() {
 
-//        modelAccess
-//                .setSelectedEntry(new Entry(modelAccess.getSelectedProject()));
-        modelAccess.newEditedEntry();
+        modelAccess.setEditedEntry(modelAccess.newEntry());
         
         WindowController wc = ViewFactory.createEditEntryDialog();
 
-        stage.show();
-
         // TODO tämä uusiksi! Kaksisuuntainen bindaus valinnan välille? Muutoksen validointi boolean isChanged tjsp?
-        stage.setOnCloseRequest((e) -> {
-            Entry selectedEntry = modelAccess.getSelectedEntry();
-            if (selectedEntry.getId() != -1) {
-                projectEntryList.getSelectionModel()
-                        .select(modelAccess.getSelectedEntry());
-            } else {
-                projectEntryList.getSelectionModel().select(0);
-            }
+        wc.getStage().setOnCloseRequest((e) -> {
+            projectEntryList.getSelectionModel().select(modelAccess.getSelectedEntry());
 
+            modelAccess.setEditedEntry(null);
+            
             projectEntryList.fireEvent(new UpdateEvent());
         });
 
@@ -254,9 +243,14 @@ public class ProjectTabController extends AbstractController {
 
     @FXML
     void handleEditEntry() {
-        Stage stage = ViewFactory.createEditEntryDialog();
-        stage.show();
-        stage.setOnCloseRequest((e) -> {
+        modelAccess.setEditedEntry(modelAccess.getSelectedEntry());
+        WindowController wc = ViewFactory.createEditEntryDialog();
+        
+        wc.getStage().setOnCloseRequest((e) -> {
+            projectEntryList.getSelectionModel().select(modelAccess.getSelectedEntry());
+            
+            modelAccess.setEditedEntry(null);
+            
             projectEntryList.fireEvent(new UpdateEvent());
         });
     }
@@ -264,9 +258,9 @@ public class ProjectTabController extends AbstractController {
 
     @FXML
     void handleRemoveEntry() {
-        Stage stage = ViewFactory.createDeleteEntryDialog();
-        stage.show();
-        stage.setOnCloseRequest((e) -> {
+        WindowController wc = ViewFactory.createDeleteEntryDialog();
+
+        wc.getStage().setOnCloseRequest((e) -> {
             projectEntryList.fireEvent(new UpdateEvent());
         });
     }

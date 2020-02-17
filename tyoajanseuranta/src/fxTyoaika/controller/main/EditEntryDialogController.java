@@ -11,6 +11,7 @@ import fxTyoaika.controller.ModelAccess;
 import fxTyoaika.model.Entries;
 import fxTyoaika.model.Entry;
 import fxTyoaika.model.Project;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
@@ -90,6 +91,7 @@ public class EditEntryDialogController extends AbstractController {
         startDatePicker.setConverter(dateConverter);
         endDatePicker.setConverter(dateConverter);
 
+        // TODO mieti nämä uusiksi. Kannattaako luoda entrywrapper johon bindaa suoraan nuo komponentit?
         startDate.set(editedEntry.getStartDate());
         startTime.set(editedEntry.getStartTime());
         endDate.set(editedEntry.getEndDate());
@@ -99,6 +101,9 @@ public class EditEntryDialogController extends AbstractController {
         startDatePicker.valueProperty().bindBidirectional(this.startDate);
         endTimeField.valueProperty().bindBidirectional(this.endTime);
         endDatePicker.valueProperty().bindBidirectional(this.endDate);
+        
+        saveButton.disableProperty().bind(startTimeField.valueProperty().isNull().or(startDatePicker.valueProperty().isNull())
+                .or(endTimeField.valueProperty().isNull().or(endDatePicker.valueProperty().isNull())));
 
         durationField.textProperty().bind(new StringBinding() {
 
@@ -135,7 +140,15 @@ public class EditEntryDialogController extends AbstractController {
 
     @FXML
     void handleSaveButton(ActionEvent event) {
-        modelAccess.commitEntry();
+        
+        editedEntry.setStartDate(this.startDate.get());
+        editedEntry.setEndDate(this.endDate.get());
+        editedEntry.setStartTime(this.startTime.get());
+        editedEntry.setEndTime(this.endTime.get());
+        
+        modelAccess.setEditedEntry(editedEntry);
+        
+        modelAccess.commitEditedEntry();
 
         exitStage(event);
     }

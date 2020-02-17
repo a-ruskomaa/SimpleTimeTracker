@@ -1,20 +1,38 @@
 package fxTyoaika.model.dataAccess;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import fxTyoaika.SampleData;
 import fxTyoaika.model.ChildObject;
 import fxTyoaika.model.DataObject;
-import fxTyoaika.model.Entry;
 import fxTyoaika.model.ParentObject;
 
+/**
+ * 
+ * Käyttäjien, projektien ja merkintöjen tietokantahakuihin tarkoitettu abstrakti luokka.
+ * Hyväksyy geneerisenä tyyppiparametrinaan DataObject-rajapinnan toteuttavat luokat. Tarjoaa
+ * geneerisenä toteutuksena kaikki muut DAO-rajapinnan metodit, paitsi create.
+ * @author aleks
+ * @version 17 Feb 2020
+ *
+ * @param <T> Luokan tyyppiparametri, oltava DataObject-rajapinnan toteuttava luokka, kuten User, Project tai Entry
+ */
 public abstract class AbstractDAO<T extends DataObject> implements DAO<Integer, T>{
     
 
-    public abstract List<T> getData();
+    /**
+     * Tilapäinen metodi, jota hyödynnetään haettaessa testidataa muun ohjelman käyttöön
+     * @return palauttaa tyypin T olioita listalla
+     */
+    protected abstract List<T> getData();
     
+    
+    /**
+     * Lukee annettua avainta vastaavan alkion tiedot pysyvästä muistista
+     * @param key Yksilöivä hakuavain, esim. id-luku
+     * @return Palauttaa hakuavainta vastaavista tiedoista luodun olion
+     */
     @Override
     public T read(Integer key) {
         List<T> objects = getData();
@@ -26,6 +44,11 @@ public abstract class AbstractDAO<T extends DataObject> implements DAO<Integer, 
         return null;
     }
 
+    /**
+     * Päivittää annettua oliota vastaavan alkion tiedot pysyvään muistiin
+     * @param object Olio, jonka sisältämät tiedot halutaan päivittää pysyvään muistiin
+     * @return Palauttaa päivitetyn olion
+     */
     @Override
     public T update(T object) {
         List<T> objects = getData();
@@ -41,6 +64,11 @@ public abstract class AbstractDAO<T extends DataObject> implements DAO<Integer, 
         return null;
     }
 
+    /**
+     * Poistaa annettua avainta vastaavan alkion tiedot pysyvästä muistista
+     * @param key Yksilöivä hakuavain, esim. id-luku
+     * @return Palauttaa false mikäli poisto-operaatio epäonnistui
+     */
     @Override
     public boolean delete(Integer key) {
 
@@ -71,6 +99,7 @@ public abstract class AbstractDAO<T extends DataObject> implements DAO<Integer, 
      * @param object haettujen alkioiden "omistaja", eli projektilla käyttäjä ja merkinnällä projekti
      * @return palauttaa kaikki tietylle omistajalle kuuluvat alkiot listalla.
      */
+    @SuppressWarnings("unchecked")
     protected List<T> list(Class<T> clazz, ParentObject object) {
         // TODO tätä pitää miettiä, mihin castaus?
         return (List<T>) SampleData.getData(clazz).stream().filter(e -> ((ChildObject) e).getOwner().equals(object)).collect(Collectors.toList());

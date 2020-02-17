@@ -1,6 +1,5 @@
 package fxTyoaika.controller;
 
-import fxTyoaika.controller.main.WindowController;
 import javafx.stage.Stage;
 
 /**
@@ -24,6 +23,7 @@ public class AbstractController implements WindowController {
     /**
      * @return palauttaa stagen jota kontrolleri ohjaa
      */
+    @Override
     public Stage getStage() {
         return this.stage;
     }

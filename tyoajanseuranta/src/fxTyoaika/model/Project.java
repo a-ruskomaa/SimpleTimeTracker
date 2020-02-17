@@ -1,98 +1,81 @@
 package fxTyoaika.model;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
+ * Luokka projektin tallentamiseksi. Sisältää tiedon merkinnän alku- ja loppuajasta.
+ * Tarjoaa metodit nimen hakemiseen ja muokkaamiseen sekä projektin id-tunnisteen sekä omistajan hakemiseen.
  * @author aleks
  * @version 28 Jan 2020
  *
  */
 public class Project implements ParentObject, ChildObject {
-    private static final AtomicInteger idGenerator = new AtomicInteger(1000);
-    
+
     private final int id;
     private String name;
     private User user;
-    private List<Entry> entries;
+
     
     
+    /**
+     * Luo annetulle käyttäjälle uuden projektin annetulla nimellä. Id:ksi asetetaan tilapäisesti -1.
+     * Tämä olio korvataan DAO-luokassa vastaavansisältöisellä oliolla, jolla id-numero on aidosti yksilöivä.
+     * @param name Projektin nimi
+     * @param user Käyttäjä, jolle projekti kuuluu
+     */
     public Project(String name, User user) {
-        this(idGenerator.getAndIncrement(), name, user);
+        this(-1, name, user);
     }
-    
+
+    /**
+     * Luo annetulle käyttäjälle uuden projektin annetulla nimellä sekä yksilöivällä id-tunnisteella.
+     * @param id Yksilöivä id-numero
+     * @param name Projektin nimi
+     * @param user Käyttäjä, jolle projekti kuuluu
+     */
     public Project(int id, String name, User user) {
-        this(id, name, user, new ArrayList<Entry>());
-    }
-    
-    public Project(int id, String name, User user, List<Entry> entries) {
         this.id = id;
         this.name = name;
         this.user = user;
-        this.entries = entries;
     }
-    
+
+
     @Override
     public int getId() {
         return this.id;
     }
+
 
     @Override
     public String getName() {
         return this.name;
     }
 
+
+    /**
+     * @return Palauttaa käyttäjän, jolle projekti kuuluu
+     */
     @Override
     public User getOwner() {
         return this.user;
     }
-    
-    public List<Entry> getEntries() {
-        return this.entries;
-    }
-    
+
+
+    /**
+     * Asettaa projektille uuden nimen
+     * @param name Asetettava nimi
+     */
     public void setName(String name) {
         this.name = name;
     }
-    
-    
-    public void setUser(User user) {
-        this.user = user;
-    }
 
 
-    public void setEntries(List<Entry> entries) {
-        this.entries = entries;
-    }
 
-    
-    public void addEntry(Entry entry) {
-        this.entries.add(entry);
-    }
-    
-    
-    public void removeEntry(Entry entry) {
-        this.entries.remove(entry);
-    }
-    
-    public void updateEntry(Entry entry) {
-        for (int i = 0; i < this.entries.size(); i++) {
-            if (this.entries.get(i).getId() == entry.getId()) {
-                this.entries.set(i, entry);
-            }
-        }
-    }
-    
     @Override
     public String toString() {
         return this.name;
     }
-    
-    
+
     //
 }

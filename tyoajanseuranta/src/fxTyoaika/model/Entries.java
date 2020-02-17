@@ -8,7 +8,9 @@ import java.time.temporal.Temporal;
 import java.util.Formatter;
 
 /**
- * Luokka sisältää staattisia apumetodeita merkintöjen, kellonaikojen ja päivämäärien käsittelyyn
+ * Luokka sisältää staattisia apumetodeita merkintöjen, kellonaikojen ja päivämäärien käsittelyyn.
+ * 
+ * Sisältää tällä hetkellä runsaasti tarpeettomiakin metodeja. Näitä karsitaan ohjelman vaatimusten tarkentuessa.
  * @author aleks
  * @version 6 Feb 2020
  *
@@ -20,10 +22,10 @@ public class Entries {
     private static DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
     private static DateTimeFormatter timeFormatterNoSeconds = DateTimeFormatter.ofPattern("HH:mm");
     
-    private final String dateTimePattern = "([0][1-9]|[1-2][0-9]|[3][01]).(0[1-9]|1[012]).[0-9]{4}([01][0-9]|2[0-3]):[0-5][0-9]";
-    private final String datePattern = "([0][1-9]|[1-2][0-9]|[3][01]).(0[1-9]|1[012]).[0-9]{4}";
-    private final String timePatternSeconds = "([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]";
-    private final String timePattern = "([01][0-9]|2[0-3]):[0-5][0-9]";
+//    private final String dateTimePattern = "([0][1-9]|[1-2][0-9]|[3][01]).(0[1-9]|1[012]).[0-9]{4}([01][0-9]|2[0-3]):[0-5][0-9]";
+//    private final String datePattern = "([0][1-9]|[1-2][0-9]|[3][01]).(0[1-9]|1[012]).[0-9]{4}";
+//    private final String timePatternSeconds = "([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]";
+//    private final String timePattern = "([01][0-9]|2[0-3]):[0-5][0-9]";
     
     public static DateTimeFormatter getDateFormatter() {
         return dateFormatter;

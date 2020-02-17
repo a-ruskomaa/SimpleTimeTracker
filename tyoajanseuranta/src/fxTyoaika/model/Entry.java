@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import java.time.Duration;
 
@@ -14,13 +13,9 @@ import java.time.Duration;
  * hakemiseksi sekä keston laskemiseksi. Tarjoaa metodit myös aikamerkintöjen muuttamiseksi muotoilluiksi merkkijonoiksi.
  * @author aleks
  * @version 28 Jan 2020
- * 
- * 
- * TODO mieti kannattaisiko luoda EntryBeanWrapper, joka toimisi wrapperina entryn ympärillä. Säästäisi paljon resursseja kun joka entrystä ei tarvitsisi luoda propertyja, tapahtumankäsittelijöitä, jne
  *
  */
 public class Entry implements ChildObject {
-    private static final AtomicInteger idGenerator = new AtomicInteger(1000);
 
     private final int id;
     private Project project;
@@ -29,55 +24,49 @@ public class Entry implements ChildObject {
     private LocalDate endDate;
     private LocalTime endTime;
 
-//    /**
-//     * Luo "tyhjän" merkinnän. Tätä hyödynnetään mm. Timer-luokassa ja uusien merkintöjen luomisessa syötteestä.
-//     */
-//    public Entry() {
-//        this(-1, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
-//                LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
-//    }
-    
+
     /**
      * Luo "tyhjän" merkinnän. Tätä hyödynnetään mm. Timer-luokassa ja uusien merkintöjen luomisessa syötteestä.
-     * @param project asd
+     * @param project Projekti, johon merkintä liittyy
      */
     public Entry(Project project) {
         this(-1, project, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
                 LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
     }
 
-
     
     /**
      * Luo uuden merkinnän annetulla alku- ja loppuajalla
-     * @param id id
-     * @param project asdasd
-     * @param start alkuaika LocalDateTime-muodossa
-     * @param end loppuaika LocalDateTime-muodossa
+     * Rajaa minuuttia tarkemmat aikamääreet pois tallennettavasta merkinnästä.
+     * @param id Yksilöivä id-tunniste
+     * @param project Projekti, johon merkintä liittyy
+     * @param start Merkinnän alkuhetki LocalDateTime-muodossa
+     * @param end Merkinnän loppuhetki LocalDateTime-muodossa
      */
     public Entry(int id, Project project, LocalDateTime start, LocalDateTime end) {
         this(id, project, start.toLocalDate(), start.toLocalTime(), end.toLocalDate(),
                 end.toLocalTime());
     }
 
-
-    public Entry(int id, LocalDate startDate, LocalTime startTime,
-            LocalDate endDate, LocalTime endTime) {
-        this.id = id;
-        this.startDate = startDate;
-        this.startTime = startTime;
-        this.endDate = endDate;
-        this.endTime = endTime;
-    }
     
+    /**
+     * Luo uuden merkinnän annetulla alku- ja loppuajalla.
+     * Rajaa minuuttia tarkemmat aikamääreet pois tallennettavasta merkinnästä.
+     * @param id Yksilöivä id-tunniste
+     * @param project Projekti, johon merkintä liittyy
+     * @param startDate Merkinnän alkuhetken päivämäärä
+     * @param startTime Merkinnän alkuhetken kellonaika
+     * @param endDate Merkinnän loppuhetken päivämäärä
+     * @param endTime Merkinnän loppuhetken kellonaika
+     */
     public Entry(int id, Project project, LocalDate startDate, LocalTime startTime,
             LocalDate endDate, LocalTime endTime) {
         this.id = id;
         this.project = project;
         this.startDate = startDate;
-        this.startTime = startTime;
+        this.startTime = startTime.truncatedTo(ChronoUnit.MINUTES);
         this.endDate = endDate;
-        this.endTime = endTime;
+        this.endTime = endTime.truncatedTo(ChronoUnit.MINUTES);
     }
 
     // Getterit:
@@ -90,7 +79,7 @@ public class Entry implements ChildObject {
 
 
     /**
-     * @return the project
+     * @return Palauttaa projektin, johon merkintä liittyy
      */
     @Override
     public Project getOwner() {
@@ -100,7 +89,7 @@ public class Entry implements ChildObject {
 
 
     /**
-     * @return palauttaa merkinnän alkuajan
+     * @return Palauttaa merkinnän alkuhetken päivämäärän
      */
     public LocalDate getStartDate() {
         return this.startDate;
@@ -108,7 +97,7 @@ public class Entry implements ChildObject {
 
 
     /**
-     * @return palauttaa merkinnän alkuajan
+     * @return palauttaa merkinnän alkuhetken kellonajan
      */
     public LocalTime getStartTime() {
         return this.startTime;
@@ -124,7 +113,7 @@ public class Entry implements ChildObject {
 
 
     /**
-     * @return palauttaa merkinnän loppuajan
+     * @return palauttaa merkinnän loppuhetken päivämäärän
      */
     public LocalDate getEndDate() {
         return this.endDate;
@@ -132,7 +121,7 @@ public class Entry implements ChildObject {
 
 
     /**
-     * @return palauttaa merkinnän loppuajan
+     * @return palauttaa merkinnän loppuhetken kellonajan
      */
     public LocalTime getEndTime() {
         return this.endTime;
@@ -140,7 +129,7 @@ public class Entry implements ChildObject {
 
 
     /**
-     * @return palauttaa merkinnän alkuajan
+     * @return palauttaa merkinnän loppuuajan
      */
     public LocalDateTime getEndDateTime() {
         return LocalDateTime.of(this.getEndDate(), this.getEndTime());
@@ -165,14 +154,6 @@ public class Entry implements ChildObject {
     }
 
     // Setterit:
-    
-    /**
-     * @param project the project to set
-     */
-    public void setProject(Project project) {
-        this.project = project;
-    }
-
 
 
     /**

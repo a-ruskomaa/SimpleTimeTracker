@@ -1,12 +1,12 @@
 package fxTyoaika.controller;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
-import org.junit.jupiter.params.shadow.com.univocity.parsers.common.DataValidationException;
-
+import fxTyoaika.model.DataObject;
 import fxTyoaika.model.Entry;
 import fxTyoaika.model.Project;
-import fxTyoaika.model.Timer;
 import fxTyoaika.model.User;
 import fxTyoaika.model.dataAccess.EntryDAO;
 import fxTyoaika.model.dataAccess.ProjectDAO;
@@ -26,7 +26,7 @@ import javafx.collections.ObservableList;
  * Luokka, jonka avulla ohjelma ylläpitää tilaa. Ohjelmassa voi samanaikaisesti olla valittuna vain yksi käyttäjä,
  * yksi käyttäjälle kuuluva projekti sekä yksi projektiin kuuluva merkintä. Luokka sisältää metodit valitun käyttäjän, projektin
  * sekä merkinnän asettamiselle ja hakemiselle. Luokasta luodaan vain yksi instanssi ohjelman
- * käynnistyksen yhteydessä. Tällä hetkellä toimii ainoana rajapintana ohjelman käyttöliittymän sekä mallinnettavan datan välillä.
+ * käynnistyksen yhteydessä. Toimii ainoana tiedonkulkuväylänä ohjelman kontrolleriluokkien, käyttöliittymän sekä mallinnettavan datan välillä.
  */
 public class ModelAccess {
     
@@ -36,55 +36,50 @@ public class ModelAccess {
 
     private final ListProperty<User> allUsers = new SimpleListProperty<User>();
     private final ObjectProperty<User> selectedUser = new SimpleObjectProperty<User>();
+    
     private final ListProperty<Project> selectedUserProjects = new SimpleListProperty<Project>();
     private final ObjectProperty<Project> selectedProject = new SimpleObjectProperty<Project>();
+    
     private final ListProperty<Entry> selectedProjectEntries = new SimpleListProperty<Entry>();
     private final ObjectProperty<Entry> selectedEntry = new SimpleObjectProperty<Entry>();
     private final ObjectProperty<Entry> editedEntry = new SimpleObjectProperty<Entry>();
-    
-
-//    private Entry currentlyEditedEntry = new Entry();
-    
-//    public Entry getCurrentlyEditedEntry() {
-//        return currentlyEditedEntry;
-//    }
-//
-//    public void setCurrentlyEditedEntry(Entry entry) {
-//        this.currentlyEditedEntry = entry;
-//    }
-//    
-//    public void resetCurrentlyEditedEntry() {
-//        this.currentlyEditedEntry = new Entry();
-//    }
-    
+   
     
 
     /**
-     * Olion luomisen yhteydessä hakee tiedot käyttäjistä "tietokannasta". Myöhempi toteutustapa vielä auki.
-     * Luo myös ajastimen.
+     * ModelAccessin oletuskonstruktori. Luo Data Access -oliot ja lataa kaikkien käyttäjien tiedot tietokannasta.
+     * Asettaa tapahtumankäsittelijät reagoimaan käyttäjän ja projektin vaihtamiselle. Käyttäjän vaihtaminen lataa
+     * automaattisesti muistiin kaikki valitulle käyttäjälle kuuluvat projektit. Projektin vaihtaminen lataa
+     * automaattisesti muistiin kaikki valittuun projektiin kuuluvat mnerkinnät.
      */
     public ModelAccess() {
         userDAO = new UserDAO();
         projectDAO = new ProjectDAO();
         entryDAO = new EntryDAO();
         
+        loadUsers();
+        
         System.out.println("modelAccess luotu!");
         
         
         // Pro
         ChangeListener<Project> projectChangeListener = (observable, oldProject, newProject) -> {
-            System.out.println("Project changed");
-            List<Entry> entries = loadEntries();
+            System.out.println("valittu projekti vaihtui");
+            ObservableList<Entry> entries = loadEntries();
+            this.selectedProjectEntries.set(entries);
             this.selectedEntry.set(entries.isEmpty() ? null : entries.get(0));
         };
+        
         
         selectedProject.addListener(projectChangeListener);
         
         ChangeListener<User> userChangeListener = (observable, oldUser, newUser) -> {
-            System.out.println("User changed");
+            System.out.println("valittu käyttäjä vaihtui");
             selectedProject.removeListener(projectChangeListener);
             
-            List<Project> projects = loadProjects();
+            ObservableList<Project> projects = loadProjects();
+            
+            this.selectedUserProjects.set(projects);
             
             selectedProject.addListener(projectChangeListener);
             
@@ -97,42 +92,66 @@ public class ModelAccess {
     
     /**
      * Luo uuden kättäjän. UserDAO tallentaa käyttäjän tietokantaan, ja palauttaa käyttäjän jonka id vastaa
-     * tietokantaan tallennettua id-numeroa. Lisää käyttäjän kaikki käyttäjät sisältävälle listalle.
+     * tietokantaan tallennettua id-numeroa. Lisää käyttäjän kaikki ohjelman käyttäjät sisältävälle listalle.
      * @param name Nimi, joka käyttäjälle halutaan antaa.
      */
     public void addUser(String name) {
         User newUser = this.userDAO.create(new User(name));
         allUsers.add(newUser);
+        selectedUser.set(newUser);
     }
     
+    
+    /**
+     * Luo uuden projektin. ProjectDAO tallentaa projektin tietokantaan, ja palauttaa projektin jonka id vastaa
+     * tietokantaan tallennettua id-numeroa. Lisää projektin kaikki valitun käyttäjän projektit sisältävälle listalle.
+     * @param name Nimi, joka projektille halutaan antaa.
+     */
     public void addProject(String name) {
         User _selectedUser = getSelectedUser();
         Project newProject = this.projectDAO.create(new Project(name, _selectedUser));
-        _selectedUser.addProject(newProject);
+        selectedUserProjects.add(newProject);
+        selectedProject.set(newProject);
     }
     
+    
+    /**
+     * Luo uuden aikamerkinnän oletusalustuksella (alku- sekä loppuaika asetettuna nykyhetkeen ja id: -1).
+     * @return Palauttaa luodun merkinnän.
+     */
     public Entry newEntry() {
         Project _selectedProject = getSelectedProject();
         Entry newEntry = new Entry(_selectedProject);
         return newEntry;
     }
     
-    // TODO mieti tarvitseeko?
-    public void editEntry(Entry entry) {
-        this.editedEntry.set(entry);
-    }
-
     
-    public void commitEntry(Entry entry) {
+    /**
+     * Tallentaa muokattavaksi merkityn merkinnän tietokantaan. Mikäli kyseessä on uusi merkintä, luo
+     * uuden merkinnän ja lisää sen valitun projektin listalle. Mikälo kyseessä
+     */
+    public void commitEditedEntry() {
         Entry edited = editedEntry.get();
         Project _selectedProject = edited.getOwner();
+        if (!getSelectedProject().equals(_selectedProject)) {
+            System.out.println("Muokattava projekti ei vastaa valittua projektia");
+            return;
+        }
         if (edited.getId() == -1) {
-            Entry newEntry = this.entryDAO.create(edited);  
-            _selectedProject.addEntry(newEntry);
+            Entry newEntry = this.entryDAO.create(edited);
+            selectedProjectEntries.add(newEntry);
+            System.out.println("hip");
             return;
         }
         Entry newEntry = this.entryDAO.update(edited);
-        _selectedProject.updateEntry(newEntry);
+        int i = findIndexById(newEntry, selectedProjectEntries.get());
+        if (i == -1) {
+            System.out.println("merkintää ei löydy");
+            return;
+        }
+        selectedProjectEntries.set(i, newEntry);
+        selectedEntry.set(newEntry);
+        System.out.println("hep");
     }
 
     
@@ -153,7 +172,7 @@ public class ModelAccess {
     public ObservableList<Project> loadProjects() {
         User _selectedUser = getSelectedUser();
         ObservableList<Project> projects = FXCollections.observableArrayList(this.projectDAO.list(_selectedUser));
-        _selectedUser.setProjects(projects);
+        selectedUserProjects.set(projects);
         return projects;
     }
     
@@ -164,7 +183,7 @@ public class ModelAccess {
     public ObservableList<Entry> loadEntries() {
         Project _selectedProject = getSelectedProject();
         ObservableList<Entry> entries = FXCollections.observableArrayList(this.entryDAO.list(_selectedProject));
-        _selectedProject.setEntries(entries);
+        selectedProjectEntries.set(entries);
         return entries;
     }
     
@@ -193,6 +212,33 @@ public class ModelAccess {
     public Entry getSelectedEntry() {
         return selectedEntry.get();
     }
+    
+    /**
+     * Asettaa parametrinaan saamansa merkinnän valituksi
+     * @param entry valittu merkintä
+     */
+    public void setSelectedEntry(Entry entry) {
+        this.selectedEntry.set(entry);
+    }
+    
+  /**
+  * Asettaa parametrinaan saamansa merkinnän valituksi muokattavaksi
+  * @param entry valittu merkintä
+  */
+    public void setEditedEntry(Entry entry) {
+        this.editedEntry.set(entry);
+    }
+    
+    private int findIndexById(DataObject o, List<? extends DataObject> list) {
+        ListIterator<? extends DataObject> iterator = list.listIterator();
+        
+        while (iterator.hasNext()) {
+            int index = iterator.nextIndex();
+            if (iterator.next().getId() == o.getId()) return index;
+        }
+        
+        return -1;
+    }
 
     
 //    /**
@@ -211,14 +257,7 @@ public class ModelAccess {
 //        this.selectedUser.set(selectedUser);
 //    }
 //
-//    /**
-//     * Asettaa parametrinaan saamansa merkinnän valituksi
-//     * @param selectedEntry valittu merkintä
-//     */
-//    public void setSelectedEntry(Entry selectedEntry) {
-//        this.selectedEntry.set(selectedEntry);
-//    }
-    
+
     public ObjectProperty<User> selectedUserProperty() {
         return this.selectedUser;
     }
@@ -233,6 +272,18 @@ public class ModelAccess {
     
     public ObjectProperty<Entry> editedEntryProperty() {
         return this.editedEntry;
+    }
+    
+    public ListProperty<User> allUsersProperty() {
+        return this.allUsers;
+    }
+    
+    public ListProperty<Project> selectedUserProjectsProperty() {
+        return this.selectedUserProjects;
+    }
+    
+    public ListProperty<Entry> selectedProjectEntriesProperty() {
+        return this.selectedProjectEntries;
     }
 
 

@@ -9,7 +9,7 @@ import fxTyoaika.SampleData;
 import fxTyoaika.controller.AbstractController;
 import fxTyoaika.controller.ModelAccess;
 import fxTyoaika.controller.ViewFactory;
-import fxTyoaika.controller.main.WindowController;
+import fxTyoaika.controller.WindowController;
 import fxTyoaika.model.Project;
 import fxTyoaika.model.User;
 import javafx.beans.binding.Bindings;
@@ -78,42 +78,20 @@ public class StartController extends AbstractController {
         users = modelAccess.loadUsers();
 
         // Haetaan ohjelmaan tallennetut käyttäjät ja lisätään valikkoon
-        userChoiceBox.setItems(users);
-
+        userChoiceBox.setItems(modelAccess.allUsersProperty());
+        
         // Luovutetaan kontrolleriluokalle valitun käyttäjän hallinta
-        modelAccess.selectedUserProperty().bind(userChoiceBox.valueProperty());
+        userChoiceBox.valueProperty().bindBidirectional(modelAccess.selectedUserProperty());
+        
+        userChoiceBox.getSelectionModel().select(0);
 
 
-        // Luodaan käsittelijä, joka vaihtaa projektilistan sisällön vastaamaan
-        // valittua käyttäjää
-        modelAccess.selectedUserProperty()
-        .addListener((prop, old, selected) -> {
-            if (old != null) {
-                old.setProjects(null);
-            }
-            
-            ObservableList<Project> projects = modelAccess.loadProjects();
-            
-            projectChoiceBox.setItems(projects);
-            
-            
-            // TODO tätä pitää miettiä? kumpi vaihtaa valinnan, kontrolleri vai modelaccess
-            if (!projectChoiceBox.getItems().isEmpty()) {
-                projectChoiceBox.getSelectionModel().select(0);
-            }
-        });
         
-        
-        if (!userChoiceBox.getItems().isEmpty()) {
-            userChoiceBox.getSelectionModel().select(0);
-        }
-        
+        projectChoiceBox.setItems(modelAccess.selectedUserProjectsProperty());
 
-        modelAccess.selectedProjectProperty()
-                .bind(projectChoiceBox.valueProperty());
+        projectChoiceBox.valueProperty().bindBidirectional(modelAccess.selectedProjectProperty());
         
         okButton.disableProperty().bind(Bindings.isNull(projectChoiceBox.valueProperty()));
-
     }
 
 

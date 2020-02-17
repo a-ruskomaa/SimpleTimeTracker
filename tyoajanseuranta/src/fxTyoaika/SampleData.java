@@ -121,7 +121,7 @@ public class SampleData {
                 Entries.parseDateTimeFromString("12.06.2019 14:12:05")));
         entries.add(new Entry(IdGenerator.getNewEntryId(), janne_alg1,
                 Entries.parseDateTimeFromString("12.06.2019 16:14:45"),
-                Entries.parseDateTimeFromString("16.06.2019 22:25:15")));
+                Entries.parseDateTimeFromString("12.06.2019 22:25:15")));
         entries.add(new Entry(IdGenerator.getNewEntryId(), janne_alg1,
                 Entries.parseDateTimeFromString("14.06.2019 21:25:52"),
                 Entries.parseDateTimeFromString("14.06.2019 23:32:49")));
@@ -166,18 +166,18 @@ public class SampleData {
     }
 
 
-    public static List<Entry> getEntries() {
-        return entries;
-    }
-
-
-    public static List<User> getUsers() {
-        return users;
-    }
-
-
-    public static List<Project> getProjects() {
-        return projects;
-    }
+//    public static List<Entry> getEntries() {
+//        return entries;
+//    }
+//
+//
+//    public static List<User> getUsers() {
+//        return users;
+//    }
+//
+//
+//    public static List<Project> getProjects() {
+//        return projects;
+//    }
 
 }

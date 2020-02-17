@@ -5,11 +5,13 @@ import java.util.ArrayList;
 
 import fxTyoaika.controller.AbstractController;
 import fxTyoaika.controller.ModelAccess;
+import fxTyoaika.controller.Timer;
 import fxTyoaika.controller.ViewFactory;
 import fxTyoaika.model.Entry;
 import fxTyoaika.model.Project;
-import fxTyoaika.model.Timer;
 import fxTyoaika.model.User;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -32,7 +34,7 @@ public class MainController extends AbstractController  {
     private Timer timer;
     private User user;
     private ObservableList<Project> projects;
-    private ObservableList<Entry> entries;
+    private ListProperty<Entry> selectedProjectEntries = new SimpleListProperty<Entry>();
     
     @FXML
     private Tab timerTab;
@@ -70,18 +72,12 @@ public class MainController extends AbstractController  {
      * Alustaa pääikkunan näkymän. Asettaa valitun projektin merkinnät näkyville.
      */
     public void initialize() {
-
-        this.projects = modelAccess.loadProjects();
         
-        Project selectedProject = modelAccess.getSelectedProject();
+        projectChoiceBox.setItems(modelAccess.selectedUserProjectsProperty());
         
-        projectChoiceBox.setItems(projects);
+        projectChoiceBox.valueProperty().bindBidirectional(modelAccess.selectedProjectProperty());
         
-        projectChoiceBox.getSelectionModel().select(selectedProject);
-        
-        modelAccess.selectedProjectProperty().bind(projectChoiceBox.getSelectionModel().selectedItemProperty());
-        
-        this.entries = modelAccess.loadEntries();
+        this.selectedProjectEntries.set(modelAccess.selectedProjectEntriesProperty());
 
         timerTab.setContent(ViewFactory.createTimerTab(this));
         projectTab.setContent(ViewFactory.createProjecTab(this));
@@ -104,38 +100,14 @@ public class MainController extends AbstractController  {
             }
         });
         
-       
-        // Reagoi jos listaan tehdään muutoksia
-//        ListChangeListener<Entry> entryListChangeListener = new WeakListChangeListener<Entry>(c ->  updateTotalTime());
-        
-        
-//        ChangeListener<Number> durationChangeListener = new WeakChangeListener<Number>((obs, old, selected) -> updateTotalTime());
-        
-//        ChangeListener<Entry> entryChangeListener = new WeakChangeListener<Entry>((obs, old, selected) -> {
-//            old.durationProperty().removeListener(durationChangeListener);
-//            selected.durationProperty().addListener(durationChangeListener);
-//        });
         
         // Tehdään jos valittu projekti vaihtuu
-        modelAccess.selectedProjectProperty().addListener((obs, old, selected) -> {
+        modelAccess.selectedProjectProperty().addListener((e) -> {
             updateTotalTime();
-            
-            
-
-            
-//            modelAccess.selectedEntryProperty().addListener(entryChangeListener);
-            
-            
-//            old.getEntries().removeListener(entryListChangeListener);
-//            // Jos valittuun projektiiin lisätään merkintöjä
-//            selected.getEntries().addListener(entryListChangeListener);
         });
-              
-        
-//        modelAccess.getSelectedEntry().durationProperty().add
+
         
         // TODO lisää tapahtumankäsittelijä joka päivittää ajan jos jotain merkintää muokataan!
-        // kannattanee tehdä luomalla projektiin totalDurationProperty ja bindaamalla se
         
         updateTotalTime();
         
@@ -167,13 +139,12 @@ public class MainController extends AbstractController  {
 
     }
     
+    // TODO nyt menee epäsynkassa, korjaa!
     private void updateTotalTime() {
 
-        ArrayList<Entry> entries = (ArrayList<Entry>) modelAccess.getSelectedProject().getEntries();
-        
         long totalTime = 0L;
         
-        for (Entry entry : entries) {
+        for (Entry entry : this.selectedProjectEntries.get()) {
             totalTime += entry.getDuration();
         }
         

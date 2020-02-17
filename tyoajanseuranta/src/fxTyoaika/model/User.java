@@ -1,19 +1,9 @@
 package fxTyoaika.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
+ * Luokka käyttäjän tietojen tallentamiseksi. Tarjoaa metodit nimen
+ * kysymiselle ja muuttamiselle, sekä id:n kysymiselle.
  * @author aleks
  * @version 28 Jan 2020
  *
@@ -22,7 +12,6 @@ public class User implements ParentObject {
     
     private final int id;
     private String name;
-    private List<Project> projects;
     
     
     /**
@@ -31,31 +20,20 @@ public class User implements ParentObject {
      * @param name Käyttäjän nimi
      */
     public User(String name) {
-        this(-1, name, new ArrayList<Project>());
+        this(-1, name);
     }
     
     /**
-     * Luo uuden käyttäjän, jolle ei ole vielä lisätty projekteja. DAO palauttaa tässä
+     * Luo uuden käyttäjän annetulla id:llä. DAO palauttaa tässä
      * muodossa olevan olion.
      * @param id Käyttäjän yksilöllinen id-numero
      * @param name Käyttäjän nimi
      */
     public User(int id, String name) {
-        this(id, name, new ArrayList<Project>());
-    }
-
-    /**
-     * Luo uuden käyttäjän, jolla on valmiiksi lisättynä projektit. DAO palauttaa tässä
-     * muodossa olevan olion kun on luotu uusi
-     * @param id Käyttäjän yksilöllinen id-numero
-     * @param name Käyttäjän nimi
-     * @param projects käyttäjälle liitettävät projektit
-     */
-    public User(int id, String name, List<Project> projects) {
         this.id = id;
         this.name = name;
-        this.projects = projects;
     }
+
 
     @Override
     public int getId() {
@@ -67,28 +45,12 @@ public class User implements ParentObject {
         return this.name;
     }
 
+    /**
+     * Asettaa käyttäjälle annetun nimen
+     * @param name Nimi joka asetetaan
+     */
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<Project> getProjects() {
-        return this.projects;
-    }
-    
-    public void setProjects(List<Project> projects) {
-        this.projects = projects;
-    }
-
-    public void addProject(Project project) {
-        this.projects.add(project);
-    }
-    
-    public void updateProject(Project project) {
-        for (int i = 0; i < this.projects.size(); i++) {
-            if (this.projects.get(i).getId() == project.getId()) {
-                this.projects.set(i, project);
-            }
-        }
     }
     
     @Override

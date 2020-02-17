@@ -1,10 +1,10 @@
-package fxTyoaika.model;
+package fxTyoaika.controller;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-import fxTyoaika.controller.ModelAccess;
+import fxTyoaika.model.Entry;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;

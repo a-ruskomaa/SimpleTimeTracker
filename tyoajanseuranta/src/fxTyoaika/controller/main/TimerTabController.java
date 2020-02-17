@@ -2,12 +2,16 @@ package fxTyoaika.controller.main;
 
 import java.time.format.DateTimeFormatter;
 
+import javax.swing.WindowConstants;
+
 import fxTyoaika.controller.AbstractController;
 import fxTyoaika.controller.ModelAccess;
+import fxTyoaika.controller.Timer;
 import fxTyoaika.controller.ViewFactory;
+import fxTyoaika.controller.WindowController;
 import fxTyoaika.model.Entries;
 import fxTyoaika.model.Entry;
-import fxTyoaika.model.Timer;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -48,20 +52,28 @@ public class TimerTabController extends AbstractController {
         timer = parentController.getTimer();
     }
     
+    public void initialize() {
+        //timerToggleButton.disableProperty().bind(Bindings.notEqual("", timerDurationField.textProperty()));
+    }
+    
 
     @FXML
     void timerHandleReset(ActionEvent event) {
-        if (timer.isRunning()) {
-            timer.stop();
-            timer.reset();
-        }
+        reset();
     }
 
     @FXML
     void timerHandleSave(ActionEvent event) {
         Entry entry = timer.getEntry();
-        modelAccess.editEntry(entry);
-        ViewFactory.createEditEntryDialog();
+        modelAccess.setEditedEntry(entry);
+        WindowController wc = ViewFactory.createEditEntryDialog();
+        
+        wc.getStage().setOnCloseRequest((e) -> {
+            
+            
+            modelAccess.setEditedEntry(null);
+            reset();
+        });
     }
 
     @FXML
@@ -81,6 +93,20 @@ public class TimerTabController extends AbstractController {
             timerEndField.setText(timer.getEntry().getEndDateTime().format(f));
             timerSaveButton.setDisable(false);
             timerResetButton.setDisable(false);
+            timerToggleButton.setDisable(true);
         }
+    }
+    
+    private void reset() {
+        if (timer.isRunning()) {
+            timer.stop();
+        }
+        timer.reset();
+        timerEndField.clear();
+        timerStartField.clear();
+        timerDurationField.setText("0 min");
+        timerToggleButton.setDisable(false);
+        timerSaveButton.setDisable(true);
+        timerResetButton.setDisable(true);
     }
 }
