@@ -11,7 +11,7 @@ import roarusko.simpleTimeTracker.model.domainModel.DataObject;
 import roarusko.simpleTimeTracker.model.domainModel.Entry;
 import roarusko.simpleTimeTracker.model.domainModel.Project;
 import roarusko.simpleTimeTracker.model.domainModel.User;
-import roarusko.simpleTimeTracker.model.utility.Timer;
+import roarusko.simpleTimeTracker.model.utility.EntryTimer;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -46,7 +46,7 @@ public class ModelAccess {
     private final ObjectProperty<Entry> selectedEntry = new SimpleObjectProperty<Entry>();
     private final ObjectProperty<Entry> editedEntry = new SimpleObjectProperty<Entry>();
 
-    private Timer timer;
+    private EntryTimer timer;
 
     /**
      * ModelAccessin oletuskonstruktori. Luo Data Access -oliot ja lataa kaikkien käyttäjien tiedot tietokannasta.
@@ -85,7 +85,7 @@ public class ModelAccess {
         };
         selectedUser.addListener(userChangeListener);
         
-        this.timer = new Timer(this);
+        this.timer = new EntryTimer(this);
         
         loadUsers();
         
@@ -298,7 +298,7 @@ public class ModelAccess {
      * Ajastimen getteri
      * @return palauttaa viitteen ohjelman ajastimeen
      */
-    public Timer getTimer() {
+    public EntryTimer getTimer() {
         return this.timer;
     }
 

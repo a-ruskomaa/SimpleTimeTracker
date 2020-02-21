@@ -8,7 +8,7 @@ import roarusko.simpleTimeTracker.controller.WindowController;
 import roarusko.simpleTimeTracker.model.ModelAccess;
 import roarusko.simpleTimeTracker.model.domainModel.Entry;
 import roarusko.simpleTimeTracker.model.utility.Entries;
-import roarusko.simpleTimeTracker.model.utility.Timer;
+import roarusko.simpleTimeTracker.model.utility.EntryTimer;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 
 public class TimerTabController extends AbstractController {
     
-    private Timer timer;
+    private EntryTimer timer;
     
     private MainController parentController;
     
@@ -40,18 +40,33 @@ public class TimerTabController extends AbstractController {
     @FXML
     private Button timerResetButton;
 //
+    /**
+     * Luo uuden ajastinvälilehden kontrollerin
+     * @param modelAccess modelAccess
+     * @param stage stage
+     */
     public TimerTabController(ModelAccess modelAccess, Stage stage) {
         super(modelAccess, stage);
     }
     
+    /**
+     * Luo uuden ajastinvälilehden kontrollerin
+     * @param modelAccess modelAccess
+     * @param stage stage
+     * @param parentController parentController
+     */
     public TimerTabController(ModelAccess modelAccess, Stage stage, MainController parentController) {
         super(modelAccess, stage);
         this.parentController = parentController;
         timer = modelAccess.getTimer();
     }
     
+    /**
+     * 
+     */
     public void initialize() {
         //timerToggleButton.disableProperty().bind(Bindings.notEqual("", timerDurationField.textProperty()));
+        timerDurationField.textProperty().bind(timer.elapsedTimeProperty().asString());
     }
     
 
@@ -102,7 +117,6 @@ public class TimerTabController extends AbstractController {
         timer.reset();
         timerEndField.clear();
         timerStartField.clear();
-        timerDurationField.setText("0 min");
         timerToggleButton.setDisable(false);
         timerSaveButton.setDisable(true);
         timerResetButton.setDisable(true);

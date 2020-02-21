@@ -1,29 +1,14 @@
 package roarusko.simpleTimeTracker.controller.start;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
-
-import roarusko.simpleTimeTracker.SampleData;
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.controller.ViewFactory;
-import roarusko.simpleTimeTracker.controller.WindowController;
 import roarusko.simpleTimeTracker.model.ModelAccess;
 import roarusko.simpleTimeTracker.model.domainModel.Project;
 import roarusko.simpleTimeTracker.model.domainModel.User;
 import javafx.beans.binding.Bindings;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -33,8 +18,6 @@ import javafx.stage.Stage;
  * Ohjelman ensimmäinen näkymä, jossa valitaan käyttäjä ja projekti.
  */
 public class StartController extends AbstractController {
-
-    private ObservableList<User> users;
 
     @FXML
     private Button newUserButton;

@@ -9,7 +9,14 @@ import javafx.stage.Stage;
  * Muiden kontrollerien yläluokka. Sisältää viitteen ModelAccessiin. ViewFactory kelpuuttaa ikkunoiden luomiseen AbstractControllerin.
  */
 public class AbstractController implements WindowController {
+    /**
+     * Ohjelman käsittelemää dataa mallintavien luokkien "access point".
+     */
     protected final ModelAccess modelAccess;
+    
+    /**
+     * Stage johon kontrolleriluokka on liitetty. Hyödynnetään ikkunoiden sulkemisessa ja tapahtumien luomisessa.
+     */
     protected final Stage stage;
     
     /**

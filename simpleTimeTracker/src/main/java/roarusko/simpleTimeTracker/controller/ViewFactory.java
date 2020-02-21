@@ -168,6 +168,7 @@ public class ViewFactory {
      * @param path polku FXML-tiedostoon
      * @return palauttaa scene-olion
      */
+    @SuppressWarnings("unused")
     private static Scene createView(WindowController controller, String path) {
         Parent root = createParentNode(controller, path);
         Scene scene = new Scene(root);

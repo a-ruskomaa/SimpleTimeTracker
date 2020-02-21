@@ -6,7 +6,6 @@ import roarusko.simpleTimeTracker.model.ModelAccess;
 import roarusko.simpleTimeTracker.model.domainModel.Entry;
 import roarusko.simpleTimeTracker.model.domainModel.Project;
 import roarusko.simpleTimeTracker.model.domainModel.User;
-import roarusko.simpleTimeTracker.model.utility.Timer;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ListProperty;

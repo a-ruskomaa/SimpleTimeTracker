@@ -36,8 +36,10 @@ public class TimeField extends TextField {
             // }
             // return change;
 
-            if (!change.getText().matches("([0-9]*|:)"))
+            //hyväksytään vain numeeriset merkit tai kaksoispiste
+            if (!change.getText().matches("([0-9]*|:)")) {
                 return null;
+            }
             return change;
 
         };
@@ -54,6 +56,7 @@ public class TimeField extends TextField {
     }
 
 
+    @SuppressWarnings("unchecked")
     public ObjectProperty<LocalTime> valueProperty() {
         return (ObjectProperty<LocalTime>) this.getTextFormatter()
                 .valueProperty();
