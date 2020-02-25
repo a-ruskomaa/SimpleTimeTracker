@@ -27,14 +27,14 @@ public class ViewFactory {
     private static final String FXML_MAINVIEW_LOCATION = "main/MainView.fxml";
     private static final String FXML_STARTVIEW_LOCATION = "start/StartView.fxml";
 
-    private static final String FXML_STARTVIEW_USERDIALOG_PATH = "start/NewUserDialogView.fxml";
-    private static final String FXML_STARTVIEW_PROJECTDIALOG_PATH = "start/NewProjectDialogView.fxml";
+    private static final String FXML_STARTVIEW_USERDIALOG_PATH = "start/NewUserDialog.fxml";
+    private static final String FXML_STARTVIEW_PROJECTDIALOG_PATH = "start/NewProjectDialog.fxml";
 
     private static final String FXML_MAINVIEW_EDIT_ENTRY_DIALOG_PATH = "main/EditEntryDialog.fxml";
     private static final String FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH = "main/DeleteEntryDialog.fxml";
     
-    private static final String FXML_MAINVIEW_TIMERTAB_PATH = "main/TimerTabView.fxml";
-    private static final String FXML_MAINVIEW_PROJECTTAB_PATH = "main/ProjectTabView.fxml";
+    private static final String FXML_MAINVIEW_TIMERTAB_PATH = "main/TimerTab.fxml";
+    private static final String FXML_MAINVIEW_PROJECTTAB_PATH = "main/ProjectTab.fxml";
 
     /*
      * Luodaan modelAccess, jonka avulla ylläpidetään ohjelman tilaa.
