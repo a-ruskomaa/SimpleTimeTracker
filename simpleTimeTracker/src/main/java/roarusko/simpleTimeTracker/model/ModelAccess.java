@@ -6,6 +6,9 @@ import java.util.ListIterator;
 import roarusko.simpleTimeTracker.model.data.EntryDAO;
 import roarusko.simpleTimeTracker.model.data.ProjectDAO;
 import roarusko.simpleTimeTracker.model.data.UserDAO;
+import roarusko.simpleTimeTracker.model.data.file.EntryDAOFile;
+import roarusko.simpleTimeTracker.model.data.file.ProjectDAOFile;
+import roarusko.simpleTimeTracker.model.data.file.UserDAOFile;
 import roarusko.simpleTimeTracker.model.data.mock.MockEntryDAO;
 import roarusko.simpleTimeTracker.model.data.mock.MockProjectDAO;
 import roarusko.simpleTimeTracker.model.data.mock.MockUserDAO;
@@ -100,7 +103,7 @@ public class ModelAccess {
      * ModelAccessin oletuskonstruktori. 
      */
     public ModelAccess() {
-        this(new MockUserDAO(), new MockProjectDAO(), new MockEntryDAO());
+        this(new UserDAOFile(), new ProjectDAOFile(), new EntryDAOFile());
     };
 
 
@@ -180,7 +183,7 @@ public class ModelAccess {
     public void addProject(String name) {
         User _selectedUser = getSelectedUser();
         Project newProject = this.projectDAO
-                .create(new Project(name, _selectedUser));
+                .create(new Project(_selectedUser.getId(), name));
         userProjects.add(newProject);
         selectedProject.set(newProject);
     }
@@ -192,7 +195,7 @@ public class ModelAccess {
      */
     public Entry newEntry() {
         Project _selectedProject = getSelectedProject();
-        Entry newEntry = new Entry(_selectedProject);
+        Entry newEntry = new Entry(_selectedProject.getId());
         return newEntry;
     }
 
@@ -206,9 +209,9 @@ public class ModelAccess {
      */
     public boolean commitEntry() {
         Entry edited = editedEntry.get();
-        Project _selectedProject = edited.getOwner();
+        int projectId = edited.getOwnerId();
 
-        if (!getSelectedProject().equals(_selectedProject)) {
+        if (getSelectedProject().getId() != projectId) {
             System.out.println(
                     "Muokattava projekti ei vastaa valittua projektia");
             return false;
@@ -244,17 +247,17 @@ public class ModelAccess {
      * @return Palauttaa false jos muokkaus epäonnistuu
      */
     private boolean saveExistingEntry(Entry entry) {
-        Entry newEntry = this.entryDAO.update(entry);
+        this.entryDAO.update(entry);
 
-        int i = findIndexById(newEntry, projectEntries.get());
+        int i = findIndexById(entry, projectEntries.get());
 
         if (i == -1) {
             System.out.println("merkintää ei löydy");
             return false;
         }
 
-        projectEntries.set(i, newEntry);
-        selectedEntry.set(newEntry);
+        projectEntries.set(i, entry);
+        selectedEntry.set(entry);
         return true;
     }
 

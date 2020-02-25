@@ -138,7 +138,7 @@ public class MainController extends AbstractController  {
 
     private void updateTotalTime() {
         
-        System.out.println("päivitetään kokonaisaika projektiin: " + this.selectedProjectEntries.get().get(0).getOwner());
+        System.out.println("päivitetään kokonaisaika projektiin numero: " + this.selectedProjectEntries.get().get(0).getOwnerId());
 
         long totalTime = 0L;
         

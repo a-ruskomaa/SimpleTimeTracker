@@ -12,9 +12,9 @@ package roarusko.simpleTimeTracker.model.domain;
  */
 public class Project implements ParentObject, ChildObject {
 
-    private final int id;
+    private int projectId;
     private String name;
-    private User user;
+    private int userId;
 
     
     
@@ -22,22 +22,22 @@ public class Project implements ParentObject, ChildObject {
      * Luo annetulle käyttäjälle uuden projektin annetulla nimellä. Id:ksi asetetaan tilapäisesti -1.
      * Tämä olio korvataan DAO-luokassa vastaavansisältöisellä oliolla, jolla id-numero on aidosti yksilöivä.
      * @param name Projektin nimi
-     * @param user Käyttäjä, jolle projekti kuuluu
+     * @param userId Käyttäjä, jolle projekti kuuluu
      */
-    public Project(String name, User user) {
-        this(-1, name, user);
+    public Project(int userId, String name) {
+        this(-1, userId, name);
     }
 
     /**
      * Luo annetulle käyttäjälle uuden projektin annetulla nimellä sekä yksilöivällä id-tunnisteella.
      * @param id Yksilöivä id-numero
      * @param name Projektin nimi
-     * @param user Käyttäjä, jolle projekti kuuluu
+     * @param userId Käyttäjä, jolle projekti kuuluu
      */
-    public Project(int id, String name, User user) {
-        this.id = id;
+    public Project(int id, int userId, String name) {
+        this.projectId = id;
         this.name = name;
-        this.user = user;
+        this.userId = userId;
     }
 
 
@@ -47,7 +47,13 @@ public class Project implements ParentObject, ChildObject {
      */
     @Override
     public int getId() {
-        return this.id;
+        return this.projectId;
+    }
+    
+    
+    @Override
+    public void setId(int id) {
+        if (this.projectId == -1) this.projectId = id;
     }
 
 
@@ -65,8 +71,8 @@ public class Project implements ParentObject, ChildObject {
      * @return Palauttaa käyttäjän, jolle projekti kuuluu
      */
     @Override
-    public User getOwner() {
-        return this.user;
+    public int getOwnerId() {
+        return this.userId;
     }
 
 

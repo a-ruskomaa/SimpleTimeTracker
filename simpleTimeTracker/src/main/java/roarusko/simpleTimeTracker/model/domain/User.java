@@ -10,7 +10,7 @@ package roarusko.simpleTimeTracker.model.domain;
  */
 public class User implements ParentObject {
     
-    private final int id;
+    private int id;
     private String name;
     
     
@@ -33,6 +33,17 @@ public class User implements ParentObject {
         this.id = id;
         this.name = name;
     }
+    
+    /**
+     * Luo uuden käyttäjän annetulla id:llä. Muut tiedot kopioidaan parametrina
+     * annetusta oliosta.
+     * @param id Käyttäjän yksilöllinen id-numero
+     * @param user Käyttäjä, jonka tiedot halutaan kopioida tähän olioon.
+     */
+    public User(int id, User user) {
+        this.id = id;
+        this.name = user.getName();
+    }
 
 
     /**
@@ -42,6 +53,12 @@ public class User implements ParentObject {
     @Override
     public int getId() {
         return this.id;
+    }
+    
+    
+    @Override
+    public void setId(int id) {
+        if (this.id == -1) this.id = id;
     }
     
     /**

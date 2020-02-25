@@ -4,8 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.Temporal;
-import java.util.Formatter;
 
 /**
  * Luokka sisältää staattisia apumetodeita merkintöjen, kellonaikojen ja päivämäärien käsittelyyn.
@@ -38,12 +36,6 @@ public class Entries {
     public static  DateTimeFormatter getTimeFormatter() {
         return timeFormatter;
     }
-    
-//    public static Entry parseEntryFromStrings(String start, String end) {
-//        LocalDateTime startTime = LocalDateTime.parse(start, dateTimeFormatter);
-//        LocalDateTime endTime = LocalDateTime.parse(end, dateTimeFormatter);
-//        return new Entry(-1, startTime, endTime);
-//    }
     
     public static String getDateAsString(LocalDateTime t) {
         return t.toLocalDate().format(dateFormatter);

@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 import roarusko.simpleTimeTracker.controller.ViewFactory;
+import roarusko.simpleTimeTracker.model.data.mock.SampleData;
 
 /**
  * @author roarusko
@@ -22,6 +23,8 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         try {
             System.out.println("käynnistys");
+            
+//            SampleData.createFiles();
 
             ViewFactory.createStartView(primaryStage);
         } catch(Exception e) {

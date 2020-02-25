@@ -15,4 +15,11 @@ public interface DataObject {
  */
 public int getId();
 
+/**
+ * Asettaa alkiolle uuden yksilöivän tunnisteen. Toimii vain
+ * jos edellinen id on -1.
+ * @param id Uusi id
+ */
+public void setId(int id);
 }
+

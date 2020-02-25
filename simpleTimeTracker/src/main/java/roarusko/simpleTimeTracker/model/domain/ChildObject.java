@@ -13,5 +13,5 @@ public interface ChildObject extends DataObject {
      * Metodilla haetaan kyseisen olion "omistaja"
      * @return Palauttaa omistajan
      */
-    public DataObject getOwner();
+    public int getOwnerId();
 }

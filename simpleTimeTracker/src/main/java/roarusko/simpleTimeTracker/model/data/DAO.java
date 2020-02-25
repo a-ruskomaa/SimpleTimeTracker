@@ -36,9 +36,9 @@ public interface DAO <K, T> {
     /**
      * Päivittää annettua oliota vastaavan alkion tiedot pysyvään muistiin
      * @param object Olio, jonka sisältämät tiedot halutaan päivittää pysyvään muistiin
-     * @return Palauttaa päivitetyn olion
+     * @return Palauttaa false mikäli päivitysoperaatio epäonnistui
      */
-    public T update(T object);
+    public boolean update(T object);
     
     
     /**
