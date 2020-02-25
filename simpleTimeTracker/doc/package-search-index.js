@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"m":"roarusko.simpleTimeTracker","l":"roarusko.simpleTimeTracker.controller"},{"m":"roarusko.simpleTimeTracker","l":"roarusko.simpleTimeTracker.controller.main"},{"m":"roarusko.simpleTimeTracker","l":"roarusko.simpleTimeTracker.controller.start"}]

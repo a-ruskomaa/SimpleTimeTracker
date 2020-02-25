@@ -8,8 +8,8 @@ import java.time.format.DateTimeFormatter;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.model.ModelAccess;
-import roarusko.simpleTimeTracker.model.domainModel.Entry;
-import roarusko.simpleTimeTracker.model.domainModel.Project;
+import roarusko.simpleTimeTracker.model.domain.Entry;
+import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
@@ -35,6 +35,8 @@ import javafx.util.converter.LocalTimeStringConverter;
  * @version 8 Feb 2020
  *
  */
+
+// TODO tarkistus onko ajastin käynnissä tai merkintä olemassa
 public class EditEntryDialogController extends AbstractController {
 
     private Entry editedEntry;
@@ -148,7 +150,7 @@ public class EditEntryDialogController extends AbstractController {
         
         modelAccess.setEditedEntry(editedEntry);
         
-        modelAccess.commitEditedEntry();
+        modelAccess.commitEntry();
 
         exitStage(event);
     }

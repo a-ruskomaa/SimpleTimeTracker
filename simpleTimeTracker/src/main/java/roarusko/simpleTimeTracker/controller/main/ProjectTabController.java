@@ -10,8 +10,8 @@ import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.controller.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
 import roarusko.simpleTimeTracker.model.ModelAccess;
-import roarusko.simpleTimeTracker.model.domainModel.Entry;
-import roarusko.simpleTimeTracker.model.domainModel.Project;
+import roarusko.simpleTimeTracker.model.domain.Entry;
+import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.LongProperty;
@@ -100,7 +100,7 @@ public class ProjectTabController extends AbstractController {
     public void initialize() {
 
         // haetaan valitun projektin merkinnät listalle
-        projectEntryList.setItems(modelAccess.selectedProjectEntriesProperty());
+        projectEntryList.setItems(modelAccess.projectEntriesProperty());
 
 
         // luodaan kuuntelija reagoimaan valitun merkinnän vaihtumiseen

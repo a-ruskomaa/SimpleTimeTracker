@@ -3,9 +3,9 @@ package roarusko.simpleTimeTracker.controller.main;
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.controller.ViewFactory;
 import roarusko.simpleTimeTracker.model.ModelAccess;
-import roarusko.simpleTimeTracker.model.domainModel.Entry;
-import roarusko.simpleTimeTracker.model.domainModel.Project;
-import roarusko.simpleTimeTracker.model.domainModel.User;
+import roarusko.simpleTimeTracker.model.domain.Entry;
+import roarusko.simpleTimeTracker.model.domain.Project;
+import roarusko.simpleTimeTracker.model.domain.User;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ListProperty;
@@ -71,17 +71,17 @@ public class MainController extends AbstractController  {
          * Kun alasvetovalikosta vaihdetaan valittua projektia, päivittyy se myös modelAccessiin.
          * Sama toimisi myös päinvastaiseen suuntaan, mutta tätä ei toistaiseksi hyödynnetä.
          */
-        projectChoiceBox.setItems(modelAccess.selectedUserProjectsProperty());
+        projectChoiceBox.setItems(modelAccess.userProjectsProperty());
         
         projectChoiceBox.valueProperty().bindBidirectional(modelAccess.selectedProjectProperty());
         
         //Liitetään tämän luokan propertyyn
-        this.selectedProjectEntries.set(modelAccess.selectedProjectEntriesProperty());
+        this.selectedProjectEntries.set(modelAccess.projectEntriesProperty());
 
         timerTab.setContent(ViewFactory.createTimerTab(this));
         projectTab.setContent(ViewFactory.createProjecTab(this));
         
-        modelAccess.selectedProjectEntriesProperty().addListener(new InvalidationListener() {
+        modelAccess.projectEntriesProperty().addListener(new InvalidationListener() {
             
             @Override
             public void invalidated(Observable observable) {

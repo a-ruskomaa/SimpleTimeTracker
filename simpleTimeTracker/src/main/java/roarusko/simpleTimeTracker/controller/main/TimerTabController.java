@@ -6,7 +6,7 @@ import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.controller.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
 import roarusko.simpleTimeTracker.model.ModelAccess;
-import roarusko.simpleTimeTracker.model.domainModel.Entry;
+import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 import roarusko.simpleTimeTracker.model.utility.EntryTimer;
 import javafx.beans.binding.Bindings;
@@ -62,7 +62,7 @@ public class TimerTabController extends AbstractController {
     }
     
     /**
-     * 
+     * TODO tähän bindaukset nappuloille
      */
     public void initialize() {
         //timerToggleButton.disableProperty().bind(Bindings.notEqual("", timerDurationField.textProperty()));

@@ -1,0 +1,9 @@
+module:roarusko.simpleTimeTracker
+roarusko.simpleTimeTracker
+roarusko.simpleTimeTracker.controller
+roarusko.simpleTimeTracker.controller.main
+roarusko.simpleTimeTracker.controller.start
+roarusko.simpleTimeTracker.model
+roarusko.simpleTimeTracker.model.dataAccess
+roarusko.simpleTimeTracker.model.domainModel
+roarusko.simpleTimeTracker.model.utility

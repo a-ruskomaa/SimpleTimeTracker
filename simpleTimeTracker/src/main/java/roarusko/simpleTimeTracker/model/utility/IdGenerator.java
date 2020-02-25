@@ -1,9 +1,12 @@
 package roarusko.simpleTimeTracker.model.utility;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import roarusko.simpleTimeTracker.model.domain.DataObject;
+
 /**
- * Avustava luokka. Sisältää staattiset AtomicInteger-oliot, joilla annetaan ulkoiseen tiedostoon
+ * Avustava luokka. Sisältää AtomicInteger-olion, joilla annetaan ulkoiseen tiedostoon
  * talletettaville tietueille yksiöivät tunnisteet juoksevalla numeroinnilla.
  * 
  * TODO lähtönumeron alustaminen automaattiseksi + konstruktoriin?
@@ -12,68 +15,70 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  */
 public class IdGenerator {
-    private static final AtomicInteger userIdGenerator = new AtomicInteger(1000);
-    private static final AtomicInteger projectIdGenerator = new AtomicInteger(1000);
-    private static final AtomicInteger entryIdGenerator = new AtomicInteger(1000);
+    private final AtomicInteger generator;
     
-    private IdGenerator() {
+    
+    
+    /**
+     * Luo oletusarvoisen IdGeneratorin, jonka aloitusarvo on 1000.
+     */
+    public IdGenerator() {
+        generator = new AtomicInteger(1000);
     }
     
     
     /**
-     * Palauttaa seuraavan vapaana olevan id-tunnisteen uudelle käyttäjälle. Ennen ensimmäistä kutsua on huolehdittava siitä,
-     * että ensimmäinen tarjottava luku on suurempi kuin suurin tiedostoon tallennettu luku
-     * @return Palauttaa seuraavan vapaan id-tunnisteen
+     * Luo IdGeneratorin, jonka ensimmäiseksi antama id vastaa annettua arvoa
+     * @param value Ensimmäinen annettava id
      */
-    public static int getNewUserId() {
-        return userIdGenerator.getAndIncrement();
+    public IdGenerator(int value) {
+        generator = new AtomicInteger(value);
     }
     
     
     /**
-     * Palauttaa seuraavan vapaana olevan id-tunnisteen uudelle projektille. Ennen ensimmäistä kutsua on huolehdittava siitä,
-     * että ensimmäinen tarjottava luku on suurempi kuin suurin tiedostoon tallennettu luku
-     * @return Palauttaa seuraavan vapaan id-tunnisteen
+     * Luo IdGeneratorin, joka asettaa aloitusarvokseen yhtä suuremman id:n kuin annetun
+     * listan suurin id on
+     * @param list Lista jonka alkioiden suurin id etsitään
      */
-    public static int getNewProjectId() {
-        return projectIdGenerator.getAndIncrement();
+    public IdGenerator(List<? extends DataObject> list) {
+        generator = new AtomicInteger(findLargestExistingId(list) + 1);
     }
     
     
     /**
-     * Palauttaa seuraavan vapaana olevan id-tunnisteen uudelle merkinnälle. Ennen ensimmäistä kutsua on huolehdittava siitä,
+     * Palauttaa seuraavan vapaana olevan id-tunnisteen. Ennen ensimmäistä kutsua on huolehdittava siitä,
      * että ensimmäinen tarjottava luku on suurempi kuin suurin tiedostoon tallennettu luku
      * @return Palauttaa seuraavan vapaan id-tunnisteen
      */
-    public static int getNewEntryId() {
-        return entryIdGenerator.getAndIncrement();
+    public int getNewId() {
+        return generator.getAndIncrement();
     }
+    
     
     
     /**
      * Asettaa juoksevan numeroinnin lähtöarvon. Asetettavan arvon on oltava suurempi kuin suurin tämänhetkinen käytössä oleva numero.
      * @param newValue Uusi lähtöarvo
      */
-    public static void setUserIdStartValue(int newValue) {
-        userIdGenerator.set(newValue);
+    public void setIdStartValue(int newValue) {
+        generator.set(newValue);
     }
     
     
     /**
-     * Asettaa juoksevan numeroinnin lähtöarvon. Asetettavan arvon on oltava suurempi kuin suurin tämänhetkinen käytössä oleva numero.
-     * @param newValue Uusi lähtöarvo
+     * Etsii annetulta listalta suurimman käytössä olevan id-numeron
+     * @param list Lista jolta etsitään
+     * @return Palauttaa suurimman löydetyn id:n (tai 0 jos lista on tyhjä)
      */
-    public static void setProjectIdStartValue(int newValue) {
-        userIdGenerator.set(newValue);
-    }
-    
-    
-    /**
-     * Asettaa juoksevan numeroinnin lähtöarvon. Asetettavan arvon on oltava suurempi kuin suurin tämänhetkinen käytössä oleva numero.
-     * @param newValue Uusi lähtöarvo
-     */
-    public static void setEntryIdStartValue(int newValue) {
-        userIdGenerator.set(newValue);
+    private int findLargestExistingId(List<? extends DataObject> list) {
+        int largest = 0;
+        
+        for (DataObject object : list) {
+            if (object.getId() > largest) largest = object.getId();
+        }
+        
+        return largest;
     }
 
 }

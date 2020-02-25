@@ -1,8 +1,9 @@
 package roarusko.simpleTimeTracker.model.utility;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
-import roarusko.simpleTimeTracker.model.domainModel.User;
+import roarusko.simpleTimeTracker.model.domain.User;
 
 /**
  * Käyttäjien tallentamiseen tarkoitettu ArrayListin kaltainen tietorakenne.
@@ -63,7 +64,11 @@ import roarusko.simpleTimeTracker.model.domainModel.User;
  * lista.get(1).equals(user1);
  * </pre>
  */
-public class UserList {
+public class UserList extends ArrayList<User> {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8732321631817964940L;
     private int size;
     private int maxSize;
     private User[] users;
@@ -94,6 +99,7 @@ public class UserList {
      * @return Palauttaa listan koon
      * 
      */
+    @Override
     public int size() {
         return this.size;
     }
@@ -103,6 +109,7 @@ public class UserList {
      * Tutkii onko lista tyhjä
      * @return Palauttaa true jos listalla ei ole yhtään alkiota
      */
+    @Override
     public boolean isEmpty() {
         return (this.size == 0);
     }
@@ -111,9 +118,12 @@ public class UserList {
     /**
      * Lisää alkion listan viimeiseksi
      * @param user Käyttäjä joka listalle lisätään
+     * @return palauttaa false jos operaatio epäonnistui
      */
-    public void add(User user) {
+    @Override
+    public boolean add(User user) {
         this.add(size, user);
+        return true;
     }
     
     
@@ -123,6 +133,7 @@ public class UserList {
      * @param index Indeksi johon lisätään
      * @param user Käyttäjä joka lisätään
      */
+    @Override
     public void add(int index, User user) {
         if (index > size) throw new IndexOutOfBoundsException();
         
@@ -169,13 +180,19 @@ public class UserList {
      * Poistaa alkion annetusta indeksistä. Siirtää listalle jääneitä
      * alkioita yhden askeleen vasemmalle.
      * @param index Indeksi josta poistetaan
+     * @return palauttaa poistetun alkion
      */
-    public void remove(int index) {
+    @Override
+    public User remove(int index) {
         if (index >= size) throw new IndexOutOfBoundsException();
+        
+        User removed = users[index];
         
         moveOneStepLeft(index);
         this.size--;
         this.users[size] = null;
+        
+        return removed;
     }
 
 
@@ -214,6 +231,7 @@ public class UserList {
      * @param index Indeksi josta etsitään.
      * @return Palauttaa annetussa indeksissä olevan käyttäjän
      */
+    @Override
     public User get(int index) {
         if (index >= size) throw new IndexOutOfBoundsException();
         return this.users[index];
@@ -226,6 +244,7 @@ public class UserList {
      * @param user Käyttäjä joka lisätään listalle
      * @return Palauttaa lisätyn käyttäjän
      */
+    @Override
     public User set(int index, User user) {
         if (index >= size) throw new IndexOutOfBoundsException();
         this.users[index] = user;
@@ -273,7 +292,7 @@ public class UserList {
     
     @Override
     public String toString() {
-        return Arrays.toString(users);
+        return Arrays.toString(Arrays.copyOf(users, this.size));
     }
 
 

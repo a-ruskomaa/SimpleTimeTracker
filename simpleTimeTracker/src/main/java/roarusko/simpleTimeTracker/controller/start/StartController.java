@@ -3,8 +3,8 @@ package roarusko.simpleTimeTracker.controller.start;
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.controller.ViewFactory;
 import roarusko.simpleTimeTracker.model.ModelAccess;
-import roarusko.simpleTimeTracker.model.domainModel.Project;
-import roarusko.simpleTimeTracker.model.domainModel.User;
+import roarusko.simpleTimeTracker.model.domain.Project;
+import roarusko.simpleTimeTracker.model.domain.User;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -60,7 +60,7 @@ public class StartController extends AbstractController {
         userChoiceBox.valueProperty().bindBidirectional(modelAccess.selectedUserProperty());
         
         // Haetaan tallennetut projektit ja lisätään valikkoon
-        projectChoiceBox.setItems(modelAccess.selectedUserProjectsProperty());
+        projectChoiceBox.setItems(modelAccess.userProjectsProperty());
 
         // Sidotaan valittuna olevan projektin tila ja valikossa valittuna oleva projekti toisiinsa
         projectChoiceBox.valueProperty().bindBidirectional(modelAccess.selectedProjectProperty());
