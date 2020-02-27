@@ -1,7 +1,10 @@
-package roarusko.simpleTimeTracker.model.mockdata;
+package roarusko.simpleTimeTracker.model.data;
 
 import java.util.ArrayList;
 
+import roarusko.simpleTimeTracker.model.data.file.EntryDAOFile;
+import roarusko.simpleTimeTracker.model.data.file.ProjectDAOFile;
+import roarusko.simpleTimeTracker.model.data.file.UserDAOFile;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
@@ -173,5 +176,22 @@ public class SampleData {
      */
     public static ArrayList<Entry> getEntries() {
         return entries;
+    }
+    
+    public static void createFiles() {
+        EntryDAOFile ef = new EntryDAOFile();
+        for (Entry entry : entries) {
+            ef.create(entry);
+        }
+        
+        ProjectDAOFile pf = new ProjectDAOFile();
+        for (Project project : projects) {
+            pf.create(project);
+        }
+        
+        UserDAOFile uf = new UserDAOFile();
+        for (User user : users) {
+            uf.create(user);
+        }
     }
 }

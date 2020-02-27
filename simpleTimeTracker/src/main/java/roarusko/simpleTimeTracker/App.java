@@ -1,15 +1,15 @@
 package roarusko.simpleTimeTracker;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 import roarusko.simpleTimeTracker.controller.ViewFactory;
-import roarusko.simpleTimeTracker.model.data.mock.SampleData;
+import roarusko.simpleTimeTracker.controller.WindowController;
+import roarusko.simpleTimeTracker.model.data.DataAccess;
+import roarusko.simpleTimeTracker.model.data.SampleData;
+import roarusko.simpleTimeTracker.model.data.file.EntryDAOFile;
+import roarusko.simpleTimeTracker.model.data.file.ProjectDAOFile;
+import roarusko.simpleTimeTracker.model.data.file.UserDAOFile;
 
 /**
  * @author roarusko
@@ -24,9 +24,15 @@ public class App extends Application {
         try {
             System.out.println("käynnistys");
             
+            /*
+             * Luodaan dataAccess, jonka avulla ohjelman käsittelemää dataa luetaan ja kirjoitetaan tietokantaan
+             */
+            DataAccess dataAccess = new DataAccess(new UserDAOFile(), new ProjectDAOFile(), new EntryDAOFile());
+            
 //            SampleData.createFiles();
 
-            ViewFactory.createStartView(primaryStage);
+            WindowController wc = ViewFactory.createStartView(primaryStage, dataAccess);
+            wc.showStage();
         } catch(Exception e) {
             e.printStackTrace();
         }

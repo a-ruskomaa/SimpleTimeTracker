@@ -7,10 +7,10 @@ import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
 
 public class ProjectDAOFile extends AbstractDAOFile<Project> implements ProjectDAO {
-    
+    private static final String pathToFile = "data/projects.dat";
 
     public ProjectDAOFile() {
-        super("projects.dat");
+        super(pathToFile);
     }
 
 

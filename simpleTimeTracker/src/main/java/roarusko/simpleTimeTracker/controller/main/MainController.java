@@ -2,14 +2,19 @@ package roarusko.simpleTimeTracker.controller.main;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.controller.ViewFactory;
-import roarusko.simpleTimeTracker.model.ModelAccess;
+import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
+import roarusko.simpleTimeTracker.model.utility.EntryWrapper;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
@@ -27,8 +32,20 @@ public class MainController extends AbstractController  {
     
     private TimerTabController timerTabController;
     private ProjectTabController projectTabController;
-    private User user;
-    private ListProperty<Entry> selectedProjectEntries = new SimpleListProperty<Entry>();
+    
+    private ListProperty<User> allUsers = new SimpleListProperty<User>();
+    
+    private ObjectProperty<User> selectedUser = new SimpleObjectProperty<User>();
+    
+    private ListProperty<Project> selectedUser_Projects = new SimpleListProperty<Project>();
+        
+    private ObjectProperty<Project> selectedProject = new SimpleObjectProperty<Project>();
+    
+    private ListProperty<Entry> selectedProject_Entries = new SimpleListProperty<Entry>();
+    
+    private ObjectProperty<Entry> selectedEntry = new SimpleObjectProperty<Entry>();
+    
+    
     
     @FXML
     private Tab timerTab;
@@ -52,12 +69,11 @@ public class MainController extends AbstractController  {
 
     /**
      * Pääikkunan kontrollerin konstruktori. Tallettaa viitteen modelaccessiin yläluokan attribuutiksi.
-     * @param modelAccess viite pääohjelmassa luotuun modelAccessiin
+     * @param dataAccess viite pääohjelmassa luotuun dataAccessiin
      * @param stage stage jota kontrolloidaan
      */
-    public MainController(ModelAccess modelAccess, Stage stage) {
-        super(modelAccess, stage);
-        this.user = modelAccess.getSelectedUser();
+    public MainController(DataAccess dataAccess, Stage stage) {
+        super(dataAccess, stage);
     }
 
 
@@ -66,46 +82,37 @@ public class MainController extends AbstractController  {
      */
     public void initialize() {
         
-        /*
-         * Lisätään alasvetovalikkoon valitun käyttäjän projektit ja sidotaan modelAccessin propertyyn.
-         * Kun alasvetovalikosta vaihdetaan valittua projektia, päivittyy se myös modelAccessiin.
-         * Sama toimisi myös päinvastaiseen suuntaan, mutta tätä ei toistaiseksi hyödynnetä.
-         */
-        projectChoiceBox.setItems(modelAccess.userProjectsProperty());
         
-        projectChoiceBox.valueProperty().bindBidirectional(modelAccess.selectedProjectProperty());
+        projectChoiceBox.setItems(this.selectedUser_Projects);
         
-        //Liitetään tämän luokan propertyyn
-        this.selectedProjectEntries.set(modelAccess.projectEntriesProperty());
+        projectChoiceBox.valueProperty().bindBidirectional(this.selectedProject);
+        
+        
 
-        timerTab.setContent(ViewFactory.createTimerTab(this));
-        projectTab.setContent(ViewFactory.createProjecTab(this));
+        timerTab.setContent(ViewFactory.createTimerTab(this, dataAccess));
+        projectTab.setContent(ViewFactory.createProjecTab(this, dataAccess));
         
-        modelAccess.projectEntriesProperty().addListener(new InvalidationListener() {
-            
-            @Override
-            public void invalidated(Observable observable) {
+        
+        projectChoiceBox.valueProperty().addListener((prop, oldV, newV) -> {
+            if (newV != null) {
+                selectedProject_Entries.set(dataAccess.loadEntries(newV));
+                selectedEntry.set(selectedProject_Entries.isEmpty() ? null : selectedProject_Entries.get(0));
                 updateTotalTime();
-                
             }
         });
+               
         
         
         projectTab.getContent().addEventHandler(UpdateEvent.UPDATE_EVENT, new EventHandler<UpdateEvent>() {
 
             @Override
             public void handle(UpdateEvent event) {
-                // TODO Auto-generated method stub
                 System.out.println("Event handled: " + event.toString());
                 updateTotalTime();
             }
         });
         
         
-
-        
-        
-        updateTotalTime();
         
 //        projectEntryList.setCellFactory(new Callback<ListView<Entry>, ListCell<Entry>>(){
 // 
@@ -138,20 +145,74 @@ public class MainController extends AbstractController  {
 
     private void updateTotalTime() {
         
-        System.out.println("päivitetään kokonaisaika projektiin numero: " + this.selectedProjectEntries.get().get(0).getOwnerId());
+        System.out.println("päivitetään kokonaisaika");
 
         long totalTime = 0L;
         
-        for (Entry entry : this.selectedProjectEntries.get()) {
+        for (Entry entry : this.selectedProject_Entries.get()) {
             totalTime += entry.getDuration();
         }
         
         totalProjectEntriesField.setText(String.format("%dh %02dmin", totalTime / 3600, (totalTime % 3600) / 60));
 
     }
-    
-    
 
+
+
+    // Propertyjen getterit
+
+    /**
+     * Palauttaa valitun käyttäjän sisältävän propertyn
+     * @return Palauttaa valitun käyttäjän sisältävän propertyn
+     */
+    public ObjectProperty<User> selectedUserProperty() {
+        return this.selectedUser;
+    }
+
+
+    /**
+     * Palauttaa valitun projektin sisältävän propertyn
+     * @return Palauttaa valitun projektin sisältävän propertyn
+     */
+    public ObjectProperty<Project> selectedProjectProperty() {
+        return this.selectedProject;
+    }
+    
+    
+    
+    /**
+     * Palauttaa valitun merkinnän sisältävän propertyn
+     * @return Palauttaa valitun merkinnän sisältävän propertyn
+     */
+    public ObjectProperty<Entry> selectedEntryProperty() {
+        return this.selectedEntry;
+    }
+
+
+    /**
+     * Palauttaa kaikki käyttäjät sisältävän propertyn
+     * @return Palauttaa kaikki käyttäjät sisältävän propertyn
+     */
+    public ListProperty<User> allUsersProperty() {
+        return this.allUsers;
+    }
+
+
+    /**
+     * Palauttaa valitun käyttäjän kaikki projektit sisältävän propertyn
+     * @return Palauttaa valitun käyttäjän kaikki projektit sisältävän propertyn
+     */
+    public ListProperty<Project> selectedUser_ProjectsProperty() {
+        return this.selectedUser_Projects;
+    }
+
+    /**
+     * Palauttaa valitun projektin kaikki merkinnät sisältävän propertyn
+     * @return Palauttaa valitun projektin kaikki merkinnät sisältävän propertyn
+     */
+    public ListProperty<Entry> selectedProject_EntriesProperty() {
+        return this.selectedProject_Entries;
+    }
 
 
 }

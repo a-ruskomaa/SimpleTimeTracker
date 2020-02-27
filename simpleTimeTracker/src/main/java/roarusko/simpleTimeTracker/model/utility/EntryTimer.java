@@ -1,17 +1,19 @@
 package roarusko.simpleTimeTracker.model.utility;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import roarusko.simpleTimeTracker.model.ModelAccess;
-import roarusko.simpleTimeTracker.model.domain.Entry;
+import roarusko.simpleTimeTracker.model.data.DataAccess;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.LongProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 /**
  * Merkinnän reaaliaikaiseen luomiseen tarkoitettu ajastin.
@@ -20,33 +22,30 @@ import javafx.beans.property.SimpleLongProperty;
  *
  */
 public class EntryTimer {
-    ModelAccess modelAccess;
+    DataAccess dataAccess;
 
-//    private ObjectProperty<LocalDateTime> timerStart = new SimpleObjectProperty<LocalDateTime>();
-//    private ObjectProperty<LocalDateTime> timerStop = new SimpleObjectProperty<LocalDateTime>();
+    private ObjectProperty<LocalDateTime> startTime = new SimpleObjectProperty<LocalDateTime>();
+    private ObjectProperty<LocalDateTime> endTime = new SimpleObjectProperty<LocalDateTime>();
 
     private BooleanProperty running = new SimpleBooleanProperty(false);
     private LongProperty elapsedTime = new SimpleLongProperty();
-    private Entry entry;
 
     private Timer timer;
 
     /**
      * 
-     * @param modelAccess modelAccess
+     * @param dataAccess dataAccess
      */
-    public EntryTimer(ModelAccess modelAccess) {
-        this.modelAccess = modelAccess;
+    public EntryTimer(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
     }
 
 
     /**
      * Käynnistää ajastimen. Luo uudessa säikeessä ajettavan Timer-olion, joka päivittää
-     * sekunnin välein käynnistyksestä kuluneen ajan elapsedTime-propertyyn. Luo uuden merkinnän,
-     * jonka alkuajaksi asetetaan ajastimen käynnistyshetki.
+     * sekunnin välein käynnistyksestä kuluneen ajan elapsedTime-propertyyn.
      */
     public void start() {
-        this.entry = modelAccess.newEntry();
         
         timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -58,7 +57,7 @@ public class EntryTimer {
         }, 1000, 1000);
 
         this.running.set(true);
-        this.entry.setStartDateTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        this.startTime.set(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     }
 
 
@@ -68,7 +67,7 @@ public class EntryTimer {
     public void stop() {
         timer.cancel();
         this.running.set(false);
-        this.entry.setEndDateTime(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
+        this.endTime.set(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
     }
 
 
@@ -78,17 +77,10 @@ public class EntryTimer {
     public void reset() {
         this.elapsedTime.set(0);
         this.running.set(false);
-        this.entry = modelAccess.newEntry();
+        this.startTime.set(null);
+        this.endTime.set(null);
     }
 
-
-    /**
-     * Palauttaa ajastimeen liitetyn merkinnän
-     * @return Palauttaa ajastimeen liitetyn merkinnän
-     */
-    public Entry getEntry() {
-        return this.entry;
-    }
 
 
     /**
@@ -111,11 +103,29 @@ public class EntryTimer {
 
 
     /**
-     * Palauttaa ajastimen käynnistyksestä kuluneen   LongPropertyna.
+     * Palauttaa ajastimen käynnistyksestä kuluneen ajan LongPropertyna.
      * @return Palauttaa ajastimen käynnistyksestä kuluneen   LongPropertyna.
      */
     public LongProperty elapsedTimeProperty() {
         return this.elapsedTime;
+    }
+    
+    
+    /**
+     * Palauttaa ajastimen käynnistyshetken LocalDateTime-objektina
+     * @return Palauttaa ajastimen käynnistyshetken LocalDateTime-objektina
+     */
+    public ObjectProperty<LocalDateTime> startTimeProperty() {
+        return this.startTime;
+    }
+    
+    
+    /**
+     * Palauttaa ajastimen käynnistyshetken LocalDateTime-objektina
+     * @return Palauttaa ajastimen käynnistyshetken LocalDateTime-objektina
+     */
+    public ObjectProperty<LocalDateTime> endTimeProperty() {
+        return this.endTime;
     }
 
 }

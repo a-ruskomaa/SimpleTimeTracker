@@ -1,5 +1,6 @@
 package roarusko.simpleTimeTracker.model.data.file;
 
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import roarusko.simpleTimeTracker.model.data.EntryDAO;
@@ -8,10 +9,11 @@ import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 
 public class EntryDAOFile extends AbstractDAOFile<Entry> implements EntryDAO {
+    private static final String pathToFile = "data/entries.dat";
     
     
     public EntryDAOFile() {
-        super("entries.dat");
+        super(pathToFile);
     }
 
     @Override
@@ -26,12 +28,14 @@ public class EntryDAOFile extends AbstractDAOFile<Entry> implements EntryDAO {
         try {
             return new Entry(Integer.parseInt(parts[0]),
                             Integer.parseInt(parts[1]),
-                            Entries.parseDateTimeFromStringNoSeconds(parts[2]),
-                            Entries.parseDateTimeFromStringNoSeconds(parts[3]));
+                            Entries.parseDateTimeFromString(parts[2]),
+                            Entries.parseDateTimeFromString(parts[3]));
         } catch (NullPointerException e) {
             System.out.println("Not enough fields" + e.getMessage());
         } catch (NumberFormatException e) {
             System.out.println("Wrong input type" + e.getMessage());
+        } catch (DateTimeParseException e) {
+            System.out.println("Wrong date format" + e.getMessage());
         }
         return null;
     }
@@ -42,8 +46,8 @@ public class EntryDAOFile extends AbstractDAOFile<Entry> implements EntryDAO {
         return String.format("%d,%d,%s,%s",
                 entry.getId(),
                 entry.getOwnerId(),
-                Entries.getDateTimeAsStringNoSeconds(entry.getStartDateTime()),
-                Entries.getDateTimeAsStringNoSeconds(entry.getEndDateTime()));
+                Entries.getDateTimeAsString(entry.getStartDateTime()),
+                Entries.getDateTimeAsString(entry.getEndDateTime()));
     }
 
 }

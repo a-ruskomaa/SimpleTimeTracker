@@ -1,18 +1,19 @@
 package roarusko.simpleTimeTracker.controller;
 
-import roarusko.simpleTimeTracker.model.ModelAccess;
+import roarusko.simpleTimeTracker.model.data.DataAccess;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
  * @author aleks
  * @version 28 Jan 2020
- * Muiden kontrollerien yläluokka. Sisältää viitteen ModelAccessiin. ViewFactory kelpuuttaa ikkunoiden luomiseen AbstractControllerin.
+ * Muiden kontrollerien yläluokka. Sisältää viitteen DataAccessiin. ViewFactory kelpuuttaa ikkunoiden luomiseen AbstractControllerin.
  */
 public class AbstractController implements WindowController {
     /**
      * Ohjelman käsittelemää dataa mallintavien luokkien "access point".
      */
-    protected final ModelAccess modelAccess;
+    protected final DataAccess dataAccess;
     
     /**
      * Stage johon kontrolleriluokka on liitetty. Hyödynnetään ikkunoiden sulkemisessa ja tapahtumien luomisessa.
@@ -20,11 +21,11 @@ public class AbstractController implements WindowController {
     protected final Stage stage;
     
     /**
-     * @param modelAccess Ohjelman käynnistyksen yhteydessä luotu ModelAccess
+     * @param dataAccess Ohjelman käynnistyksen yhteydessä luotu DataAccess
      * @param stage näkymä, jota tämä kontrolleri ohjaa
      */
-    public AbstractController(ModelAccess modelAccess, Stage stage) {
-        this.modelAccess = modelAccess;
+    public AbstractController(DataAccess dataAccess, Stage stage) {
+        this.dataAccess = dataAccess;
         this.stage = stage;
     }
     
@@ -34,5 +35,18 @@ public class AbstractController implements WindowController {
     @Override
     public Stage getStage() {
         return this.stage;
+    }
+    
+    
+    @Override
+    public void showStage() {
+        this.stage.show();
+    }
+    
+    
+    public void showModalStage() {
+        this.stage.initModality(Modality.APPLICATION_MODAL);
+        
+        this.stage.showAndWait();
     }
 }

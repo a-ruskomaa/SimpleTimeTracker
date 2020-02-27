@@ -15,5 +15,10 @@ public interface WindowController {
      * @return Palauttaa stagen, johon kontrolleri on liitetty.
      */
     public Stage getStage();
+    
+    /**
+     * Käskee kontrolleria näyttämään siihen liitetyn stagen
+     */
+    public void showStage();
 
 }

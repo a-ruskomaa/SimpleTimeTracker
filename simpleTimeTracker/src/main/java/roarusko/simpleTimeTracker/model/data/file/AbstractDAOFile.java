@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -102,20 +103,25 @@ public abstract class AbstractDAOFile<T extends DataObject> implements DAO<Integ
     @Override
     public List<T> list() {
         try {
-            List<T> objects = Files.lines(path)
+            List<T> objects = Files.lines(createIfNotExists(path))
                     .map(row -> parseObject(row))
                     .collect(Collectors.toList());
             return objects;
         } catch (IOException e) {
             System.out.println("File not found!");
-            return null;
+            return new ArrayList<T>();
         } catch (NullPointerException e) {
-            System.out.println("User not found");
-            return null;
+            System.out.println("File not found");
+            return new ArrayList<T>();
         }
     }
     
     
+    
+    /**
+     * @param object asd
+     * @return asd
+     */
     protected List<T> list(ParentObject object) {
         List<T> objects = list().stream()
                 .filter(e -> ((ChildObject) e).getOwnerId() == object.getId())
@@ -149,4 +155,15 @@ public abstract class AbstractDAOFile<T extends DataObject> implements DAO<Integ
     protected abstract T parseObject(String row);
     
     protected abstract String objectToStringForm(T object);
+    
+    private Path createIfNotExists(Path path) {
+        if (Files.exists(path)) return path;
+        try {
+            Files.createDirectories(path.getParent());
+            return Files.createFile(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

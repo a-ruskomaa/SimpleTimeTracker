@@ -1,12 +1,15 @@
 package roarusko.simpleTimeTracker.controller.start;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
-import roarusko.simpleTimeTracker.model.ModelAccess;
+import roarusko.simpleTimeTracker.model.data.DataAccess;
+import roarusko.simpleTimeTracker.model.domain.Project;
+import roarusko.simpleTimeTracker.model.domain.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -28,14 +31,17 @@ public class NewProjectDialogController extends AbstractController {
     @FXML
     private Button cancelButton;
     
+    private Project project;
+    private User user;
+    
     /**
      * Luo uuden kontrollerin projektin lisäämiseen käytettävälle näkymälle.
      * 
-     * @param modelAccess Pääohjelmassa luotu ModelAccess olio. Tätä välitetään parametreina muille kontrollereille.
+     * @param dataAccess Pääohjelmassa luotu DataAccess olio. Tätä välitetään parametreina muille kontrollereille.
      * @param stage Stage jota kontrolloidaan.
      */
-    public NewProjectDialogController(ModelAccess modelAccess, Stage stage) {
-        super(modelAccess, stage);
+    public NewProjectDialogController(DataAccess dataAccess, Stage stage) {
+        super(dataAccess, stage);
     }
 
     /**
@@ -44,7 +50,7 @@ public class NewProjectDialogController extends AbstractController {
      */
     @FXML
     void handleOkButton(ActionEvent event) {
-        modelAccess.addProject(newProjectNameField.getText());
+        this.project = dataAccess.addProject(newProjectNameField.getText(), this.user);
         exitStage(event);
     }
     
@@ -69,6 +75,15 @@ public class NewProjectDialogController extends AbstractController {
 
         window.fireEvent(
                 new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
+    }
+
+    
+    public Project getProject() {
+        return this.project;
+    }
+    
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

@@ -14,7 +14,7 @@ import roarusko.simpleTimeTracker.model.utility.UserList;
 public class TestUserList {
 
     /**
-    * Testataan userListiä lisäilemällä ja poistelemalla käyttäjiä
+    * Könttätesti, lisäillään ja poistellaan
     */
     @Test
     public void testUserList() {

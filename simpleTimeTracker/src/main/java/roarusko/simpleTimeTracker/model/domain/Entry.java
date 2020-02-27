@@ -28,15 +28,36 @@ public class Entry implements ChildObject {
 
 
     /**
-     * Luo "tyhjän" merkinnän. Tätä hyödynnetään mm. Timer-luokassa ja uusien merkintöjen luomisessa syötteestä.
+     * Luo "tyhjän" merkinnän. Tätä hyödynnetään mm. Timer-luokassa.
      * Merkinnän id:ksi asetetaan tilapäinen arvo -1 ja alku- sekä loppuaika asetetaan olion luomishetkeen.
+     */
+    public Entry() {
+        this(-1, -1, LocalDateTime.now(), LocalDateTime.now());
+    }
+    
+    /**
+     * Luo merkinnän väliaikaisella id-tunnuksella. Tätä hyödynnetään uusien merkintöjen luomisessa.
+     * Merkinnän id:ksi asetetaan tilapäinen arvo -1 ja
+     * alku- sekä loppuaika asetetaan olion luomishetkeen.
      * @param projectId Projekti, johon merkintä liittyy
      */
     public Entry(int projectId) {
-        this(-1, projectId, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES),
-                LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES));
+        this(-1, projectId, LocalDateTime.now(), LocalDateTime.now());
     }
 
+    
+    /**
+     * Luo uuden merkinnän väliaikaisella id-tunnuksella ja annetulla alku- ja loppuajalla
+     * Rajaa minuuttia tarkemmat aikamääreet pois tallennettavasta merkinnästä.
+     * @param projectId Projekti, johon merkintä liittyy
+     * @param start Merkinnän alkuhetki LocalDateTime-muodossa
+     * @param end Merkinnän loppuhetki LocalDateTime-muodossa
+     */
+    public Entry(int projectId, LocalDateTime start, LocalDateTime end) {
+        this(-1, projectId, start.toLocalDate(), start.toLocalTime(), end.toLocalDate(),
+                end.toLocalTime());
+    }
+    
     
     /**
      * Luo uuden merkinnän annetulla alku- ja loppuajalla
@@ -95,7 +116,6 @@ public class Entry implements ChildObject {
     public int getOwnerId() {
         return projectId;
     }
-
 
 
     /**
@@ -216,24 +236,13 @@ public class Entry implements ChildObject {
     }
 
 
-    // Apumetodit:
-
-
-    /**
-     * @return palauttaa merkinnän keston muotuiltuna merkkijonona muodossa "0h 00min"
-     */
-    public String getDurationAsString() {
-        Long seconds = getDuration();
-        return String.format("%dh %02dmin", seconds / 3600,
-                (seconds % 3600) / 60);
-    }
-
 
     @Override
     public String toString() {
         return startDate.format(Entries.getDateFormatter()) + " "
-                + getDurationAsString();
+                + Entries.getDurationAsString(getDuration());
     }
+
 
 
 //    /**

@@ -5,16 +5,19 @@ import java.time.format.DateTimeFormatter;
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.controller.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
-import roarusko.simpleTimeTracker.model.ModelAccess;
+import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 import roarusko.simpleTimeTracker.model.utility.EntryTimer;
+import roarusko.simpleTimeTracker.view.components.DateTimeField;
+import roarusko.simpleTimeTracker.view.components.TimeField;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.converter.LocalDateTimeStringConverter;
 
 public class TimerTabController extends AbstractController {
     
@@ -23,10 +26,10 @@ public class TimerTabController extends AbstractController {
     private MainController parentController;
     
     @FXML
-    private TextField timerStartField;
+    private DateTimeField timerStartField;
 
     @FXML
-    private TextField timerEndField;
+    private DateTimeField timerEndField;
 
     @FXML
     private TextField timerDurationField;
@@ -39,34 +42,37 @@ public class TimerTabController extends AbstractController {
 
     @FXML
     private Button timerResetButton;
-//
-    /**
-     * Luo uuden ajastinvälilehden kontrollerin
-     * @param modelAccess modelAccess
-     * @param stage stage
-     */
-    public TimerTabController(ModelAccess modelAccess, Stage stage) {
-        super(modelAccess, stage);
-    }
+    
+    private DateTimeFormatter formatter = Entries.getDateTimeFormatter();
+    
+    private LocalDateTimeStringConverter converter = new LocalDateTimeStringConverter(formatter, formatter);
+    
+
     
     /**
      * Luo uuden ajastinvälilehden kontrollerin
-     * @param modelAccess modelAccess
+     * @param dataAccess dataAccess
      * @param stage stage
      * @param parentController parentController
      */
-    public TimerTabController(ModelAccess modelAccess, Stage stage, MainController parentController) {
-        super(modelAccess, stage);
+    public TimerTabController(DataAccess dataAccess, Stage stage, MainController parentController) {
+        super(dataAccess, stage);
         this.parentController = parentController;
-        timer = modelAccess.getTimer();
+        timer = new EntryTimer(dataAccess);
     }
     
+
     /**
-     * TODO tähän bindaukset nappuloille
+     * 
      */
     public void initialize() {
-        //timerToggleButton.disableProperty().bind(Bindings.notEqual("", timerDurationField.textProperty()));
         timerDurationField.textProperty().bind(timer.elapsedTimeProperty().asString());
+        
+        timerStartField.valueProperty().bind(timer.startTimeProperty());
+        timerEndField.valueProperty().bind(timer.endTimeProperty());
+        
+        timerSaveButton.disableProperty().bind(timer.runningProperty().or(timer.endTimeProperty().isNull()));
+        timerResetButton.disableProperty().bind(timer.runningProperty());
     }
     
 
@@ -77,48 +83,50 @@ public class TimerTabController extends AbstractController {
 
     @FXML
     void timerHandleSave() {
-        Entry entry = timer.getEntry();
-        modelAccess.setEditedEntry(entry);
-        WindowController wc = ViewFactory.createEditEntryDialog();
+        Entry entry = dataAccess.newEntry(parentController.selectedProjectProperty().get(), timerStartField.getValue(), timerEndField.getValue());
         
-        wc.getStage().setOnCloseRequest((e) -> {
-            
-            
-            modelAccess.setEditedEntry(null);
+        EditEntryDialogController controller = ViewFactory.createEditEntryDialog(dataAccess);
+        controller.setEntry(entry);
+        
+        controller.getStage().setOnCloseRequest((e) -> {
             reset();
         });
+        
+        controller.showModalStage();
+        
+        Entry newEntry = controller.getEntry();
+        
+        if (newEntry != null) {
+            parentController.selectedProject_EntriesProperty().add(newEntry);
+            parentController.selectedEntryProperty().set(newEntry);
+        }
     }
 
     @FXML
     void timerToggle() {
-        DateTimeFormatter f = Entries.getDateTimeFormatter();
         
         if (!timer.isRunning()) {
-            timer.start();
-            timerToggleButton.setText("Pysäytä ajastin");
-            timerStartField.setText(timer.getEntry().getStartDateTime().format(f));
-            timerEndField.clear();
-            timerSaveButton.setDisable(true);
-            timerResetButton.setDisable(true);
+            timerStart();
         } else {
-            timer.stop();
-            timerToggleButton.setText("Käynnistä ajastin");
-            timerEndField.setText(timer.getEntry().getEndDateTime().format(f));
-            timerSaveButton.setDisable(false);
-            timerResetButton.setDisable(false);
-            timerToggleButton.setDisable(true);
+            timerStop();
         }
     }
     
+    private void timerStart() {
+        // käynnistetään ajastin. ajastin tallentaa alku- ja loppuajan annettuun merkintään
+        timer.start();
+        timerToggleButton.setText("Pysäytä ajastin");
+        
+    }
+    
+    private void timerStop() {
+        timer.stop();
+        timerToggleButton.setText("Käynnistä ajastin");
+        timerToggleButton.setDisable(true);
+    }
+    
     private void reset() {
-        if (timer.isRunning()) {
-            timer.stop();
-        }
         timer.reset();
-        timerEndField.clear();
-        timerStartField.clear();
         timerToggleButton.setDisable(false);
-        timerSaveButton.setDisable(true);
-        timerResetButton.setDisable(true);
     }
 }

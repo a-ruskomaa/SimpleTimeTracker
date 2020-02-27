@@ -5,6 +5,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import roarusko.simpleTimeTracker.view.components.DateTimeField?>
+<?import roarusko.simpleTimeTracker.view.components.BindableListView?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -14,12 +16,12 @@
    <center>
 	                  <HBox>
                      <children>
-                        <ListView fx:id="projectEntryList" prefHeight="200.0" prefWidth="200.0">
+                        <BindableListView fx:id="entryListView" prefHeight="200.0" prefWidth="200.0">
                            <HBox.margin>
                               <Insets />
                            </HBox.margin>
-                        </ListView>
-            <TreeView fx:id="projectEntryTree" prefHeight="200.0" prefWidth="200.0" />
+                        </BindableListView>
+<!-- 	            <TreeView fx:id="projectEntryTree" prefHeight="200.0" prefWidth="200.0" /> -->
                         <VBox>
                            <children>
                               <HBox>
@@ -29,7 +31,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField fx:id="entryStartField" editable="false" />
+                                    <DateTimeField fx:id="entryStartField" editable="false" />
                                  </children>
                               </HBox>
                               <HBox>
@@ -39,7 +41,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </Label>
-                                    <TextField fx:id="entryEndField" editable="false" />
+                                    <DateTimeField fx:id="entryEndField" editable="false" />
                                  </children>
                               </HBox>
                               <HBox>
@@ -62,7 +64,7 @@
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
                                     </Button>
-                                    <Button fx:id="removeEntryButton" mnemonicParsing="false" onAction="#handleRemoveEntry" text="Poista...">
+                                    <Button fx:id="deleteEntryButton" mnemonicParsing="false" onAction="#handleRemoveEntry" text="Poista...">
                                        <HBox.margin>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </HBox.margin>

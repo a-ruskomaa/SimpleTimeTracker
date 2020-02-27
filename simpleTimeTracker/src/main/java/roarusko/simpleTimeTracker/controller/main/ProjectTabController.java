@@ -9,10 +9,13 @@ import java.time.format.DateTimeFormatter;
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.controller.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
-import roarusko.simpleTimeTracker.model.ModelAccess;
+import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
+import roarusko.simpleTimeTracker.view.components.BindableListView;
+import roarusko.simpleTimeTracker.view.components.DateTimeField;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
@@ -42,16 +45,16 @@ public class ProjectTabController extends AbstractController {
     private Button manualSaveButton;
 
     @FXML
-    private ListView<Entry> projectEntryList;
+    private BindableListView<Entry> entryListView;
 
     @FXML
-    private TreeView<Entry> projectEntryTree;
+    private TreeView<Entry> entryTreeView;
 
     @FXML
-    private TextField entryStartField;
+    private DateTimeField entryStartField;
 
     @FXML
-    private TextField entryEndField;
+    private DateTimeField entryEndField;
 
     @FXML
     private TextField entryDurationField;
@@ -60,36 +63,32 @@ public class ProjectTabController extends AbstractController {
     private Button editEntryButton;
 
     @FXML
-    private Button removeEntryButton;
+    private Button deleteEntryButton;
 
     @FXML
     private Button addEntryButton;
 
-    private final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<LocalDate>();
-    private final ObjectProperty<LocalTime> startTime = new SimpleObjectProperty<LocalTime>();
-    private final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<LocalDate>();
-    private final ObjectProperty<LocalTime> endTime = new SimpleObjectProperty<LocalTime>();
     private final LongProperty duration = new SimpleLongProperty();
 
     DateTimeFormatter formatter = Entries.getDateTimeFormatter();
 
     /**
-     * @param modelAccess modelAccess
+     * @param dataAccess dataAccess
      * @param stage stage jota kontrolloidaan
      */
-    public ProjectTabController(ModelAccess modelAccess, Stage stage) {
-        super(modelAccess, stage);
+    public ProjectTabController(DataAccess dataAccess, Stage stage) {
+        super(dataAccess, stage);
     }
 
 
     /**
-     * @param modelAccess modelAccess
+     * @param dataAccess dataAccess
      * @param stage stage jota kontrolloidaan
      * @param parentController asd
      */
-    public ProjectTabController(ModelAccess modelAccess, Stage stage,
+    public ProjectTabController(DataAccess dataAccess, Stage stage,
             MainController parentController) {
-        super(modelAccess, stage);
+        super(dataAccess, stage);
         this.parentController = parentController;
     }
 
@@ -100,96 +99,22 @@ public class ProjectTabController extends AbstractController {
     public void initialize() {
 
         // haetaan valitun projektin merkinnät listalle
-        projectEntryList.setItems(modelAccess.projectEntriesProperty());
-
-
-        // luodaan kuuntelija reagoimaan valitun merkinnän vaihtumiseen
-        ChangeListener<Entry> selectedEntryListener = ((obs, old, selected) -> {
-            System.out.println("Entry selection changed. old: " + old + " new: "
-                    + selected);
-
-            if (selected == null) {
-                System.out.println("No entry selected");
-                return;
-            }
-            
-            modelAccess.setSelectedEntry(selected);
-            
-            // TODO näiden asetus muualle, päivitys kun merkintä muuttuu
-            startDate.set(selected.getStartDate());
-            startTime.set(selected.getStartTime());
-            endDate.set(selected.getEndDate());
-            endTime.set(selected.getEndTime());
-        });
-
-        // asetetaan äsken luotu kuuntelija
-        projectEntryList.getSelectionModel().selectedItemProperty()
-                .addListener(selectedEntryListener);
-
-//        // luodaan kuuntelija reagoimaan valitun projektin vaihtumiseen
-//        ChangeListener<Project> selectedProjectListener = ((obs, old,
-//                selected) -> {
-//            if (selected == null) {
-//                System.out.println("No project selected");
-//                return;
-//            }
-//
-//            // poistetaan kuuntelija listan päivityksen ajaksi, voi olla turha?
-//            projectEntryList.getSelectionModel().selectedItemProperty()
-//                    .removeListener(selectedEntryListener);
-//
-//            // päivitetään uuden projektin merkinnät listalle
-//            ObservableList<Entry> newEntries = FXCollections.observableArrayList(modelAccess.getEntryDAO().list(selected));
-//            projectEntryList.setItems(newEntries);
-//
-//            // palautetaan kuuntelija paikalleen
-//            projectEntryList.getSelectionModel().selectedItemProperty()
-//                    .addListener(selectedEntryListener);
-//        });
-//
-//        // asetetaan äsken luotu kuuntelija model accessiin
-//        modelAccess.selectedProjectProperty()
-//                .addListener(selectedProjectListener);
-
-        // sidotaan tekstikentän sisältö valitun merkinnän aikaleimojen dataan
+        entryListView.setItems(parentController.selectedProject_EntriesProperty());
         
-        entryStartField.textProperty().bind(new StringBinding() {
-
-            {
-                bind(startDate, startTime);
-            }
-
-            @Override
-            protected String computeValue() {
-                try {
-                    return LocalDateTime.of(startDate.get(), startTime.get())
-                            .format(formatter);
-                } catch (NullPointerException e) {
-                    return "";
-                }
-
-            }
-
-        });
-
-        // sidotaan tekstikentän sisältö valitun merkinnän aikaleimojen dataan
-        entryEndField.textProperty().bind(new StringBinding() {
-
-            {
-                bind(endDate, endTime);
-            }
-
-            @Override
-            protected String computeValue() {
-                try {
-                    return LocalDateTime.of(endDate.get(), endTime.get())
-                            .format(formatter);
-                } catch (NullPointerException e) {
-                    return "";
-                }
-            }
-
-        });
+        entryListView.valueProperty().bindBidirectional(parentController.selectedEntryProperty());
+        
+        editEntryButton.disableProperty().bind(entryListView.valueProperty().isNull());
+        deleteEntryButton.disableProperty().bind(entryListView.valueProperty().isNull());
+        
+        entryStartField.valueProperty().bind(Bindings.createObjectBinding(() -> {
+            Entry entry = entryListView.valueProperty().get();
+            return entry != null ? entry.getStartDateTime() : null;
+        }, entryListView.valueProperty()));
+        
+        entryEndField.valueProperty().bind(Bindings.createObjectBinding(() -> {
+            Entry entry = entryListView.valueProperty().get();
+            return entry != null ? entry.getEndDateTime() : null;
+        }, entryListView.valueProperty()));
 
         // sidotaan tekstikentän sisältö valitun merkinnän aikaleimojen dataan
         entryDurationField.textProperty().bind(new StringBinding() {
@@ -202,9 +127,7 @@ public class ProjectTabController extends AbstractController {
             @Override
             protected String computeValue() {
                 try {
-                    Long seconds = Duration.between(
-                            LocalDateTime.of(startDate.get(), startTime.get()),
-                            LocalDateTime.of(endDate.get(), endTime.get()))
+                    Long seconds = Duration.between(entryStartField.getValue(), entryEndField.getValue())
                             .toSeconds();
                     return String.format(String.format("%dh %02dmin",
                             seconds / 3600, (seconds % 3600) / 60));
@@ -219,50 +142,76 @@ public class ProjectTabController extends AbstractController {
 
 
     /**
-     * Kutsutaan kun lisätään uusi merkintä. Poistetaan aluksi bindaus modelAccessista,
-     * jotta voidaan luoda uusi merkintä ja asettaa se valituksi
+     * Kutsutaan kun lisätään uusi merkintä.
      */
     @FXML
     void handleAddEntry() {
-
-        modelAccess.setEditedEntry(modelAccess.newEntry());
+        Entry entry = dataAccess.newEntry(parentController.selectedProjectProperty().get());
         
-        WindowController wc = ViewFactory.createEditEntryDialog();
+        EditEntryDialogController controller = ViewFactory.createEditEntryDialog(dataAccess);
+        controller.setEntry(entry);
 
-        // TODO tämä uusiksi! Kaksisuuntainen bindaus valinnan välille? Muutoksen validointi boolean isChanged tjsp?
-        wc.getStage().setOnCloseRequest((e) -> {
-            projectEntryList.getSelectionModel().select(modelAccess.getSelectedEntry());
-
-            modelAccess.setEditedEntry(null);
+        controller.getStage().setOnCloseRequest((e) -> {
             
-            projectEntryList.fireEvent(new UpdateEvent());
+            Entry newEntry = controller.getEntry();
+            
+            if (newEntry != null) {
+                parentController.selectedProject_EntriesProperty().add(newEntry);
+                parentController.selectedEntryProperty().set(newEntry);
+            }
+            
+            entryListView.fireEvent(new UpdateEvent());
         });
 
+        controller.showModalStage();
+        
     }
 
 
     @FXML
     void handleEditEntry() {
-        modelAccess.setEditedEntry(modelAccess.getSelectedEntry());
-        WindowController wc = ViewFactory.createEditEntryDialog();
+        Entry entry = entryListView.valueProperty().get();
         
-        wc.getStage().setOnCloseRequest((e) -> {
-            projectEntryList.getSelectionModel().select(modelAccess.getSelectedEntry());
+        EditEntryDialogController controller = ViewFactory.createEditEntryDialog(dataAccess);
+        controller.setEntry(entry);
+        
+        controller.getStage().setOnCloseRequest((e) -> {
+            Entry newEntry = controller.getEntry();
             
-            modelAccess.setEditedEntry(null);
+            if (newEntry != null) {
+                int index = dataAccess.findIndexById(newEntry, entryListView.getItems());
+                parentController.selectedProject_EntriesProperty().set(index, newEntry);
+                parentController.selectedEntryProperty().set(newEntry);
+            }
             
-            projectEntryList.fireEvent(new UpdateEvent());
+            entryListView.fireEvent(new UpdateEvent());
         });
+        
+        controller.showModalStage();
+        
     }
 
 
     @FXML
     void handleRemoveEntry() {
-        WindowController wc = ViewFactory.createDeleteEntryDialog();
-
-        wc.getStage().setOnCloseRequest((e) -> {
-            projectEntryList.fireEvent(new UpdateEvent());
+        Entry entry = entryListView.valueProperty().get();
+        DeleteEntryDialogController controller = ViewFactory.createDeleteEntryDialog(dataAccess);
+        controller.setEntry(entry);
+        
+        controller.getStage().setOnCloseRequest((e) -> {
+            if (controller.wasDeleted()) {
+                parentController.selectedProject_EntriesProperty().remove(entry);
+                parentController.selectedEntryProperty().set(null);
+                
+                entryListView.fireEvent(new UpdateEvent());
+            }
         });
+
+        controller.showModalStage();
     }
+    
+
+
+
 
 }

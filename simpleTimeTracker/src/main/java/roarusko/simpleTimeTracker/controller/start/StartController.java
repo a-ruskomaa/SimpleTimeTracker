@@ -2,7 +2,9 @@ package roarusko.simpleTimeTracker.controller.start;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.controller.ViewFactory;
-import roarusko.simpleTimeTracker.model.ModelAccess;
+import roarusko.simpleTimeTracker.controller.WindowController;
+import roarusko.simpleTimeTracker.controller.main.MainController;
+import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
 import javafx.beans.binding.Bindings;
@@ -37,33 +39,42 @@ public class StartController extends AbstractController {
     /**
      * Luo uuden kontrollerin aloitusnäkymälle
      * 
-     * @param modelAccess Pääohjelmassa luotu ModelAccess olio. Tätä välitetään parametreina muille kontrollereille.
+     * @param dataAccess Pääohjelmassa luotu DataAccess olio. Tätä välitetään parametreina muille kontrollereille.
      * @param stage stage jota kontrolloidaan
      * 
      */
-    public StartController(ModelAccess modelAccess, Stage stage) {
-        super(modelAccess, stage);
+    public StartController(DataAccess dataAccess, Stage stage) {
+        super(dataAccess, stage);
     }
 
 
     /**
-     * Alustaa kontrollerin ohjaaman näkymän. Hakee modelAccessin avulla listan ohjelmaan tallennetuista käyttäjistä.
+     * Alustaa kontrollerin ohjaaman näkymän. Hakee dataAccessin avulla listan ohjelmaan tallennetuista käyttäjistä.
      */
     public void initialize() {
 
         System.out.println("alustetaan startcontroller");
 
         // Haetaan tallennetut käyttäjät ja lisätään valikkoon
-        userChoiceBox.setItems(modelAccess.allUsersProperty());
+        userChoiceBox.setItems(dataAccess.loadUsers());
         
-        // Sidotaan valittuna olevan käyttäjän tila ja valikossa valittuna oleva käyttäjä toisiinsa
-        userChoiceBox.valueProperty().bindBidirectional(modelAccess.selectedUserProperty());
+        userChoiceBox.valueProperty().addListener((prop, oldV, newV) -> {
+            if (newV != null) {
+                // Haetaan tallennetut projektit ja lisätään valikkoon
+                projectChoiceBox.setItems(dataAccess.loadProjects(newV));
+                
+                //TODO projektiin property lastModified ja tähän sortedlist wrappays + comparator
+                
+                if (!projectChoiceBox.getItems().isEmpty()) {
+                    projectChoiceBox.getSelectionModel().select(0);
+                }
+            };
+        });
         
-        // Haetaan tallennetut projektit ja lisätään valikkoon
-        projectChoiceBox.setItems(modelAccess.userProjectsProperty());
-
-        // Sidotaan valittuna olevan projektin tila ja valikossa valittuna oleva projekti toisiinsa
-        projectChoiceBox.valueProperty().bindBidirectional(modelAccess.selectedProjectProperty());
+        if (!userChoiceBox.getItems().isEmpty()) {
+            userChoiceBox.getSelectionModel().select(0);
+        }
+        
         
         // OK-nappia voi painaa vain jos joku projekti on valittuna (käyttäjä ei voi olla null jos 
         // joku projekti on valittuna)
@@ -79,8 +90,16 @@ public class StartController extends AbstractController {
 
         Stage oldStage = this.getStage();
 
-        ViewFactory.createMainView();
-
+        MainController mc = ViewFactory.createMainView(dataAccess);
+        
+        System.out.println("selecting..");
+        mc.allUsersProperty().set(this.userChoiceBox.getItems());
+        mc.selectedUserProperty().set(this.userChoiceBox.getValue());
+        mc.selectedUser_ProjectsProperty().set(this.projectChoiceBox.getItems());
+        mc.selectedProjectProperty().set(this.projectChoiceBox.getValue());
+        
+        mc.showStage();
+        
         oldStage.close();
     }
 
@@ -90,7 +109,13 @@ public class StartController extends AbstractController {
      */
     @FXML
     private void handleNewUserButton() {
-        ViewFactory.createNewUserDialog();
+        NewUserDialogController controller = ViewFactory.createNewUserDialog(dataAccess);
+        controller.showModalStage();
+        User newUser = controller.getUser();
+        if (newUser != null) {
+            this.userChoiceBox.getItems().add(newUser);
+            this.userChoiceBox.getSelectionModel().select(newUser);
+        }
     }
 
 
@@ -99,7 +124,14 @@ public class StartController extends AbstractController {
      */
     @FXML
     private void handleNewProjectButton() {
-        ViewFactory.createNewProjectDialog();
+        NewProjectDialogController controller = ViewFactory.createNewProjectDialog(dataAccess);
+        controller.setUser(this.userChoiceBox.getValue());
+        controller.showModalStage();
+        Project newProject = controller.getProject();
+        if (newProject != null) {
+            this.projectChoiceBox.getItems().add(newProject);
+            this.projectChoiceBox.getSelectionModel().select(newProject);
+        }
     }
 
 }

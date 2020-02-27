@@ -1,4 +1,4 @@
-package roarusko.simpleTimeTracker.controller.main;
+package roarusko.simpleTimeTracker.view.components;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -10,11 +10,12 @@ import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.converter.LocalTimeStringConverter;
+import roarusko.simpleTimeTracker.model.utility.Entries;
 
 public class TimeField extends TextField {
 
     public TimeField() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter formatter = Entries.getTimeFormatter();
         // String timePatternSeconds =
         // "([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]";
         // String timePatternSeconds =
@@ -67,5 +68,15 @@ public class TimeField extends TextField {
         this.setTextFormatter(new TextFormatter<LocalTime>(
                 new LocalTimeStringConverter(formatter, formatter),
                 LocalTime.now().truncatedTo(ChronoUnit.MINUTES)));
+    }
+    
+    public void setConverter(LocalTimeStringConverter converter) {
+        this.setTextFormatter(new TextFormatter<LocalTime>(converter,
+                LocalTime.now().truncatedTo(ChronoUnit.MINUTES), this.getTextFormatter().getFilter()));
+    }
+
+
+    public void setValue(LocalTime value) {
+        this.valueProperty().set(value);
     }
 }

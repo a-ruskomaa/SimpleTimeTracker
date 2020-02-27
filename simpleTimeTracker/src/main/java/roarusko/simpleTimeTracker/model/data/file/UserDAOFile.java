@@ -4,9 +4,10 @@ import roarusko.simpleTimeTracker.model.data.UserDAO;
 import roarusko.simpleTimeTracker.model.domain.User;
 
 public class UserDAOFile extends AbstractDAOFile<User> implements UserDAO {
+    private static final String pathToFile = "data/users.dat";
      
      public UserDAOFile() {
-        super("users.dat");
+        super(pathToFile);
     }
 
     

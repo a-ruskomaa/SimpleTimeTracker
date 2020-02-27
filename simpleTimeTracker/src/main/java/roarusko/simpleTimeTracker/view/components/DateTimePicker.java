@@ -1,4 +1,4 @@
-package roarusko.simpleTimeTracker.controller.main;
+package roarusko.simpleTimeTracker.view.components;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;

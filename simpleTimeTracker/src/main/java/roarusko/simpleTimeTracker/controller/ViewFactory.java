@@ -6,7 +6,7 @@ import java.net.URL;
 import roarusko.simpleTimeTracker.App;
 import roarusko.simpleTimeTracker.controller.main.*;
 import roarusko.simpleTimeTracker.controller.start.*;
-import roarusko.simpleTimeTracker.model.ModelAccess;
+import roarusko.simpleTimeTracker.model.data.DataAccess;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -36,55 +36,52 @@ public class ViewFactory {
     private static final String FXML_MAINVIEW_TIMERTAB_PATH = "main/TimerTab.fxml";
     private static final String FXML_MAINVIEW_PROJECTTAB_PATH = "main/ProjectTab.fxml";
 
-    /*
-     * Luodaan modelAccess, jonka avulla ylläpidetään ohjelman tilaa.
-     * ModelAccess hakee luonnin yhteydessä tietorakenteeseen/tietokantaan tallennetut tiedot ohjelman
-     * käyttäjistä, projekteista sekä niihin tehdyistä merkinnöistä. Viitettä tähän olioon välitetään parametreina
-     * ohjelman kaikille kontrollereille.
-     */
-    private static final ModelAccess modelAccess = new ModelAccess();
     
     /**
      * Luo käynnistysikkunan.
      * @param stage ohjelman stage
+     * @param dataAccess dataAccess 
      * @return palauttaa luodun ikkunan kontrolleriluokan
      */
-    public static StartController createStartView(Stage stage) {
-        StartController controller = new StartController(modelAccess, stage);
-        createAndShowWindow(controller, FXML_STARTVIEW_LOCATION, stage, false);
+    public static StartController createStartView(Stage stage, DataAccess dataAccess) {
+        StartController controller = new StartController(dataAccess, stage);
+        addSceneToStage(controller, FXML_STARTVIEW_LOCATION, stage);
         return controller;
     }
     
     /**
      * Luo uuden käyttäjän luomiseen käytettävän modaalisen popup-dialogin
+     * @param dataAccess dataAccess 
      * @return palauttaa luodun ikkunan kontrolleriluokan
      */
-    public static NewUserDialogController createNewUserDialog() {
+    public static NewUserDialogController createNewUserDialog(DataAccess dataAccess) {
         Stage stage = new Stage();
-        NewUserDialogController controller = new NewUserDialogController(modelAccess, stage);
-        createAndShowWindow(controller, FXML_STARTVIEW_USERDIALOG_PATH, stage, true);
+        NewUserDialogController controller = new NewUserDialogController(dataAccess, stage);
+        addSceneToStage(controller, FXML_STARTVIEW_USERDIALOG_PATH, stage);
         return controller;
     }
     
     /**
      * Luo uuden projektin luomiseen käytettävän modaalisen popup-dialogin
+     * @param dataAccess dataAccess 
      * @return palauttaa luodun ikkunan kontrolleriluokan
      */
-    public static NewProjectDialogController createNewProjectDialog() {
+    public static NewProjectDialogController createNewProjectDialog(DataAccess dataAccess) {
         Stage stage = new Stage();
-        NewProjectDialogController controller = new NewProjectDialogController(modelAccess, stage);
-        createAndShowWindow(controller, FXML_STARTVIEW_PROJECTDIALOG_PATH, stage, true);
+        NewProjectDialogController controller = new NewProjectDialogController(dataAccess, stage);
+        addSceneToStage(controller, FXML_STARTVIEW_PROJECTDIALOG_PATH, stage);
         return controller;
     }
     
     /**
      * Luo pääikkunan.
+     * @param dataAccess dataAccess 
      * @return palauttaa luodun ikkunan kontrolleriluokan
      */
-    public static MainController createMainView() {
+    public static MainController createMainView(DataAccess dataAccess) {
         Stage stage = new Stage();
-        MainController controller = new MainController(modelAccess, stage);
-        createAndShowWindow(controller, FXML_MAINVIEW_LOCATION, stage, false);
+        MainController controller = new MainController(dataAccess, stage);
+        addSceneToStage(controller, FXML_MAINVIEW_LOCATION, stage);
         return controller;
     }
     
@@ -92,12 +89,13 @@ public class ViewFactory {
     
     /**
      * Luo merkinnän muokkaamiseen käytettävän modaalisen popup-dialogin
+     * @param dataAccess dataAccess 
      * @return palauttaa luodun ikkunan kontrolleriluokan
      */
-    public static EditEntryDialogController createEditEntryDialog() {
+    public static EditEntryDialogController createEditEntryDialog(DataAccess dataAccess) {
         Stage stage = new Stage();
-        EditEntryDialogController controller = new EditEntryDialogController(modelAccess, stage);
-        createAndShowWindow(controller, FXML_MAINVIEW_EDIT_ENTRY_DIALOG_PATH, stage, true);
+        EditEntryDialogController controller = new EditEntryDialogController(dataAccess, stage);
+        addSceneToStage(controller, FXML_MAINVIEW_EDIT_ENTRY_DIALOG_PATH, stage);
         
         return controller;
     }
@@ -105,12 +103,13 @@ public class ViewFactory {
     
     /**
      * Luo merkinnän poistamiseen käytettävän modaalisen popup-dialogin
+     * @param dataAccess dataAccess 
      * @return palauttaa luodun ikkunan kontrolleriluokan
      */
-    public static DeleteEntryDialogController createDeleteEntryDialog() {
+    public static DeleteEntryDialogController createDeleteEntryDialog(DataAccess dataAccess) {
         Stage stage = new Stage();
-        DeleteEntryDialogController controller = new DeleteEntryDialogController(modelAccess, stage);
-        createAndShowWindow(controller, FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH, stage, true);
+        DeleteEntryDialogController controller = new DeleteEntryDialogController(dataAccess, stage);
+        addSceneToStage(controller, FXML_MAINVIEW_DELETE_ENTRY_DIALOG_PATH, stage);
 
         return controller;
     }
@@ -119,11 +118,12 @@ public class ViewFactory {
     /**
      * Luo pääikkunan ajastinvälilehden
      * @param parentController luotavan kontrollerin vanhempi
+     * @param dataAccess dataAccess 
      * @return palauttaa Parent-muotoisen olion
      */
-    public static Parent createTimerTab(MainController parentController) {
+    public static Parent createTimerTab(MainController parentController, DataAccess dataAccess) {
         Stage stage = parentController.getStage();
-        TimerTabController timerTabController = new TimerTabController(modelAccess, stage, parentController);
+        TimerTabController timerTabController = new TimerTabController(dataAccess, stage, parentController);
         
         return createParentNode(timerTabController, FXML_MAINVIEW_TIMERTAB_PATH);
     }
@@ -131,11 +131,12 @@ public class ViewFactory {
     /**
      * Luo pääikkunan projektivälilehden
      * @param parentController luotavan kontrollerin vanhempi
+     * @param dataAccess dataAccess 
      * @return palauttaa Parent-muotoisen olion
      */
-    public static Parent createProjecTab(MainController parentController) {
+    public static Parent createProjecTab(MainController parentController, DataAccess dataAccess) {
         Stage stage = parentController.getStage();
-        ProjectTabController projectTabController = new ProjectTabController(modelAccess, stage, parentController);
+        ProjectTabController projectTabController = new ProjectTabController(dataAccess, stage, parentController);
         
         return createParentNode(projectTabController, FXML_MAINVIEW_PROJECTTAB_PATH);
     }
@@ -162,34 +163,17 @@ public class ViewFactory {
         }
     }
 
-    /**
-     * Luo annetussa polussa olevasta FXML-tiedostosta scene-olion.
-     * @param controller Näkymään liitettävä kontrolleriluokka
-     * @param path polku FXML-tiedostoon
-     * @return palauttaa scene-olion
-     */
-    @SuppressWarnings("unused")
-    private static Scene createView(WindowController controller, String path) {
-        Parent root = createParentNode(controller, path);
-        Scene scene = new Scene(root);
-        scene.getStylesheets()
-                .add(App.class.getResource("tyoaika.css")
-                        .toExternalForm());
-
-        return scene;
-    }
     
     /**
-     * Luo annetussa polussa olevan näkymän, yhdistää näkymän stageen ja näyttää stagen.
+     * Luo annetussa polussa olevan näkymän, yhdistää näkymän stageen ja palauttaa stagen.
      * 
      * @param controller Näkymään liitettävä kontrolleriluokka, joka välitetään parametrina ketjun seuraavalle metodille
      * @param path polku FXML-tiedostoon
      * @param stage stage, johon luotava näkymä liitetään.
      * @param modal Halutaanko näytettävästä ikkunasta modaalinen
      */
-    private static void createAndShowWindow(WindowController controller, String path, Stage stage, boolean modal) {
+    private static Stage addSceneToStage(WindowController controller, String path, Stage stage) {
         
-        // TODO parametriksi voisi lisätä halutaanko kutsua showAndWait()?
         Parent root = createParentNode(controller, path);
         Scene scene = new Scene(root);
         scene.getStylesheets()
@@ -197,11 +181,8 @@ public class ViewFactory {
                 .getResource("tyoaika.css")
                 .toExternalForm());
         stage.setScene(scene);
-        if (modal) {            
-            stage.initModality(Modality.APPLICATION_MODAL);
-        }
         
-        stage.show();
+        return stage;
     }
 
 

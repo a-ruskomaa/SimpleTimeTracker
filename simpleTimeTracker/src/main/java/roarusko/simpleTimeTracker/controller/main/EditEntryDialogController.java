@@ -7,10 +7,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
-import roarusko.simpleTimeTracker.model.ModelAccess;
+import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
+import roarusko.simpleTimeTracker.view.components.TimeField;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.LongProperty;
@@ -23,6 +24,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -36,21 +38,25 @@ import javafx.util.converter.LocalTimeStringConverter;
  *
  */
 
-// TODO tarkistus onko ajastin käynnissä tai merkintä olemassa
+//TODO tarkistus onko ajastin käynnissä tai merkintä olemassa
+// TODO terkistus onko kesto negatiivinen
+
 public class EditEntryDialogController extends AbstractController {
 
-    private Entry editedEntry;
+    private Entry entry;
     private DateTimeFormatter dateFormatter = Entries.getDateFormatter();
     private DateTimeFormatter timeFormatter = Entries.getTimeFormatter();
     private LocalDateStringConverter dateConverter = new LocalDateStringConverter(
             dateFormatter, dateFormatter);
     private LocalTimeStringConverter timeConverter = new LocalTimeStringConverter(
             timeFormatter, timeFormatter);
+    
+    private boolean updated = false;
 
-    private final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<LocalDate>();
-    private final ObjectProperty<LocalTime> startTime = new SimpleObjectProperty<LocalTime>();
-    private final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<LocalDate>();
-    private final ObjectProperty<LocalTime> endTime = new SimpleObjectProperty<LocalTime>();
+//    private final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<LocalDate>();
+//    private final ObjectProperty<LocalTime> startTime = new SimpleObjectProperty<LocalTime>();
+//    private final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<LocalDate>();
+//    private final ObjectProperty<LocalTime> endTime = new SimpleObjectProperty<LocalTime>();
     private final LongProperty duration = new SimpleLongProperty();
 
     @FXML
@@ -76,15 +82,11 @@ public class EditEntryDialogController extends AbstractController {
 
     /**
      * 
-     * @param modelAccess Olio, jonka avulla pidetään ohjelman tilaa yllä ja välitetään valittuja olioita luokalta toiselle.
+     * @param dataAccess Olio, jonka avulla pidetään ohjelman tilaa yllä ja välitetään valittuja olioita luokalta toiselle.
      * @param stage stage johon kontrolleri liittyy
      */
-    public EditEntryDialogController(ModelAccess modelAccess, Stage stage) {
-        super(modelAccess, stage);
-        
-        // TODO kannattaisiko tämä välittää parametrina?
-        // TODO tarvitseeko olla propertyna?
-        this.editedEntry = modelAccess.editedEntryProperty().get();
+    public EditEntryDialogController(DataAccess dataAccess, Stage stage) {
+        super(dataAccess, stage);
     }
 
 
@@ -92,20 +94,18 @@ public class EditEntryDialogController extends AbstractController {
 
         startDatePicker.setConverter(dateConverter);
         endDatePicker.setConverter(dateConverter);
+        startTimeField.setConverter(timeConverter);
+        endTimeField.setConverter(timeConverter);
 
-        // TODO mieti nämä uusiksi. Kannattaako luoda entrywrapper johon bindaa suoraan nuo komponentit?
-        startDate.set(editedEntry.getStartDate());
-        startTime.set(editedEntry.getStartTime());
-        endDate.set(editedEntry.getEndDate());
-        endTime.set(editedEntry.getEndTime());
-
-        startTimeField.valueProperty().bindBidirectional(this.startTime);
-        startDatePicker.valueProperty().bindBidirectional(this.startDate);
-        endTimeField.valueProperty().bindBidirectional(this.endTime);
-        endDatePicker.valueProperty().bindBidirectional(this.endDate);
+//        startTimeField.valueProperty().bindBidirectional(this.startTime);
+//        startDatePicker.valueProperty().bindBidirectional(this.startDate);
+//        endTimeField.valueProperty().bindBidirectional(this.endTime);
+//        endDatePicker.valueProperty().bindBidirectional(this.endDate);
         
-        saveButton.disableProperty().bind(startTimeField.valueProperty().isNull().or(startDatePicker.valueProperty().isNull())
-                .or(endTimeField.valueProperty().isNull().or(endDatePicker.valueProperty().isNull())));
+        saveButton.disableProperty().bind(startTimeField.valueProperty().isNull()
+                                    .or(startDatePicker.valueProperty().isNull())
+                                    .or(endTimeField.valueProperty().isNull()
+                                    .or(endDatePicker.valueProperty().isNull())));
 
         durationField.textProperty().bind(new StringBinding() {
 
@@ -120,8 +120,8 @@ public class EditEntryDialogController extends AbstractController {
             protected String computeValue() {
                 try {
                     Long seconds = Duration.between(
-                            LocalDateTime.of(startDate.get(), startTime.get()),
-                            LocalDateTime.of(endDate.get(), endTime.get()))
+                            LocalDateTime.of(startDatePicker.getValue(), startTimeField.getValue()),
+                            LocalDateTime.of(endDatePicker.getValue(), endTimeField.getValue()))
                             .toSeconds();
                     return String.format(String.format("%dh %02dmin",
                             seconds / 3600, (seconds % 3600) / 60));
@@ -143,14 +143,12 @@ public class EditEntryDialogController extends AbstractController {
     @FXML
     void handleSaveButton(ActionEvent event) {
         
-        editedEntry.setStartDate(this.startDate.get());
-        editedEntry.setEndDate(this.endDate.get());
-        editedEntry.setStartTime(this.startTime.get());
-        editedEntry.setEndTime(this.endTime.get());
+        entry.setStartDate(this.startDatePicker.getValue());
+        entry.setEndDate(this.endDatePicker.getValue());
+        entry.setStartTime(this.startTimeField.getValue());
+        entry.setEndTime(this.endTimeField.getValue());
         
-        modelAccess.setEditedEntry(editedEntry);
-        
-        modelAccess.commitEntry();
+        this.entry = dataAccess.commitEntry(entry);
 
         exitStage(event);
     }
@@ -164,6 +162,22 @@ public class EditEntryDialogController extends AbstractController {
 
         window.fireEvent(
                 new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
+    }
+    
+    public void setEntry(Entry entry) {
+        this.entry = entry;
+        
+        this.startDatePicker.setValue(entry.getStartDate());
+
+        this.endDatePicker.setValue(entry.getEndDate());
+
+        this.startTimeField.setValue(entry.getStartTime());
+
+        this.endTimeField.setValue(entry.getEndTime());
+    }
+    
+    public Entry getEntry() {
+        return this.entry;
     }
 
 }
