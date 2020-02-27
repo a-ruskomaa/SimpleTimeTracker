@@ -1,16 +1,22 @@
-package roarusko.simpleTimeTracker.controller;
+package roarusko.simpleTimeTracker.view;
 
 import java.io.IOException;
 import java.net.URL;
 
 import roarusko.simpleTimeTracker.App;
+import roarusko.simpleTimeTracker.controller.WindowController;
 import roarusko.simpleTimeTracker.controller.main.*;
+import roarusko.simpleTimeTracker.controller.main.dialogs.DeleteEntryDialogController;
+import roarusko.simpleTimeTracker.controller.main.dialogs.EditEntryDialogController;
+import roarusko.simpleTimeTracker.controller.main.tabs.ProjectTabController;
+import roarusko.simpleTimeTracker.controller.main.tabs.TimerTabController;
 import roarusko.simpleTimeTracker.controller.start.*;
+import roarusko.simpleTimeTracker.controller.start.dialogs.NewProjectDialogController;
+import roarusko.simpleTimeTracker.controller.start.dialogs.NewUserDialogController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -24,8 +30,8 @@ import javafx.stage.Stage;
  */
 public class ViewFactory {
 
-    private static final String FXML_MAINVIEW_LOCATION = "main/MainView.fxml";
-    private static final String FXML_STARTVIEW_LOCATION = "start/StartView.fxml";
+    private static final String FXML_MAINVIEW_LOCATION = "main/Main.fxml";
+    private static final String FXML_STARTVIEW_LOCATION = "start/Start.fxml";
 
     private static final String FXML_STARTVIEW_USERDIALOG_PATH = "start/NewUserDialog.fxml";
     private static final String FXML_STARTVIEW_PROJECTDIALOG_PATH = "start/NewProjectDialog.fxml";

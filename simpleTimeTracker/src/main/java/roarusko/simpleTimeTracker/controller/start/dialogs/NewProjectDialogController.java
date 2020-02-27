@@ -1,7 +1,8 @@
-package roarusko.simpleTimeTracker.controller.start;
+package roarusko.simpleTimeTracker.controller.start.dialogs;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
+import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,16 +15,15 @@ import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 /**
- * Uuden käyttäjän luomiseen käytettävän dialogin kontrolleriluokka.
+ * Uuden projektin luomiseen käytettävän dialogin kontrolleriluokka.
  * @author aleks
  * @version 21 Feb 2020
  *
  */
-public class NewUserDialogController extends AbstractController {
+public class NewProjectDialogController extends AbstractController {
     
-
     @FXML
-    private TextField newUserNameField;
+    private TextField newProjectNameField;
 
     @FXML
     private Button okButton;
@@ -31,27 +31,26 @@ public class NewUserDialogController extends AbstractController {
     @FXML
     private Button cancelButton;
     
-    
+    private Project project;
     private User user;
     
-    
     /**
-     * Luo uuden kontrollerin käyttäjän lisäämiseen käytettävälle näkymälle.
+     * Luo uuden kontrollerin projektin lisäämiseen käytettävälle näkymälle.
      * 
      * @param dataAccess Pääohjelmassa luotu DataAccess olio. Tätä välitetään parametreina muille kontrollereille.
      * @param stage Stage jota kontrolloidaan.
      */
-    public NewUserDialogController(DataAccess dataAccess, Stage stage) {
+    public NewProjectDialogController(DataAccess dataAccess, Stage stage) {
         super(dataAccess, stage);
     }
 
     /**
-     * Tapahtumankäsittelijä OK-napille. Lisää uuden käyttäjän ja sulkee dialogin.
+     * Tapahtumankäsittelijä OK-napille. Lisää uuden projektin ja sulkee dialogin.
      * @param event Napin painamisen aiheuttama tapahtuma.
      */
     @FXML
     void handleOkButton(ActionEvent event) {
-        this.user = dataAccess.addUser(newUserNameField.getText());
+        this.project = dataAccess.addProject(newProjectNameField.getText(), this.user);
         exitStage(event);
     }
     
@@ -77,11 +76,14 @@ public class NewUserDialogController extends AbstractController {
         window.fireEvent(
                 new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
+
     
-    
-    public User getUser() {
-        return this.user;
+    public Project getProject() {
+        return this.project;
     }
     
-    
+    public void setUser(User user) {
+        this.user = user;
+    }
+
 }

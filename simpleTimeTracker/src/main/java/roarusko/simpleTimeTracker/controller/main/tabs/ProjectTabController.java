@@ -1,4 +1,4 @@
-package roarusko.simpleTimeTracker.controller.main;
+package roarusko.simpleTimeTracker.controller.main.tabs;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -7,8 +7,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
-import roarusko.simpleTimeTracker.controller.ViewFactory;
+import roarusko.simpleTimeTracker.view.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
+import roarusko.simpleTimeTracker.controller.main.MainController;
+import roarusko.simpleTimeTracker.controller.main.UpdateEvent;
+import roarusko.simpleTimeTracker.controller.main.dialogs.DeleteEntryDialogController;
+import roarusko.simpleTimeTracker.controller.main.dialogs.EditEntryDialogController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
@@ -99,7 +103,9 @@ public class ProjectTabController extends AbstractController {
     public void initialize() {
 
         // haetaan valitun projektin merkinnät listalle
-        entryListView.setItems(parentController.selectedProject_EntriesProperty());
+        entryListView.setItems(parentController.selectedProject_EntriesProperty().sorted((first, second) -> {
+            return first.getStartDateTime().compareTo(second.getStartDateTime()); 
+        }));
         
         entryListView.valueProperty().bindBidirectional(parentController.selectedEntryProperty());
         
@@ -117,26 +123,10 @@ public class ProjectTabController extends AbstractController {
         }, entryListView.valueProperty()));
 
         // sidotaan tekstikentän sisältö valitun merkinnän aikaleimojen dataan
-        entryDurationField.textProperty().bind(new StringBinding() {
-
-            {
-                bind(entryStartField.textProperty(),
-                        entryEndField.textProperty());
-            }
-
-            @Override
-            protected String computeValue() {
-                try {
-                    Long seconds = Duration.between(entryStartField.getValue(), entryEndField.getValue())
-                            .toSeconds();
-                    return String.format(String.format("%dh %02dmin",
-                            seconds / 3600, (seconds % 3600) / 60));
-                } catch (NullPointerException e) {
-
-                    return "";
-                }
-            }
-        });
+        entryDurationField.textProperty().bind(Bindings.createStringBinding(() -> {
+            Entry entry = entryListView.valueProperty().get();
+            return entry != null ? Entries.getDurationAsString(entry.getStartDateTime(), entry.getEndDateTime()) : null;
+        }, entryListView.valueProperty()));
 
     }
 
@@ -155,7 +145,7 @@ public class ProjectTabController extends AbstractController {
             
             Entry newEntry = controller.getEntry();
             
-            if (newEntry != null) {
+            if (newEntry != entry) {
                 parentController.selectedProject_EntriesProperty().add(newEntry);
                 parentController.selectedEntryProperty().set(newEntry);
             }
@@ -179,7 +169,7 @@ public class ProjectTabController extends AbstractController {
             Entry newEntry = controller.getEntry();
             
             if (newEntry != null) {
-                int index = dataAccess.findIndexById(newEntry, entryListView.getItems());
+                int index = dataAccess.findIndexById(newEntry, parentController.selectedProject_EntriesProperty());
                 parentController.selectedProject_EntriesProperty().set(index, newEntry);
                 parentController.selectedEntryProperty().set(newEntry);
             }

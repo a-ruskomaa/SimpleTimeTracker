@@ -22,7 +22,6 @@ public class TestEntry {
         
         assertTrue(LocalDate.of(2020, 05, 30).isEqual(entry.getStartDate()), "Wrong start date");
         assertTrue(LocalDate.of(2020, 05, 31).isEqual(entry.getEndDate()), "Wrong end date");
-        assertEquals(90060L, entry.getDuration(), "Wrong duration!"); //25h 1min = 90060s
     }
     //
 }

@@ -1,10 +1,11 @@
-package roarusko.simpleTimeTracker.controller.main;
+package roarusko.simpleTimeTracker.controller.main.dialogs;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
@@ -45,19 +46,15 @@ public class EditEntryDialogController extends AbstractController {
 
     private Entry entry;
     private DateTimeFormatter dateFormatter = Entries.getDateFormatter();
-    private DateTimeFormatter timeFormatter = Entries.getTimeFormatter();
     private LocalDateStringConverter dateConverter = new LocalDateStringConverter(
             dateFormatter, dateFormatter);
+    
+    private DateTimeFormatter timeFormatter = Entries.getTimeFormatter();
     private LocalTimeStringConverter timeConverter = new LocalTimeStringConverter(
             timeFormatter, timeFormatter);
     
     private boolean updated = false;
 
-//    private final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<LocalDate>();
-//    private final ObjectProperty<LocalTime> startTime = new SimpleObjectProperty<LocalTime>();
-//    private final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<LocalDate>();
-//    private final ObjectProperty<LocalTime> endTime = new SimpleObjectProperty<LocalTime>();
-    private final LongProperty duration = new SimpleLongProperty();
 
     @FXML
     private DatePicker startDatePicker;
@@ -94,43 +91,50 @@ public class EditEntryDialogController extends AbstractController {
 
         startDatePicker.setConverter(dateConverter);
         endDatePicker.setConverter(dateConverter);
+        
         startTimeField.setConverter(timeConverter);
         endTimeField.setConverter(timeConverter);
+        
+        startDatePicker.valueProperty().addListener((changed) -> {
+            System.out.println("value changed!");
+        });
+        
+        // pakotetaan datepickerit parsimaan päivämäärää kun focus poistuu tekstikentästä.
+        // it's not pretty, but it works...
+        startDatePicker.focusedProperty().addListener((e) -> {
+            System.out.println("hep");
+            try {
+                startDatePicker.setValue(startDatePicker.getConverter().fromString(startDatePicker.getEditor().getText()));
+            } catch (DateTimeParseException ex) {
+                System.out.println("invalid date format");
+                startDatePicker.getEditor().setText(startDatePicker.getConverter().toString(startDatePicker.getValue()));
+            }
+        });
+        
+        endDatePicker.focusedProperty().addListener((e) -> {
+            System.out.println("hep");
+            try {
+                endDatePicker.setValue(endDatePicker.getConverter().fromString(endDatePicker.getEditor().getText()));
+            } catch (DateTimeParseException ex) {
+                System.out.println("invalid date format");
+                endDatePicker.getEditor().setText(endDatePicker.getConverter().toString(endDatePicker.getValue()));
+            }
+        });
 
-//        startTimeField.valueProperty().bindBidirectional(this.startTime);
-//        startDatePicker.valueProperty().bindBidirectional(this.startDate);
-//        endTimeField.valueProperty().bindBidirectional(this.endTime);
-//        endDatePicker.valueProperty().bindBidirectional(this.endDate);
         
         saveButton.disableProperty().bind(startTimeField.valueProperty().isNull()
                                     .or(startDatePicker.valueProperty().isNull())
                                     .or(endTimeField.valueProperty().isNull()
                                     .or(endDatePicker.valueProperty().isNull())));
 
-        durationField.textProperty().bind(new StringBinding() {
-
-            {
-                bind(startTimeField.valueProperty(),
-                        startDatePicker.valueProperty(),
-                        endTimeField.valueProperty(),
-                        endDatePicker.valueProperty());
+        durationField.textProperty().bind(Bindings.createStringBinding(() -> {
+            try {
+                return Entries.getDurationAsString(startDatePicker.getValue(), startTimeField.getValue(), endDatePicker.getValue(), endTimeField.getValue());
+            } catch (NullPointerException e) {
+                return "";
             }
-
-            @Override
-            protected String computeValue() {
-                try {
-                    Long seconds = Duration.between(
-                            LocalDateTime.of(startDatePicker.getValue(), startTimeField.getValue()),
-                            LocalDateTime.of(endDatePicker.getValue(), endTimeField.getValue()))
-                            .toSeconds();
-                    return String.format(String.format("%dh %02dmin",
-                            seconds / 3600, (seconds % 3600) / 60));
-                } catch (NullPointerException e) {
-
-                    return "";
-                }
-            }
-        });
+        }, startTimeField.valueProperty(),startDatePicker.valueProperty(),endTimeField.valueProperty(),endDatePicker.valueProperty())
+        );
     }
 
 
@@ -149,6 +153,8 @@ public class EditEntryDialogController extends AbstractController {
         entry.setEndTime(this.endTimeField.getValue());
         
         this.entry = dataAccess.commitEntry(entry);
+        
+        this.updated = true;
 
         exitStage(event);
     }
@@ -178,6 +184,10 @@ public class EditEntryDialogController extends AbstractController {
     
     public Entry getEntry() {
         return this.entry;
+    }
+    
+    public boolean wasUpdated() {
+        return updated;
     }
 
 }

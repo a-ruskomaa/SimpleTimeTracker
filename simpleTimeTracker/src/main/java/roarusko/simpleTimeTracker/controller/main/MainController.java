@@ -1,21 +1,20 @@
 package roarusko.simpleTimeTracker.controller.main;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
-import roarusko.simpleTimeTracker.controller.ViewFactory;
+import roarusko.simpleTimeTracker.view.ViewFactory;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
-import roarusko.simpleTimeTracker.model.utility.EntryWrapper;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
+import roarusko.simpleTimeTracker.model.utility.Entries;
+
+import java.util.Comparator;
+import java.util.List;
+
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Tab;
@@ -30,8 +29,8 @@ import javafx.stage.Stage;
  */
 public class MainController extends AbstractController  {
     
-    private TimerTabController timerTabController;
-    private ProjectTabController projectTabController;
+//    private TimerTabController timerTabController;
+//    private ProjectTabController projectTabController;
     
     private ListProperty<User> allUsers = new SimpleListProperty<User>();
     
@@ -82,17 +81,25 @@ public class MainController extends AbstractController  {
      */
     public void initialize() {
         
-        
+        // asetetaan valintalaatikon sisältö vastaamaan valitun käyttäjän projekteja
         projectChoiceBox.setItems(this.selectedUser_Projects);
         
+        // bindataan valitun projektin käärivä property ja valintalaatikon valinta
         projectChoiceBox.valueProperty().bindBidirectional(this.selectedProject);
         
-        
-
+        // luodaan sisältö välilehtiin
         timerTab.setContent(ViewFactory.createTimerTab(this, dataAccess));
         projectTab.setContent(ViewFactory.createProjecTab(this, dataAccess));
         
-        
+        /*
+         * asetetaan tapahtumankäsittelijä lataamaan kaikki projektiin kuuluvat tapahtumat projektin vaihtuessa.
+         * valitaan automaattisesti projektin ensimmäinen merkintä
+         * päivitetaan myös projektin kokonaiskesto näkyville
+         * 
+         *  
+         *  
+         */
+        //
         projectChoiceBox.valueProperty().addListener((prop, oldV, newV) -> {
             if (newV != null) {
                 selectedProject_Entries.set(dataAccess.loadEntries(newV));
@@ -102,43 +109,15 @@ public class MainController extends AbstractController  {
         });
                
         
-        
-        projectTab.getContent().addEventHandler(UpdateEvent.UPDATE_EVENT, new EventHandler<UpdateEvent>() {
-
-            @Override
-            public void handle(UpdateEvent event) {
-                System.out.println("Event handled: " + event.toString());
+        projectTab.getContent().addEventHandler(UpdateEvent.UPDATE_EVENT, (UpdateEvent e) -> {
+                System.out.println("Event handled: " + e.toString());
                 updateTotalTime();
             }
-        });
+       );
         
         
         
-//        projectEntryList.setCellFactory(new Callback<ListView<Entry>, ListCell<Entry>>(){
-// 
-//            @Override
-//            public ListCell<Entry> call(ListView<Entry> p) {
-//                 
-//                ListCell<Entry> cell = new ListCell<Entry>(){
-// 
-//                    @Override
-//                    protected void updateItem(Entry item, boolean empty) {
-//                        super.updateItem(item, empty);
-//
-//                        if (empty || item == null) {
-//                            setText(null);
-//                            setGraphic(null);
-//                        } else {
-//                            setText(item.toString());
-//                        }
-//                    }
-//                    
-// 
-//                };
-//                 
-//                return cell;
-//            }
-//        });
+
 
     }
 
@@ -147,17 +126,24 @@ public class MainController extends AbstractController  {
         
         System.out.println("päivitetään kokonaisaika");
 
-        long totalTime = 0L;
+        long time = calculateTotalTime(this.selectedProject_Entries.get());
         
-        for (Entry entry : this.selectedProject_Entries.get()) {
-            totalTime += entry.getDuration();
-        }
-        
-        totalProjectEntriesField.setText(String.format("%dh %02dmin", totalTime / 3600, (totalTime % 3600) / 60));
+        totalProjectEntriesField.setText(Entries.getDurationAsString(time));
 
     }
+    
+    
+    private Long calculateTotalTime(List<Entry> list) {
+        long totalTime = 0L;
+        
+        for (Entry entry : list) {
+            totalTime += Entries.getDurationAsLong(entry.getStartDateTime(), entry.getEndDateTime());
+        }
+        
+        return totalTime;
+    }
 
-
+    
 
     // Propertyjen getterit
 
@@ -190,7 +176,7 @@ public class MainController extends AbstractController  {
 
 
     /**
-     * Palauttaa kaikki käyttäjät sisältävän propertyn
+     * Palauttaa kaikki käyttäjät sisältävän listpropertyn
      * @return Palauttaa kaikki käyttäjät sisältävän propertyn
      */
     public ListProperty<User> allUsersProperty() {
@@ -199,7 +185,7 @@ public class MainController extends AbstractController  {
 
 
     /**
-     * Palauttaa valitun käyttäjän kaikki projektit sisältävän propertyn
+     * Palauttaa valitun käyttäjän kaikki projektit sisältävän listpropertyn
      * @return Palauttaa valitun käyttäjän kaikki projektit sisältävän propertyn
      */
     public ListProperty<Project> selectedUser_ProjectsProperty() {
@@ -207,7 +193,7 @@ public class MainController extends AbstractController  {
     }
 
     /**
-     * Palauttaa valitun projektin kaikki merkinnät sisältävän propertyn
+     * Palauttaa valitun projektin kaikki merkinnät sisältävän listpropertyn
      * @return Palauttaa valitun projektin kaikki merkinnät sisältävän propertyn
      */
     public ListProperty<Entry> selectedProject_EntriesProperty() {

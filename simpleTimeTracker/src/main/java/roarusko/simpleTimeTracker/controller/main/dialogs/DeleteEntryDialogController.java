@@ -1,4 +1,4 @@
-package roarusko.simpleTimeTracker.controller.main;
+package roarusko.simpleTimeTracker.controller.main.dialogs;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
@@ -68,11 +68,8 @@ public class DeleteEntryDialogController extends AbstractController {
         
         this.startTimeLabel.setText(Entries.getDateTimeAsString(entry.getStartDateTime()));
         this.endTimeLabel.setText(Entries.getDateTimeAsString(entry.getEndDateTime()));
-
-        Long seconds = entry.getDuration();
         
-        this.durationLabel.setText(String.format(String.format("%dh %02dmin",
-                            seconds / 3600, (seconds % 3600) / 60)));
+        this.durationLabel.setText(Entries.getDurationAsString(entry.getStartDateTime(), entry.getEndDateTime()));
     }
     
     public boolean wasDeleted() {

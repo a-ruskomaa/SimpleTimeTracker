@@ -1,9 +1,11 @@
 package roarusko.simpleTimeTracker.controller.start;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
-import roarusko.simpleTimeTracker.controller.ViewFactory;
+import roarusko.simpleTimeTracker.view.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
 import roarusko.simpleTimeTracker.controller.main.MainController;
+import roarusko.simpleTimeTracker.controller.start.dialogs.NewProjectDialogController;
+import roarusko.simpleTimeTracker.controller.start.dialogs.NewUserDialogController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;

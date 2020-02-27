@@ -165,24 +165,6 @@ public class Entry implements ChildObject {
         return LocalDateTime.of(this.getEndDate(), this.getEndTime());
     }
 
-
-    /**
-     * @return palauttaa keston sekunneissa
-     */
-    public Long getDuration() {
-        {
-            try {
-            LocalDateTime startDateTime = LocalDateTime.of(this.getStartDate(),
-                    this.getStartTime());
-            LocalDateTime endDateTime = LocalDateTime.of(this.getEndDate(),
-                    this.getEndTime());
-            return Duration.between(startDateTime, endDateTime).toSeconds();
-            } catch (NullPointerException e) {
-                return 0L;
-            }
-        }
-    }
-
     // Setterit:
 
 
@@ -240,7 +222,7 @@ public class Entry implements ChildObject {
     @Override
     public String toString() {
         return startDate.format(Entries.getDateFormatter()) + " "
-                + Entries.getDurationAsString(getDuration());
+                + Entries.getDurationAsString(startDate, startTime, endDate, endTime);
     }
 
 

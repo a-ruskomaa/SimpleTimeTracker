@@ -61,13 +61,54 @@ public class Entries {
     }
     
     /**
+     * @param startDate aikavälin alkupäivä
+     * @param startTime aikavälin alkuaika
+     * @param endDate aikavälin loppupäivä
+     * @param endTime aikavälin loppuaika
+     * @return palauttaa aikavälin keston sekunneissa
+     */
+    public static Long getDurationAsLong(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        return Duration.between(LocalDateTime.of(startDate, startTime), LocalDateTime.of(endDate, endTime)).toSeconds();
+    }
+    
+    
+    /**
+     * @param start aikavälin alkuaika
+     * @param end aikavälin loppuaika
+     * @return palauttaa aikavälin keston sekunneissa
+     */
+    public static Long getDurationAsLong(LocalDateTime start, LocalDateTime end) {
+        return Duration.between(start, end).toSeconds();
+    }
+    
+    
+    /**
+     * @param startDate aikavälin alkupäivä
+     * @param startTime aikavälin alkuaika
+     * @param endDate aikavälin loppupäivä
+     * @param endTime aikavälin loppuaika
+     * @return palauttaa aikavälin muotuiltuna merkkijonona muodossa "0h 00min"
+     */
+    public static String getDurationAsString(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
+        return getDurationAsString(Duration.between(LocalDateTime.of(startDate, startTime), LocalDateTime.of(endDate, endTime)).toSeconds());
+    }
+    
+    
+    /**
+     * @param start aikavälin alkuaika
+     * @param end aikavälin loppuaika
+     * @return palauttaa aikavälin muotuiltuna merkkijonona muodossa "0h 00min"
+     */
+    public static String getDurationAsString(LocalDateTime start, LocalDateTime end) {
+        return getDurationAsString(Duration.between(start, end).toSeconds());
+    }
+    
+    /**
      * @param duration aikaväli
      * @return palauttaa aikavälin muotuiltuna merkkijonona muodossa "0h 00min"
      */
     public static String getDurationAsString(Duration duration) {
-        Long seconds = duration.toSeconds();
-        return String.format("%dh %02dmin", seconds / 3600,
-                (seconds % 3600) / 60);
+        return getDurationAsString(duration.toSeconds());
     }
     
     /**

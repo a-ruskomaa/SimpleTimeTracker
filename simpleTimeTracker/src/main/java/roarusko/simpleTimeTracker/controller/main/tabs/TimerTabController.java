@@ -1,10 +1,12 @@
-package roarusko.simpleTimeTracker.controller.main;
+package roarusko.simpleTimeTracker.controller.main.tabs;
 
 import java.time.format.DateTimeFormatter;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
-import roarusko.simpleTimeTracker.controller.ViewFactory;
+import roarusko.simpleTimeTracker.view.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
+import roarusko.simpleTimeTracker.controller.main.MainController;
+import roarusko.simpleTimeTracker.controller.main.dialogs.EditEntryDialogController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.utility.Entries;

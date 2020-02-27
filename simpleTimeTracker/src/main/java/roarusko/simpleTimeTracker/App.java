@@ -3,7 +3,7 @@ package roarusko.simpleTimeTracker;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import roarusko.simpleTimeTracker.controller.ViewFactory;
+import roarusko.simpleTimeTracker.view.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.data.SampleData;
