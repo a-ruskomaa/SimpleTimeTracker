@@ -2,12 +2,19 @@ package roarusko.simpleTimeTracker.controller.start.dialogs;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
+import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
+
+import java.util.List;
+
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -33,6 +40,7 @@ public class NewUserDialogController extends AbstractController {
     
     
     private User user;
+    private List<User> userList;
     
     
     /**
@@ -44,6 +52,10 @@ public class NewUserDialogController extends AbstractController {
     public NewUserDialogController(DataAccess dataAccess, Stage stage) {
         super(dataAccess, stage);
     }
+    
+    public void initialize() {
+        okButton.disableProperty().bind(Bindings.equal(newUserNameField.textProperty(), ""));
+    }
 
     /**
      * Tapahtumankäsittelijä OK-napille. Lisää uuden käyttäjän ja sulkee dialogin.
@@ -51,7 +63,15 @@ public class NewUserDialogController extends AbstractController {
      */
     @FXML
     void handleOkButton(ActionEvent event) {
-        this.user = dataAccess.addUser(newUserNameField.getText());
+        String newName = newUserNameField.getText();
+        if (checkIfNameExists(newName, userList)) {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setHeaderText(null);
+            alert.setContentText("Saman niminen käyttäjä on jo olemassa. Vaihda käyttäjän nimi!");
+            alert.showAndWait();
+            return;
+        }
+        this.user = dataAccess.addUser(newName);
         exitStage(event);
     }
     
@@ -81,6 +101,20 @@ public class NewUserDialogController extends AbstractController {
     
     public User getUser() {
         return this.user;
+    }
+    
+    
+    public void setUserList(List<User> list) {
+        this.userList = list;
+    }
+    
+    
+    private boolean checkIfNameExists(String name, List<User> list) {
+        for (User user : list) {
+            if (user.getName().equals(name)) return true;
+        }
+        
+        return false;
     }
     
     

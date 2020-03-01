@@ -19,9 +19,9 @@ import roarusko.simpleTimeTracker.model.utility.IdGenerator;
  */
 public class SampleData {
 
-    private static final IdGenerator userIdGen = new IdGenerator();
-    private static final IdGenerator projectIdGen = new IdGenerator();
-    private static final IdGenerator entryIdGen = new IdGenerator();
+    private static final IdGenerator userIdGen = new IdGenerator(1);
+    private static final IdGenerator projectIdGen = new IdGenerator(1);
+    private static final IdGenerator entryIdGen = new IdGenerator(1);
 
     private static final ArrayList<User> users;
 

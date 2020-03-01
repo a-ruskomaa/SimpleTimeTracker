@@ -89,6 +89,7 @@ public class TimerTabController extends AbstractController {
         
         EditEntryDialogController controller = ViewFactory.createEditEntryDialog(dataAccess);
         controller.setEntry(entry);
+        controller.setEntryList(parentController.selectedProject_EntriesProperty());
         
         controller.getStage().setOnCloseRequest((e) -> {
             reset();

@@ -54,7 +54,7 @@ public class DataAccess {
         this.projectDAO = projectDAO;
         this.entryDAO = entryDAO;
 
-        System.out.println("dataAccess created!");
+        System.out.println("dataAccess luotu!");
     }
 
 
@@ -113,11 +113,15 @@ public class DataAccess {
      * @return Palauttaa tallennetun merkinnän
      */
     public Entry commitEntry(Entry entry) {
+        if (entry.getOwnerId() == -1) {
+            // TODO tälle poikkeus joka avaa dialogin
+            System.out.println("Projektin id ei saa olla -1");
+        }
         if (entry.getId() == -1) {
             return saveNewEntry(entry);
         }
         if (!saveExistingEntry(entry)) {
-            // TODO dialogilla ilmoitus ohjelman käyttäjälle
+            // TODO poikkeus + dialogilla ilmoitus ohjelman käyttäjälle
             System.out.println("Merkinnän muokkaaminen epäonnistui!");
         }
         return entry;

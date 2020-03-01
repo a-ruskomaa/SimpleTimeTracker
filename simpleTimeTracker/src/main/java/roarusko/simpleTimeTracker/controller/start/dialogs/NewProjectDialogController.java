@@ -4,9 +4,15 @@ import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
+
+import java.util.List;
+
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
@@ -33,6 +39,7 @@ public class NewProjectDialogController extends AbstractController {
     
     private Project project;
     private User user;
+    private List<Project> projectList;
     
     /**
      * Luo uuden kontrollerin projektin lisäämiseen käytettävälle näkymälle.
@@ -43,6 +50,10 @@ public class NewProjectDialogController extends AbstractController {
     public NewProjectDialogController(DataAccess dataAccess, Stage stage) {
         super(dataAccess, stage);
     }
+    
+    public void initialize() {
+        okButton.disableProperty().bind(Bindings.equal(newProjectNameField.textProperty(), ""));
+    }
 
     /**
      * Tapahtumankäsittelijä OK-napille. Lisää uuden projektin ja sulkee dialogin.
@@ -50,7 +61,15 @@ public class NewProjectDialogController extends AbstractController {
      */
     @FXML
     void handleOkButton(ActionEvent event) {
-        this.project = dataAccess.addProject(newProjectNameField.getText(), this.user);
+        String newName = newProjectNameField.getText();
+        if (checkIfNameExists(newName, projectList)) {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setHeaderText(null);
+            alert.setContentText("Käyttäjällä on jo saman niminen projekti. Vaihda projektin nimi!");
+            alert.showAndWait();
+            return;
+        }
+        this.project = dataAccess.addProject(newName, this.user);
         exitStage(event);
     }
     
@@ -82,8 +101,23 @@ public class NewProjectDialogController extends AbstractController {
         return this.project;
     }
     
+    
     public void setUser(User user) {
         this.user = user;
+    }
+    
+    
+    public void setProjectList(List<Project> projectList) {
+        this.projectList = projectList;
+    }
+
+    
+    private boolean checkIfNameExists(String name, List<Project> list) {
+        for (Project project : list) {
+            if (project.getName().equals(name)) return true;
+        }
+        
+        return false;
     }
 
 }

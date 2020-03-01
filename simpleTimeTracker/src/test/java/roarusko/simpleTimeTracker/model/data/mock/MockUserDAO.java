@@ -1,5 +1,7 @@
 package roarusko.simpleTimeTracker.model.data.mock;
 
+import java.util.List;
+
 import roarusko.simpleTimeTracker.model.data.UserDAO;
 import roarusko.simpleTimeTracker.model.domain.User;
 import roarusko.simpleTimeTracker.model.utility.IdGenerator;
@@ -19,5 +21,23 @@ public class MockUserDAO extends MockAbstractDAO<User> implements UserDAO {
     public MockUserDAO() {
         super(SampleData.getUsers());
     }
+    
+    /**
+     * Testidataa käyttävä UserDAO:n implementaatio
+     * @param list lista joka sisältää testidatan
+     */
+    public MockUserDAO(List<User> list) {
+        super(list);
+    }
+    
+    /**
+     * Testidataa käyttävä UserDAO:n implementaatio
+     * @param list lista joka sisältää testidatan
+     * @param idGen idGeneraattori jolla testidatan id:t luodaan
+     */
+    public MockUserDAO(List<User> list, IdGenerator idGen) {
+        super(list, idGen);
+    }
+    
 
 }

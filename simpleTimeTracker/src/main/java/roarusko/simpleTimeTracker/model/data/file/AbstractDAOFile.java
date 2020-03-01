@@ -21,9 +21,13 @@ public abstract class AbstractDAOFile<T extends DataObject> implements DAO<Integ
     
     
     protected AbstractDAOFile(String pathToFile) {
-        this.path = Paths.get(pathToFile);
-        this.idGen = new IdGenerator(getMaxId());
+        this.path = createIfNotExists(Paths.get(pathToFile));
+        this.idGen = new IdGenerator(getMaxId(path) + 1);
     }
+    
+    protected abstract T parseObject(String row);
+    
+    protected abstract String objectToStringForm(T object);
     
     @Override
     public T create(T object) {
@@ -41,6 +45,7 @@ public abstract class AbstractDAOFile<T extends DataObject> implements DAO<Integ
     
     @Override
     public T read(Integer key) {
+        // TODO parempi poikkeuskäsittely
         T object;
         try {
             String row = Files.lines(path)
@@ -49,10 +54,10 @@ public abstract class AbstractDAOFile<T extends DataObject> implements DAO<Integ
                     .get();
             object = parseObject(row);
         } catch (IOException e) {
-            System.out.println("File not found!");
+            System.out.println("File not found! " + e.getMessage());
             return null;
         } catch (NullPointerException e) {
-            System.out.println("Object not found");
+            System.out.println("Object not found! " + e.getMessage());
             return null;
         }
         return object;
@@ -61,59 +66,59 @@ public abstract class AbstractDAOFile<T extends DataObject> implements DAO<Integ
 
     @Override
     public boolean update(T object) {
+        // TODO parempi poikkeuskäsittely
+        boolean updated = false;
         try {
             List<String> rows = Files.readAllLines(path);
             
             for (int i = 0; i < rows.size(); i++) {
                 if (rowMatchesId(object.getId(), rows.get(i))) {
                     rows.set(i, objectToStringForm(object));
-                    break;
+                    updated = true;
                 }
             }
-
             Files.write(path, rows);
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return updated;
     }
 
 
     @Override
     public boolean delete(Integer key) {
+        boolean deleted = false;
         try {
             List<String> rows = Files.readAllLines(path);
             
             for (int i = 0; i < rows.size(); i++) {
                 if (rowMatchesId(key, rows.get(i))) {
                     rows.remove(i);
+                    deleted = true;
                 }
             }
 
             Files.write(path, rows);
-            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return false;
+        return deleted;
     }
     
     
     @Override
     public List<T> list() {
         try {
-            List<T> objects = Files.lines(createIfNotExists(path))
+            List<T> objects = Files.lines(path)
                     .map(row -> parseObject(row))
                     .collect(Collectors.toList());
             return objects;
         } catch (IOException e) {
-            System.out.println("File not found!");
-            return new ArrayList<T>();
+            System.out.println("File not found! " + e.getMessage());
         } catch (NullPointerException e) {
-            System.out.println("File not found");
-            return new ArrayList<T>();
+            System.out.println("File not found! " + e.getMessage());
         }
+        return new ArrayList<T>();
     }
     
     
@@ -130,17 +135,19 @@ public abstract class AbstractDAOFile<T extends DataObject> implements DAO<Integ
     }
     
     
-    private final int getMaxId() {
+    // Apumetodit
+    
+    private final int getMaxId(Path pathToFile) {
+        int max = 0;
         try {
-            int max = Files.lines(path)
+            max = Files.lines(pathToFile)
                     .mapToInt(row -> parseId(row))
                     .max()
                     .orElse(0);
-            return max + 1;
         } catch (IOException e) {
             System.out.println("File not found: " + e.getMessage());
-            return 0;
         }
+        return max;
     }
     
     
@@ -148,13 +155,11 @@ public abstract class AbstractDAOFile<T extends DataObject> implements DAO<Integ
         return parseId(row) == key;
     }
     
+    
     private final int parseId(String row) {
         return Integer.parseUnsignedInt(row, 0, row.indexOf(','), 10);
     }
-    
-    protected abstract T parseObject(String row);
-    
-    protected abstract String objectToStringForm(T object);
+
     
     private Path createIfNotExists(Path path) {
         if (Files.exists(path)) return path;

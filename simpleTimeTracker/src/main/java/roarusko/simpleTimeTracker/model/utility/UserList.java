@@ -13,56 +13,6 @@ import roarusko.simpleTimeTracker.model.domain.User;
  * 
  * @author aleks
  * @version 17 Feb 2020
- *
- * @example
- * <pre name="test">
- * #import  roarusko.simpleTimeTracker.model.domainModel.User;
- * UserList lista = new UserList(5);
- * lista.size() === 0;
- * lista.isEmpty() === true;
- * 
- * User user1 = new User(1, "Janne");
- * User user2 = new User(2, "Jonne");
- * User user3 = new User(3, "Jenni");
- * lista.add(user1);
- * lista.add(user2);
- * lista.add(user3); //[Janne, Jonne, Jenni]
- * 
- * lista.size() === 3;
- * lista.isEmpty() === false;
- * 
- * User user4 = new User(4, "Joonas");
- * lista.add(0, user4); //[Joonas, Janne, Jonne, Jenni]
- * lista.indexOf(user4) === 0;
- * lista.contains(user4) === true;
- * 
- * lista.remove(user4) === true; // [Janne, Jonne, Jenni]
- * lista.remove(1); // [Janne, Jenni]
- * lista.get(1).equals(user3) === true;
- * 
- * User user5 = new User(5, "Jammu");
- * User user6 = new User(6, "Kyösti");
- * 
- * lista.contains(user5) === false;
- * lista.indexOf(user6) === -1;
- * 
- * lista.add(user5);
- * lista.add(user6); //[Janne, Jenni, Jammu, Kyösti]
- * 
- * lista.size() === 4;
- * 
- * lista.add(user4); //[Janne, Jenni, Jammu, Kyösti, Joonas]
- * lista.add(0, user2); //[Jonne, Janne, Jenni, Jammu, Kyösti, Joonas]
- * 
- * lista.size() === 6;
- * 
- * User user7 = new User(7, "Jorma");
- * lista.set(4, user7); //[Jonne, Janne, Jenni, Jammu, Jorma, Joonas]
- * 
- * lista.contains(user6) === false;
- * 
- * lista.get(1).equals(user1);
- * </pre>
  */
 public class UserList extends ArrayList<User> {
     /**

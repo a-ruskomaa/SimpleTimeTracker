@@ -112,6 +112,7 @@ public class StartController extends AbstractController {
     @FXML
     private void handleNewUserButton() {
         NewUserDialogController controller = ViewFactory.createNewUserDialog(dataAccess);
+        controller.setUserList(userChoiceBox.getItems());
         controller.showModalStage();
         User newUser = controller.getUser();
         if (newUser != null) {
@@ -128,6 +129,7 @@ public class StartController extends AbstractController {
     private void handleNewProjectButton() {
         NewProjectDialogController controller = ViewFactory.createNewProjectDialog(dataAccess);
         controller.setUser(this.userChoiceBox.getValue());
+        controller.setProjectList(projectChoiceBox.getItems());
         controller.showModalStage();
         Project newProject = controller.getProject();
         if (newProject != null) {

@@ -5,6 +5,7 @@ import java.util.List;
 import roarusko.simpleTimeTracker.model.data.EntryDAO;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
+import roarusko.simpleTimeTracker.model.domain.User;
 import roarusko.simpleTimeTracker.model.utility.IdGenerator;
 
 /**
@@ -21,6 +22,24 @@ public class MockEntryDAO extends MockAbstractDAO<Entry> implements EntryDAO{
      */
     public MockEntryDAO() {
         super(SampleData.getEntries());
+    }
+    
+    
+    /**
+     * Testidataa käyttävä EntryDAO:n implementaatio
+     * @param list lista joka sisältää testidatan
+     */
+    public MockEntryDAO(List<Entry> list) {
+        super(list);
+    }
+    
+    /**
+     * Testidataa käyttävä EntryDAO:n implementaatio
+     * @param list lista joka sisältää testidatan
+     * @param idGen idGeneraattori jolla testidatan id:t luodaan
+     */
+    public MockEntryDAO(List<Entry> list, IdGenerator idGen) {
+        super(list, idGen);
     }
 
 

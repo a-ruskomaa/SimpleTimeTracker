@@ -28,6 +28,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -128,6 +130,14 @@ public class ProjectTabController extends AbstractController {
             return entry != null ? Entries.getDurationAsString(entry.getStartDateTime(), entry.getEndDateTime()) : null;
         }, entryListView.valueProperty()));
 
+        // pakotetaan merkinnän tiedot näyttävät kentät päivittymään valitsemalla sama merkintä uusiksi
+        this.stage.addEventHandler(UpdateEvent.UPDATE_EVENT, (EventHandler<? super UpdateEvent>) (UpdateEvent e) -> {
+            System.out.println("Event handled in project tab: " + e.toString());
+            int current = entryListView.getSelectionModel().getSelectedIndex();
+            entryListView.getSelectionModel().select(null);
+            entryListView.getSelectionModel().select(current);
+        }
+   );
     }
 
 
@@ -140,14 +150,13 @@ public class ProjectTabController extends AbstractController {
         
         EditEntryDialogController controller = ViewFactory.createEditEntryDialog(dataAccess);
         controller.setEntry(entry);
+        controller.setEntryList(parentController.selectedProject_EntriesProperty());
 
         controller.getStage().setOnCloseRequest((e) -> {
             
-            Entry newEntry = controller.getEntry();
-            
-            if (newEntry != entry) {
-                parentController.selectedProject_EntriesProperty().add(newEntry);
-                parentController.selectedEntryProperty().set(newEntry);
+            if (entry.getId() != -1) {
+                parentController.selectedProject_EntriesProperty().add(entry);
+                parentController.selectedEntryProperty().set(entry);
             }
             
             entryListView.fireEvent(new UpdateEvent());
@@ -164,14 +173,14 @@ public class ProjectTabController extends AbstractController {
         
         EditEntryDialogController controller = ViewFactory.createEditEntryDialog(dataAccess);
         controller.setEntry(entry);
+        controller.setEntryList(parentController.selectedProject_EntriesProperty());
         
         controller.getStage().setOnCloseRequest((e) -> {
-            Entry newEntry = controller.getEntry();
             
-            if (newEntry != null) {
-                int index = dataAccess.findIndexById(newEntry, parentController.selectedProject_EntriesProperty());
-                parentController.selectedProject_EntriesProperty().set(index, newEntry);
-                parentController.selectedEntryProperty().set(newEntry);
+            if (controller.wasUpdated()) {
+                int index = dataAccess.findIndexById(entry, parentController.selectedProject_EntriesProperty());
+                parentController.selectedProject_EntriesProperty().set(index, entry);
+                parentController.selectedEntryProperty().set(entry);
             }
             
             entryListView.fireEvent(new UpdateEvent());

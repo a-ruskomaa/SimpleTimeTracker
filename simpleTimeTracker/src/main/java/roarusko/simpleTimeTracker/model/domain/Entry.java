@@ -8,8 +8,6 @@ import java.time.temporal.ChronoUnit;
 
 import roarusko.simpleTimeTracker.model.utility.Entries;
 
-import java.time.Duration;
-
 /**
  * Luokka projektimerkinnän tallentamiseksi. Sisältää tiedon merkinnän alku- ja loppuajasta. Tarjoaa metodit aikamerkintöjen muokkaamiseksi,
  * hakemiseksi sekä keston laskemiseksi. Tarjoaa metodit myös aikamerkintöjen muuttamiseksi muotoilluiksi merkkijonoiksi.

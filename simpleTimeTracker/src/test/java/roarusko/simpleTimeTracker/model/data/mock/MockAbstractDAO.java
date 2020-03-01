@@ -21,12 +21,21 @@ import roarusko.simpleTimeTracker.model.utility.IdGenerator;
  * @param <T> Luokan tyyppiparametri, oltava DataObject-rajapinnan toteuttava luokka, kuten User, Project tai Entry
  */
 public abstract class MockAbstractDAO<T extends DataObject> implements DAO<Integer, T> {
-    private IdGenerator idGenerator;
+    private IdGenerator idGen;
     protected List<T> data;
 
     public MockAbstractDAO(List<T> data) {
         this.data = data;
-        this.idGenerator = new IdGenerator(data);
+        this.idGen = new IdGenerator(findMaxId(data) + 1);
+    }
+    
+    public MockAbstractDAO(List<T> data, IdGenerator idGen) {
+        this.data = data;
+        this.idGen = idGen;
+    }
+    
+    public void setIdGenerator(IdGenerator idGen) {
+        this.idGen = idGen;
     }
     
     /**
@@ -36,7 +45,7 @@ public abstract class MockAbstractDAO<T extends DataObject> implements DAO<Integ
      */
     @Override
     public T create(T object) {        
-        object.setId(idGenerator.getNewId());
+        object.setId(idGen.getNewId());
         
         data.add(object);
         
@@ -112,6 +121,22 @@ public abstract class MockAbstractDAO<T extends DataObject> implements DAO<Integ
      */
     protected List<T> list(ParentObject object) {
         return data.stream().filter(e -> ((ChildObject) e).getOwnerId() == object.getId()).collect(Collectors.toList());
+    }
+    
+    
+    /**
+     * Etsii annetulta listalta suurimman käytössä olevan id-numeron
+     * @param list Lista jolta etsitään
+     * @return Palauttaa suurimman löydetyn id:n (tai 0 jos lista on tyhjä)
+     */
+    private int findMaxId(List<? extends DataObject> list) {
+        int largest = 0;
+        
+        for (DataObject object : list) {
+            if (object.getId() > largest) largest = object.getId();
+        }
+        
+        return largest;
     }
 
 

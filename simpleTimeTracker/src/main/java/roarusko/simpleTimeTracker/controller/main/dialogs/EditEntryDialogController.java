@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
@@ -22,9 +23,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -45,6 +48,8 @@ import javafx.util.converter.LocalTimeStringConverter;
 public class EditEntryDialogController extends AbstractController {
 
     private Entry entry;
+    private List<Entry> entryList;
+    
     private DateTimeFormatter dateFormatter = Entries.getDateFormatter();
     private LocalDateStringConverter dateConverter = new LocalDateStringConverter(
             dateFormatter, dateFormatter);
@@ -147,10 +152,24 @@ public class EditEntryDialogController extends AbstractController {
     @FXML
     void handleSaveButton(ActionEvent event) {
         
-        entry.setStartDate(this.startDatePicker.getValue());
-        entry.setEndDate(this.endDatePicker.getValue());
-        entry.setStartTime(this.startTimeField.getValue());
-        entry.setEndTime(this.endTimeField.getValue());
+        LocalDateTime start = LocalDateTime.of(this.startDatePicker.getValue(), this.startTimeField.getValue());
+        LocalDateTime end = LocalDateTime.of(this.endDatePicker.getValue(), this.endTimeField.getValue());
+        
+        Entry overlappingEntry = checkIfOverlappingEntryExists(start, end, entryList);
+        
+        if (overlappingEntry != null) {
+            Alert alert = new Alert(AlertType.WARNING);
+            alert.setHeaderText(null);
+            alert.setContentText("Lisättävä merkintä on päällekkäin olemassa olevan merkinnän kanssa:\n\n"
+                    + "\t" + Entries.getDateTimeAsString(overlappingEntry.getStartDateTime()) + "\n"
+                    + "\t" + Entries.getDateTimeAsString(overlappingEntry.getEndDateTime()) + "\n\n"
+                    + "Tarkista lisättävän merkinnän ajankohta!");
+            alert.showAndWait();
+            return;
+        }
+
+        entry.setStartDateTime(start);
+        entry.setEndDateTime(end);
         
         this.entry = dataAccess.commitEntry(entry);
         
@@ -182,12 +201,30 @@ public class EditEntryDialogController extends AbstractController {
         this.endTimeField.setValue(entry.getEndTime());
     }
     
+    public void setEntryList(List<Entry> list) {
+        this.entryList = list;
+    }
+    
     public Entry getEntry() {
         return this.entry;
     }
     
     public boolean wasUpdated() {
         return updated;
+    }
+    
+    
+    private Entry checkIfOverlappingEntryExists(LocalDateTime start, LocalDateTime end, List<Entry> list) {
+        // TODO jaetuissa projekteissa muuta tarkistamaan vain saman käyttäjän tekemiä merkintöjä
+        for (Entry existing : list) {
+            if (existing.equals(this.entry)) {
+                continue;
+            }
+            if (!(existing.getEndDateTime().isBefore(start) || existing.getStartDateTime().isAfter(end))) {
+                return existing;
+            } 
+        }
+        return null;
     }
 
 }

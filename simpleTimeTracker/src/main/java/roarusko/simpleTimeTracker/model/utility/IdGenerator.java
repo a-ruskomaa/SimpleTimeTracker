@@ -19,12 +19,12 @@ public class IdGenerator {
     
     
     
-    /**
-     * Luo oletusarvoisen IdGeneratorin, jonka aloitusarvo on 1000.
-     */
-    public IdGenerator() {
-        generator = new AtomicInteger(1000);
-    }
+//    /**
+//     * Luo oletusarvoisen IdGeneratorin, jonka aloitusarvo on 1000.
+//     */
+//    public IdGenerator() {
+//        generator = new AtomicInteger(1000);
+//    }
     
     
     /**
@@ -35,15 +35,6 @@ public class IdGenerator {
         generator = new AtomicInteger(value);
     }
     
-    
-    /**
-     * Luo IdGeneratorin, joka asettaa aloitusarvokseen yhtä suuremman id:n kuin annetun
-     * listan suurin id on
-     * @param list Lista jonka alkioiden suurin id etsitään
-     */
-    public IdGenerator(List<? extends DataObject> list) {
-        generator = new AtomicInteger(findLargestExistingId(list) + 1);
-    }
     
     
     /**
@@ -66,19 +57,6 @@ public class IdGenerator {
     }
     
     
-    /**
-     * Etsii annetulta listalta suurimman käytössä olevan id-numeron
-     * @param list Lista jolta etsitään
-     * @return Palauttaa suurimman löydetyn id:n (tai 0 jos lista on tyhjä)
-     */
-    private int findLargestExistingId(List<? extends DataObject> list) {
-        int largest = 0;
-        
-        for (DataObject object : list) {
-            if (object.getId() > largest) largest = object.getId();
-        }
-        
-        return largest;
-    }
+
 
 }
