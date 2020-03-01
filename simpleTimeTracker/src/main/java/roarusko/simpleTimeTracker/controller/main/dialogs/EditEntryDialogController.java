@@ -42,24 +42,23 @@ import javafx.util.converter.LocalTimeStringConverter;
  *
  */
 
-//TODO tarkistus onko ajastin käynnissä tai merkintä olemassa
+// TODO tarkistus onko ajastin käynnissä tai merkintä olemassa
 // TODO terkistus onko kesto negatiivinen
 
 public class EditEntryDialogController extends AbstractController {
 
     private Entry entry;
     private List<Entry> entryList;
-    
+
     private DateTimeFormatter dateFormatter = Entries.getDateFormatter();
     private LocalDateStringConverter dateConverter = new LocalDateStringConverter(
             dateFormatter, dateFormatter);
-    
+
     private DateTimeFormatter timeFormatter = Entries.getTimeFormatter();
     private LocalTimeStringConverter timeConverter = new LocalTimeStringConverter(
             timeFormatter, timeFormatter);
-    
-    private boolean updated = false;
 
+    private boolean updated = false;
 
     @FXML
     private DatePicker startDatePicker;
@@ -96,50 +95,57 @@ public class EditEntryDialogController extends AbstractController {
 
         startDatePicker.setConverter(dateConverter);
         endDatePicker.setConverter(dateConverter);
-        
+
         startTimeField.setConverter(timeConverter);
         endTimeField.setConverter(timeConverter);
-        
+
         startDatePicker.valueProperty().addListener((changed) -> {
             System.out.println("value changed!");
         });
-        
-        // pakotetaan datepickerit parsimaan päivämäärää kun focus poistuu tekstikentästä.
+
+        // pakotetaan datepickerit parsimaan päivämäärää kun focus poistuu
+        // tekstikentästä.
         // it's not pretty, but it works...
         startDatePicker.focusedProperty().addListener((e) -> {
             System.out.println("hep");
             try {
-                startDatePicker.setValue(startDatePicker.getConverter().fromString(startDatePicker.getEditor().getText()));
+                startDatePicker.setValue(startDatePicker.getConverter()
+                        .fromString(startDatePicker.getEditor().getText()));
             } catch (DateTimeParseException ex) {
                 System.out.println("invalid date format");
-                startDatePicker.getEditor().setText(startDatePicker.getConverter().toString(startDatePicker.getValue()));
+                startDatePicker.getEditor().setText(startDatePicker
+                        .getConverter().toString(startDatePicker.getValue()));
             }
         });
-        
+
         endDatePicker.focusedProperty().addListener((e) -> {
             System.out.println("hep");
             try {
-                endDatePicker.setValue(endDatePicker.getConverter().fromString(endDatePicker.getEditor().getText()));
+                endDatePicker.setValue(endDatePicker.getConverter()
+                        .fromString(endDatePicker.getEditor().getText()));
             } catch (DateTimeParseException ex) {
                 System.out.println("invalid date format");
-                endDatePicker.getEditor().setText(endDatePicker.getConverter().toString(endDatePicker.getValue()));
+                endDatePicker.getEditor().setText(endDatePicker.getConverter()
+                        .toString(endDatePicker.getValue()));
             }
         });
 
-        
-        saveButton.disableProperty().bind(startTimeField.valueProperty().isNull()
-                                    .or(startDatePicker.valueProperty().isNull())
-                                    .or(endTimeField.valueProperty().isNull()
-                                    .or(endDatePicker.valueProperty().isNull())));
+        saveButton.disableProperty()
+                .bind(startTimeField.valueProperty().isNull()
+                        .or(startDatePicker.valueProperty().isNull())
+                        .or(endTimeField.valueProperty().isNull()
+                                .or(endDatePicker.valueProperty().isNull())));
 
         durationField.textProperty().bind(Bindings.createStringBinding(() -> {
             try {
-                return Entries.getDurationAsString(startDatePicker.getValue(), startTimeField.getValue(), endDatePicker.getValue(), endTimeField.getValue());
+                return Entries.getDurationAsString(startDatePicker.getValue(),
+                        startTimeField.getValue(), endDatePicker.getValue(),
+                        endTimeField.getValue());
             } catch (NullPointerException e) {
                 return "";
             }
-        }, startTimeField.valueProperty(),startDatePicker.valueProperty(),endTimeField.valueProperty(),endDatePicker.valueProperty())
-        );
+        }, startTimeField.valueProperty(), startDatePicker.valueProperty(),
+                endTimeField.valueProperty(), endDatePicker.valueProperty()));
     }
 
 
@@ -151,28 +157,28 @@ public class EditEntryDialogController extends AbstractController {
 
     @FXML
     void handleSaveButton(ActionEvent event) {
-        
-        LocalDateTime start = LocalDateTime.of(this.startDatePicker.getValue(), this.startTimeField.getValue());
-        LocalDateTime end = LocalDateTime.of(this.endDatePicker.getValue(), this.endTimeField.getValue());
-        
-        Entry overlappingEntry = checkIfOverlappingEntryExists(start, end, entryList);
-        
-        if (overlappingEntry != null) {
-            Alert alert = new Alert(AlertType.WARNING);
-            alert.setHeaderText(null);
-            alert.setContentText("Lisättävä merkintä on päällekkäin olemassa olevan merkinnän kanssa:\n\n"
-                    + "\t" + Entries.getDateTimeAsString(overlappingEntry.getStartDateTime()) + "\n"
-                    + "\t" + Entries.getDateTimeAsString(overlappingEntry.getEndDateTime()) + "\n\n"
-                    + "Tarkista lisättävän merkinnän ajankohta!");
-            alert.showAndWait();
+
+        LocalDateTime start = LocalDateTime.of(this.startDatePicker.getValue(),
+                this.startTimeField.getValue());
+        LocalDateTime end = LocalDateTime.of(this.endDatePicker.getValue(),
+                this.endTimeField.getValue());
+
+        if (start.isAfter(end)) {
+            showNegativeDurationAlert();
+        }
+
+        Entry existing = checkIfOverlappingEntryExists(start, end, entryList);
+
+        if (existing != null) {
+            showOverLappingAlert(existing);
             return;
         }
 
         entry.setStartDateTime(start);
         entry.setEndDateTime(end);
-        
+
         this.entry = dataAccess.commitEntry(entry);
-        
+
         this.updated = true;
 
         exitStage(event);
@@ -188,10 +194,11 @@ public class EditEntryDialogController extends AbstractController {
         window.fireEvent(
                 new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
-    
+
+
     public void setEntry(Entry entry) {
         this.entry = entry;
-        
+
         this.startDatePicker.setValue(entry.getStartDate());
 
         this.endDatePicker.setValue(entry.getEndDate());
@@ -200,31 +207,61 @@ public class EditEntryDialogController extends AbstractController {
 
         this.endTimeField.setValue(entry.getEndTime());
     }
-    
+
+
     public void setEntryList(List<Entry> list) {
         this.entryList = list;
     }
-    
+
+
     public Entry getEntry() {
         return this.entry;
     }
-    
+
+
     public boolean wasUpdated() {
         return updated;
     }
-    
-    
-    private Entry checkIfOverlappingEntryExists(LocalDateTime start, LocalDateTime end, List<Entry> list) {
-        // TODO jaetuissa projekteissa muuta tarkistamaan vain saman käyttäjän tekemiä merkintöjä
+
+
+    private Entry checkIfOverlappingEntryExists(LocalDateTime start,
+            LocalDateTime end, List<Entry> list) {
+        // TODO jaetuissa projekteissa muuta tarkistamaan vain saman käyttäjän
+        // tekemiä merkintöjä
         for (Entry existing : list) {
             if (existing.equals(this.entry)) {
                 continue;
             }
-            if (!(existing.getEndDateTime().isBefore(start) || existing.getStartDateTime().isAfter(end))) {
+            if (!(existing.getEndDateTime().isBefore(start)
+                    || existing.getStartDateTime().isAfter(end))) {
                 return existing;
-            } 
+            }
         }
         return null;
+    }
+
+
+    private void showOverLappingAlert(Entry existing) {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setHeaderText(null);
+        alert.setContentText(
+                "Lisättävä merkintä on päällekkäin olemassa olevan merkinnän kanssa:\n\n"
+                        + "\t"
+                        + Entries.getDateTimeAsString(
+                                existing.getStartDateTime())
+                        + "\n" + "\t"
+                        + Entries.getDateTimeAsString(existing.getEndDateTime())
+                        + "\n\n" + "Tarkista lisättävän merkinnän ajankohta!");
+        alert.showAndWait();
+    }
+
+
+    private void showNegativeDurationAlert() {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setHeaderText(null);
+        alert.setContentText("Merkinnän kesto ei voi olla negatiivinen:\n\n"
+                + "Tarkista lisättävän merkinnän alku- ja loppuaika!");
+        alert.showAndWait();
     }
 
 }
