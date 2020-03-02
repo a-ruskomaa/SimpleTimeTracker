@@ -45,11 +45,7 @@ public class TimerTabController extends AbstractController {
     @FXML
     private Button timerResetButton;
     
-    private DateTimeFormatter formatter = Entries.getDateTimeFormatter();
     
-    private LocalDateTimeStringConverter converter = new LocalDateTimeStringConverter(formatter, formatter);
-    
-
     
     /**
      * Luo uuden ajastinvälilehden kontrollerin
@@ -60,7 +56,7 @@ public class TimerTabController extends AbstractController {
     public TimerTabController(DataAccess dataAccess, Stage stage, MainController parentController) {
         super(dataAccess, stage);
         this.parentController = parentController;
-        timer = new EntryTimer(dataAccess);
+        timer = parentController.getTimer();
     }
     
 

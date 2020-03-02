@@ -22,7 +22,6 @@ public class UpdateEvent extends Event {
     public UpdateEvent() {
         super(UPDATE_EVENT);
         System.out.println("event fired");
-        // TODO Auto-generated constructor stub
     }
 
 }

@@ -5,6 +5,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.DatePicker?>
+<?import roarusko.simpleTimeTracker.view.components.EnhancedDatePicker?>
 <?import roarusko.simpleTimeTracker.view.components.DateTimeField?>
 <?import roarusko.simpleTimeTracker.view.components.BindableListView?>
 <?import javafx.scene.control.TreeView?>
@@ -12,84 +14,139 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <center>
-	                  <HBox>
-                     <children>
-                        <BindableListView fx:id="entryListView" prefHeight="200.0" prefWidth="200.0">
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                        </BindableListView>
-<!-- 	            <TreeView fx:id="projectEntryTree" prefHeight="200.0" prefWidth="200.0" /> -->
-                        <VBox>
-                           <children>
-                              <HBox>
-                                 <children>
-                                    <Label minWidth="100.0" text="Aloitus:">
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                    <DateTimeField fx:id="entryStartField" editable="false" />
-                                 </children>
-                              </HBox>
-                              <HBox>
-                                 <children>
-                                    <Label minWidth="100.0" text="Lopetus:">
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                    <DateTimeField fx:id="entryEndField" editable="false" />
-                                 </children>
-                              </HBox>
-                              <HBox>
-                                 <children>
-                                    <Label minWidth="100.0" text="Kesto:">
-                                       <HBox.margin>
-                                          <Insets left="10.0" />
-                                       </HBox.margin>
-                                    </Label>
-                                    <TextField fx:id="entryDurationField" editable="false" />
-                                 </children>
-                              </HBox>
-                              <HBox prefHeight="100.0" prefWidth="380.0">
-                                 <children>
-                                    <Button fx:id="editEntryButton" mnemonicParsing="false" onAction="#handleEditEntry" text="Muokkaa...">
-                                       <HBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </HBox.margin>
-                                       <padding>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </padding>
-                                    </Button>
-                                    <Button fx:id="deleteEntryButton" mnemonicParsing="false" onAction="#handleRemoveEntry" text="Poista...">
-                                       <HBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </HBox.margin>
-                                       <padding>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </padding>
-                                    </Button>
-                                    <Button fx:id="addEntryButton" mnemonicParsing="false" onAction="#handleAddEntry" text="Lisää uusi...">
-                                       <padding>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </padding>
-                                       <HBox.margin>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </HBox.margin>
-                                    </Button>
-                                 </children>
-                              </HBox>
-                           </children>
-                        </VBox>
-                     </children>
-                     <padding>
-                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                     </padding>
-                  </HBox>
-                     </center>
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1"
+	xmlns:fx="http://javafx.com/fxml/1">
+	<left>
+		<VBox>
+			<children>
+				<BindableListView fx:id="entryListView"
+					prefHeight="300.0" prefWidth="200.0">
+					<VBox.margin>
+						<Insets bottom="10.0" left="5.0" right="10.0" top="10.0" />
+					</VBox.margin>
+				</BindableListView>
+				<Label minWidth="100.0" text="Rajaa merkintöjä:">
+					<VBox.margin>
+						<Insets left="10.0" bottom="5.0" />
+					</VBox.margin>
+				</Label>
+				<HBox>
+					<children>
+						<Label minWidth="40.0" text="Yläraja:">
+							<HBox.margin>
+								<Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
+							</HBox.margin>
+						</Label>
+						<EnhancedDatePicker fx:id="endDatePicker">
+							<HBox.margin>
+								<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+							</HBox.margin>
+						</EnhancedDatePicker>
+					</children>
+				</HBox>
+				<HBox>
+					<children>
+						<Label minWidth="40.0" text="Alaraja:">
+							<HBox.margin>
+								<Insets bottom="5.0" left="10.0" right="5.0" top="5.0" />
+							</HBox.margin>
+						</Label>
+						<EnhancedDatePicker fx:id="startDatePicker">
+							<HBox.margin>
+								<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+							</HBox.margin>
+						</EnhancedDatePicker>
+					</children>
+				</HBox>
+				<HBox>
+						<Button fx:id="clearFilterButton" mnemonicParsing="false"
+							onAction="#handleClearFilter" text="Tyhjennä rajaus">
+							<padding>
+								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+							</padding>
+							<HBox.margin>
+								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+							</HBox.margin>
+						</Button>
+				</HBox>
+
+				<!-- <TreeView fx:id="projectEntryTree" prefHeight="200.0" prefWidth="200.0" 
+					/> -->
+			</children>
+		</VBox>
+	</left>
+	<center>
+		<VBox>
+			<children>
+				<HBox>
+					<children>
+						<Label minWidth="100.0" text="Aloitus:">
+							<HBox.margin>
+								<Insets left="10.0" />
+							</HBox.margin>
+						</Label>
+						<DateTimeField fx:id="entryStartField"
+							editable="false" />
+					</children>
+				</HBox>
+				<HBox>
+					<children>
+						<Label minWidth="100.0" text="Lopetus:">
+							<HBox.margin>
+								<Insets left="10.0" />
+							</HBox.margin>
+						</Label>
+						<DateTimeField fx:id="entryEndField"
+							editable="false" />
+					</children>
+				</HBox>
+				<HBox>
+					<children>
+						<Label minWidth="100.0" text="Kesto:">
+							<HBox.margin>
+								<Insets left="10.0" />
+							</HBox.margin>
+						</Label>
+						<TextField fx:id="entryDurationField" editable="false" />
+					</children>
+				</HBox>
+				<HBox prefHeight="100.0" prefWidth="380.0">
+					<children>
+						<Button fx:id="editEntryButton" mnemonicParsing="false"
+							onAction="#handleEditEntry" text="Muokkaa...">
+							<HBox.margin>
+								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+							</HBox.margin>
+							<padding>
+								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+							</padding>
+						</Button>
+						<Button fx:id="deleteEntryButton" mnemonicParsing="false"
+							onAction="#handleRemoveEntry" text="Poista...">
+							<HBox.margin>
+								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+							</HBox.margin>
+							<padding>
+								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+							</padding>
+						</Button>
+						<Button fx:id="addEntryButton" mnemonicParsing="false"
+							onAction="#handleAddEntry" text="Lisää uusi...">
+							<padding>
+								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+							</padding>
+							<HBox.margin>
+								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+							</HBox.margin>
+						</Button>
+					</children>
+				</HBox>
+			</children>
+		</VBox>
+		<padding>
+			<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+		</padding>
+	</center>
 	<padding>
 		<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
 	</padding>

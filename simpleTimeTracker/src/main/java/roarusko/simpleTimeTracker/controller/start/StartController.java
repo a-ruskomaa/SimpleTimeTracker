@@ -55,8 +55,6 @@ public class StartController extends AbstractController {
      */
     public void initialize() {
 
-        System.out.println("alustetaan startcontroller");
-
         // Haetaan tallennetut käyttäjät ja lisätään valikkoon
         userChoiceBox.setItems(dataAccess.loadUsers());
         

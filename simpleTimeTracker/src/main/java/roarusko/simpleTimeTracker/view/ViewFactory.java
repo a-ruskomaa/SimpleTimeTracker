@@ -163,7 +163,6 @@ public class ViewFactory {
         try {
             return fxmlloader.load();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return null;
         }

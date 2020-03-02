@@ -13,6 +13,7 @@ import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
+import roarusko.simpleTimeTracker.view.components.EnhancedDatePicker;
 import roarusko.simpleTimeTracker.view.components.TimeField;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
@@ -42,32 +43,21 @@ import javafx.util.converter.LocalTimeStringConverter;
  *
  */
 
-// TODO tarkistus onko ajastin käynnissä tai merkintä olemassa
-// TODO terkistus onko kesto negatiivinen
-
 public class EditEntryDialogController extends AbstractController {
 
     private Entry entry;
     private List<Entry> entryList;
 
-    private DateTimeFormatter dateFormatter = Entries.getDateFormatter();
-    private LocalDateStringConverter dateConverter = new LocalDateStringConverter(
-            dateFormatter, dateFormatter);
-
-    private DateTimeFormatter timeFormatter = Entries.getTimeFormatter();
-    private LocalTimeStringConverter timeConverter = new LocalTimeStringConverter(
-            timeFormatter, timeFormatter);
-
     private boolean updated = false;
 
     @FXML
-    private DatePicker startDatePicker;
+    private EnhancedDatePicker startDatePicker;
 
     @FXML
     private TimeField startTimeField;
 
     @FXML
-    private DatePicker endDatePicker;
+    private EnhancedDatePicker endDatePicker;
 
     @FXML
     private TimeField endTimeField;
@@ -93,49 +83,14 @@ public class EditEntryDialogController extends AbstractController {
 
     public void initialize() {
 
-        startDatePicker.setConverter(dateConverter);
-        endDatePicker.setConverter(dateConverter);
-
-        startTimeField.setConverter(timeConverter);
-        endTimeField.setConverter(timeConverter);
-
-        startDatePicker.valueProperty().addListener((changed) -> {
-            System.out.println("value changed!");
-        });
-
-        // pakotetaan datepickerit parsimaan päivämäärää kun focus poistuu
-        // tekstikentästä.
-        // it's not pretty, but it works...
-        startDatePicker.focusedProperty().addListener((e) -> {
-            System.out.println("hep");
-            try {
-                startDatePicker.setValue(startDatePicker.getConverter()
-                        .fromString(startDatePicker.getEditor().getText()));
-            } catch (DateTimeParseException ex) {
-                System.out.println("invalid date format");
-                startDatePicker.getEditor().setText(startDatePicker
-                        .getConverter().toString(startDatePicker.getValue()));
-            }
-        });
-
-        endDatePicker.focusedProperty().addListener((e) -> {
-            System.out.println("hep");
-            try {
-                endDatePicker.setValue(endDatePicker.getConverter()
-                        .fromString(endDatePicker.getEditor().getText()));
-            } catch (DateTimeParseException ex) {
-                System.out.println("invalid date format");
-                endDatePicker.getEditor().setText(endDatePicker.getConverter()
-                        .toString(endDatePicker.getValue()));
-            }
-        });
-
+        // Sidotaan tallennusnappi aktiiviseksi vain kun kaikilla kentillä on arvot
         saveButton.disableProperty()
                 .bind(startTimeField.valueProperty().isNull()
                         .or(startDatePicker.valueProperty().isNull())
                         .or(endTimeField.valueProperty().isNull()
-                                .or(endDatePicker.valueProperty().isNull())));
+                        .or(endDatePicker.valueProperty().isNull())));
 
+        
         durationField.textProperty().bind(Bindings.createStringBinding(() -> {
             try {
                 return Entries.getDurationAsString(startDatePicker.getValue(),

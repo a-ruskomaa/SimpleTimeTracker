@@ -8,6 +8,7 @@ import java.util.function.UnaryOperator;
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextFormatter.Change;
 import javafx.util.converter.LocalDateTimeStringConverter;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 
@@ -20,16 +21,26 @@ import roarusko.simpleTimeTracker.model.utility.Entries;
  *
  */
 public class DateTimeField extends TextField {
+    DateTimeFormatter formatter = Entries.getDateTimeFormatter();
 
     
     /**
      * Luo uuden DateTimeFieldin, jonka formaatti vastaa Entries-luokkaan tallennettua formaattia
      */
     public DateTimeField() {
-        DateTimeFormatter formatter = Entries.getDateTimeFormatter();
-        
-        UnaryOperator<TextFormatter.Change> textFilter = change -> {
-//          if (change.getControlNewText().length() >= 8) {
+
+        this.setTextFormatter(new TextFormatter<LocalDateTime>(
+                new LocalDateTimeStringConverter(formatter, formatter),
+                LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), createFilter()));
+    }
+    
+    
+    private UnaryOperator<TextFormatter.Change> createFilter() {
+        return new UnaryOperator<TextFormatter.Change>() {
+
+            @Override
+            public Change apply(Change change) {
+//              if (change.getControlNewText().length() >= 8) {
 //              if (!change.getControlNewText().matches(timePatternSeconds)) {
 //                  this.setStyle("-fx-text-box-border: red ;");
 //                  return change;
@@ -42,16 +53,14 @@ public class DateTimeField extends TextField {
           // }
           // return change;
 
-          //hyväksytään vain numeeriset merkit tai piste
-          if (!change.getText().matches("([0-9]*|.)")) {
+          //hyväksytään vain numeeriset merkit, piste tai kaksoispiste
+          // ainakaan toistaiseksi sen kummempaa tarkastelua ei suoriteta
+          if (!change.getText().matches("([0-9]*|.|:)")) {
               return null;
           }
           return change;
+            }
         };
-
-        this.setTextFormatter(new TextFormatter<LocalDateTime>(
-                new LocalDateTimeStringConverter(formatter, formatter),
-                LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), textFilter));
     }
 
 

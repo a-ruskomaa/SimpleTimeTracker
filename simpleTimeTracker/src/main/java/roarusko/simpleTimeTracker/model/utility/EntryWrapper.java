@@ -116,7 +116,6 @@ public class EntryWrapper extends ObjectPropertyBase<Entry> {
      */
     @Override
     public Object getBean() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -126,7 +125,6 @@ public class EntryWrapper extends ObjectPropertyBase<Entry> {
      */
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
         return null;
     }
 

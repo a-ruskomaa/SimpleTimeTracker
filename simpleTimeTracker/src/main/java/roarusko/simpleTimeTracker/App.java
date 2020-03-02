@@ -21,8 +21,6 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            System.out.println("käynnistys");
-            
             /*
              * Luodaan dataAccess, jonka avulla ohjelman käsittelemää dataa luetaan ja kirjoitetaan tietokantaan
              */

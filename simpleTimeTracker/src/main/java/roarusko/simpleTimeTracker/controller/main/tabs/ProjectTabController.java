@@ -22,6 +22,8 @@ import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 import roarusko.simpleTimeTracker.view.components.BindableListView;
 import roarusko.simpleTimeTracker.view.components.DateTimeField;
+import roarusko.simpleTimeTracker.view.components.EnhancedDatePicker;
+import roarusko.simpleTimeTracker.view.components.TimeField;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.LongProperty;
@@ -31,33 +33,33 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
+import javafx.util.converter.LocalDateStringConverter;
 
+/**
+ * Projektimerkintöjä käsittelevän välilehden kontrolleriluokka
+ * @author aleks
+ * @version 2 Mar 2020
+ *
+ */
 public class ProjectTabController extends AbstractController {
+
+    DateTimeFormatter formatter = Entries.getDateTimeFormatter();
 
     private MainController parentController;
 
     @FXML
-    private TextField manualEndField;
-
-    @FXML
-    private TextField manualDurationField;
-
-    @FXML
-    private Button manualSaveButton;
-
-    @FXML
     private BindableListView<Entry> entryListView;
-
-    @FXML
-    private TreeView<Entry> entryTreeView;
 
     @FXML
     private DateTimeField entryStartField;
@@ -67,6 +69,12 @@ public class ProjectTabController extends AbstractController {
 
     @FXML
     private TextField entryDurationField;
+    
+    @FXML
+    private EnhancedDatePicker startDatePicker;
+
+    @FXML
+    private EnhancedDatePicker endDatePicker;
 
     @FXML
     private Button editEntryButton;
@@ -76,10 +84,13 @@ public class ProjectTabController extends AbstractController {
 
     @FXML
     private Button addEntryButton;
-
-    private final LongProperty duration = new SimpleLongProperty();
-
-    DateTimeFormatter formatter = Entries.getDateTimeFormatter();
+    
+    @FXML
+    private Button clearFilterButton;
+    
+    FilteredList<Entry> filteredEntries;
+    
+    SortedList<Entry> sortedEntries;
 
     /**
      * @param dataAccess dataAccess
@@ -106,11 +117,17 @@ public class ProjectTabController extends AbstractController {
      * 
      */
     public void initialize() {
-
-        // haetaan valitun projektin merkinnät listalle, järjestetään päivämäärän mukaan uusin ylimmäksi
-        entryListView.setItems(parentController.selectedProject_EntriesProperty().sorted((first, second) -> {
+        // pakataan merkinnät FilteredListille, asetetaan predikaatiksi null
+        filteredEntries = new FilteredList<Entry>(parentController.selectedProject_EntriesProperty(), null);
+        
+        // pakataan suodatetut merkinnät SortedListille, järjestetään päivämäärän mukaan uusin ylimmäksi
+        sortedEntries = new SortedList<Entry>(filteredEntries, (first, second) -> {
             return second.getStartDateTime().compareTo(first.getStartDateTime()); 
-        }));
+        });
+
+        entryListView.setItems(sortedEntries);
+        
+//        entryListView.setItems(parentController.selectedProject_EntriesProperty());
         
         entryListView.valueProperty().bindBidirectional(parentController.selectedEntryProperty());
 
@@ -139,8 +156,31 @@ public class ProjectTabController extends AbstractController {
             int current = entryListView.getSelectionModel().getSelectedIndex();
             entryListView.getSelectionModel().select(null);
             entryListView.getSelectionModel().select(current);
-        }
-   );
+        });
+        
+        startDatePicker.valueProperty().addListener((i) -> filterListedEntries());
+        endDatePicker.valueProperty().addListener((i) -> filterListedEntries());
+   
+    }
+    
+    
+    private void filterListedEntries() {
+        filteredEntries.setPredicate((entry) -> { 
+            LocalDate start = startDatePicker.getValue();
+            LocalDate end = endDatePicker.getValue();
+            if (start == null || entry.getStartDate().isAfter(start)) {
+                if (end == null || entry.getEndDate().isBefore(end)) {
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+    
+    @FXML
+    void handleClearFilter() {
+        startDatePicker.setValue(null);
+        endDatePicker.setValue(null);
     }
 
 
