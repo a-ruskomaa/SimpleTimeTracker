@@ -15,15 +15,16 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 /**
- * Uuden projektin luomiseen käytettävän dialogin kontrolleriluokka.
+ * Uuden projektin luomiseen käytettävän dialogin kontrolleriluokka. Luo annetun nimen perusteella
+ * uuden projektin, joka tallennetaan pysyvään muistiin DataAccess-luokan avulla. Tarjoaa getterin
+ * luodulle projektille, jonka avulla aloitusikkunan kontrolleri voi saada tiedon luodusta projektista.
  * @author aleks
- * @version 21 Feb 2020
+ * @version 02.03.2020
  *
  */
 public class NewProjectDialogController extends AbstractController {
@@ -44,14 +45,19 @@ public class NewProjectDialogController extends AbstractController {
     /**
      * Luo uuden kontrollerin projektin lisäämiseen käytettävälle näkymälle.
      * 
-     * @param dataAccess Pääohjelmassa luotu DataAccess olio. Tätä välitetään parametreina muille kontrollereille.
+     * @param dataAccess Pääohjelmassa luotu DataAccess olio, juonka avulla uuden projektin tiedot tallennetaan
      * @param stage Stage jota kontrolloidaan.
      */
     public NewProjectDialogController(DataAccess dataAccess, Stage stage) {
         super(dataAccess, stage);
     }
     
+    
+    /**
+     * Alustaa kontrollerin.
+     */
     public void initialize() {
+        // Sidotaan ok-button aktivoitumaan vain jos nimikenttä ei ole tyhjä
         okButton.disableProperty().bind(Bindings.equal(newProjectNameField.textProperty(), ""));
     }
 
@@ -62,6 +68,8 @@ public class NewProjectDialogController extends AbstractController {
     @FXML
     void handleOkButton(ActionEvent event) {
         String newName = newProjectNameField.getText();
+        
+        // Tarkistetaan ettei saman nimistä projektilla ole olemassa
         if (checkIfNameExists(newName, projectList)) {
             Alert alert = new Alert(AlertType.WARNING);
             alert.setHeaderText(null);
@@ -69,6 +77,8 @@ public class NewProjectDialogController extends AbstractController {
             alert.showAndWait();
             return;
         }
+        
+        // Tallennetaan luotu projekti tietokantaan, tallennetaan tieto luodusta projektista muiden luokkien saataville
         this.project = dataAccess.addProject(newName, this.user);
         exitStage(event);
     }
@@ -97,24 +107,39 @@ public class NewProjectDialogController extends AbstractController {
     }
 
     
+    
+    /**
+     * Näkymässä luodun projektin getteri.
+     * @return Palauttaa dialogissa luodun projektin tai null ennen uuden projektin luomista.
+     */
     public Project getProject() {
         return this.project;
     }
     
     
+    /**
+     * Setteri, jolla asetetaan luotavan projektin omistava käyttäjä
+     * @param user Käyttäjä, jolle ollaan luomassa projektia
+     */
     public void setUser(User user) {
         this.user = user;
     }
     
     
+    /**
+     * Aiemmin luodut projektit sisältävän listan setteri
+     * @param projectList Lista, jolle on lisättynä aiemmin luodut projektit.
+     */
     public void setProjectList(List<Project> projectList) {
         this.projectList = projectList;
     }
 
-    
+    /**
+     * Apumetodi, jolla selvitetään onko käyttäjällä olemassa jo halutun niminen projekti
+     */
     private boolean checkIfNameExists(String name, List<Project> list) {
-        for (Project project : list) {
-            if (project.getName().equals(name)) return true;
+        for (Project existing : list) {
+            if (existing.getName().equals(name)) return true;
         }
         
         return false;

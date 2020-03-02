@@ -1,15 +1,13 @@
 package roarusko.simpleTimeTracker.model.utility;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import roarusko.simpleTimeTracker.model.domain.DataObject;
-
 /**
- * Avustava luokka. Sisältää AtomicInteger-olion, joilla annetaan ulkoiseen tiedostoon
- * talletettaville tietueille yksiöivät tunnisteet juoksevalla numeroinnilla.
+ * Id-tunnusten luomiseen käytettävä avustava luokka.
  * 
- * TODO lähtönumeron alustaminen automaattiseksi + konstruktoriin?
+ * Sisältää AtomicInteger-olion, jolla luodaan juoksevaan numerointiin
+ * perustuvat yksiöivät tunnisteet.
+ * 
  * @author aleks
  * @version 17 Feb 2020
  *

@@ -3,7 +3,6 @@ package roarusko.simpleTimeTracker.view.components;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.function.UnaryOperator;
 
 import javafx.beans.property.ObjectProperty;
@@ -12,8 +11,18 @@ import javafx.scene.control.TextFormatter;
 import javafx.util.converter.LocalTimeStringConverter;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 
+/**
+ * TextField-käyttöliittymäkomponentin laajennus, johon on liitetty tekstiä LocalTime-olioksi
+ * ja LocalTime-olioita tekstiksi konvertoiva TextFormatter. Rajoittaa tekstikenttään 
+ * @author aleks
+ * @version 2 Mar 2020
+ *
+ */
 public class TimeField extends TextField {
 
+    /**
+     * Luo uuden TimeFieldin, jonka formaatti vastaa Entries-luokkaan tallennettua formaattia.
+     */
     public TimeField() {
         DateTimeFormatter formatter = Entries.getTimeFormatter();
         // String timePatternSeconds =
@@ -51,31 +60,36 @@ public class TimeField extends TextField {
 
     }
 
-
+    /**
+     * @return Palauttaa kentän arvon
+     */
     public LocalTime getValue() {
         return (LocalTime) this.getTextFormatter().getValue();
     }
 
-
+    
+    /**
+     * @return Palauttaa kentän arvon propertyna
+     */
     @SuppressWarnings("unchecked")
     public ObjectProperty<LocalTime> valueProperty() {
         return (ObjectProperty<LocalTime>) this.getTextFormatter()
                 .valueProperty();
     }
 
-
-    public void setFormatter(DateTimeFormatter formatter) {
-        this.setTextFormatter(new TextFormatter<LocalTime>(
-                new LocalTimeStringConverter(formatter, formatter),
-                LocalTime.now().truncatedTo(ChronoUnit.MINUTES)));
-    }
     
+    /**
+     * @param converter converter
+     */
+    @SuppressWarnings("exports")
     public void setConverter(LocalTimeStringConverter converter) {
         this.setTextFormatter(new TextFormatter<LocalTime>(converter,
                 LocalTime.now().truncatedTo(ChronoUnit.MINUTES), this.getTextFormatter().getFilter()));
     }
 
-
+    /**
+     * @param value Asettaa kentän arvon
+     */
     public void setValue(LocalTime value) {
         this.valueProperty().set(value);
     }

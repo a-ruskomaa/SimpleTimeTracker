@@ -178,6 +178,9 @@ public class SampleData {
         return entries;
     }
     
+    /**
+     * Tallentaa mallidatan tiedostoihin
+     */
     public static void createFiles() {
         EntryDAOFile ef = new EntryDAOFile();
         for (Entry entry : entries) {

@@ -1,26 +1,57 @@
 package roarusko.simpleTimeTracker.view.components;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.function.UnaryOperator;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.util.converter.LocalDateTimeStringConverter;
-import javafx.util.converter.LocalTimeStringConverter;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 
+
+/**
+ * TextField-käyttöliittymäkomponentin laajennus, johon on liitetty tekstiä LocalDateTime-olioksi
+ * ja LocalDateTime-olioita tekstiksi konvertoiva TextFormatter.
+ * @author aleks
+ * @version 2 Mar 2020
+ *
+ */
 public class DateTimeField extends TextField {
 
+    
+    /**
+     * Luo uuden DateTimeFieldin, jonka formaatti vastaa Entries-luokkaan tallennettua formaattia
+     */
     public DateTimeField() {
         DateTimeFormatter formatter = Entries.getDateTimeFormatter();
+        
+        UnaryOperator<TextFormatter.Change> textFilter = change -> {
+//          if (change.getControlNewText().length() >= 8) {
+//              if (!change.getControlNewText().matches(timePatternSeconds)) {
+//                  this.setStyle("-fx-text-box-border: red ;");
+//                  return change;
+//              }
+//              this.setStyle("");
+//              return change;
+//          }
+          // if (!change.getControlNewText().matches(timePatternSeconds)) {
+          // return null;
+          // }
+          // return change;
+
+          //hyväksytään vain numeeriset merkit tai piste
+          if (!change.getText().matches("([0-9]*|.)")) {
+              return null;
+          }
+          return change;
+        };
 
         this.setTextFormatter(new TextFormatter<LocalDateTime>(
-                new LocalDateTimeStringConverter(formatter, formatter)));
+                new LocalDateTimeStringConverter(formatter, formatter),
+                LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), textFilter));
     }
 
 
@@ -49,19 +80,13 @@ public class DateTimeField extends TextField {
                 .valueProperty();
     }
 
-
-    /**
-     * @param formatter formatter
-     */
-    public void setFormatter(DateTimeFormatter formatter) {
-        this.setTextFormatter(new TextFormatter<LocalDateTime>(
-                new LocalDateTimeStringConverter(formatter, formatter)));
-    }
     
     /**
-     * @param converter formatter
+     * @param converter converter
      */
+    @SuppressWarnings("exports")
     public void setConverter(LocalDateTimeStringConverter converter) {
-        this.setTextFormatter(new TextFormatter<LocalDateTime>(converter));
+        this.setTextFormatter(new TextFormatter<LocalDateTime>(converter,
+                LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), this.getTextFormatter().getFilter()));
     }
 }

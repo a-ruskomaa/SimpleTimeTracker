@@ -8,6 +8,15 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 
+
+/**
+ * Luokka, jonka avulla merkinnän sisältämät päivämäärät ja kellonajat voidaan sitoa suoraan
+ * käyttöliittymäkomponentteihin muuttamatta Entry-luokan sisäistä toteutusta. Toistaiseksi
+ * ei käytössä.
+ * @author aleks
+ * @version 2 Mar 2020
+ *
+ */
 public class EntryWrapper extends ObjectPropertyBase<Entry> {
 
     // private static final Object DEFAULT_BEAN = null;
@@ -23,6 +32,10 @@ public class EntryWrapper extends ObjectPropertyBase<Entry> {
     private ChangeListener<LocalDateTime> startDateTimeListener;
     private ChangeListener<LocalDateTime> endDateTimeListener;
 
+    
+    /**
+     * Luo uuden entrywrapperin. Lisää kuuntelijat reagoimaan merkinnän vaihtumiseen tai sen tietojen muokkaamiseen.
+     */
     public EntryWrapper() {
         addListeners();
     }
@@ -81,11 +94,18 @@ public class EntryWrapper extends ObjectPropertyBase<Entry> {
     }
 
 
+    /**
+     * Merkinnän alkuajankohdan property
+     * @return Palauttaa merkinnän alkuajankohdan propertyn
+     */
     public ObjectProperty<LocalDateTime> entryStartProperty() {
         return this.starDateTime;
     }
 
-
+    /**
+     * Merkinnän loppuajankohdan property
+     * @return Palauttaa merkinnän loppuajankohdan propertyn
+     */
     public ObjectProperty<LocalDateTime> entryEndProperty() {
         return this.endDateTime;
     }

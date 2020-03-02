@@ -11,7 +11,7 @@ import javafx.stage.Stage;
  */
 public class AbstractController implements WindowController {
     /**
-     * Ohjelman käsittelemää dataa mallintavien luokkien "access point".
+     * DataAccess-olio, jonka avulla kontrollerit keskustelevat tietokannan kanssa
      */
     protected final DataAccess dataAccess;
     
@@ -44,6 +44,9 @@ public class AbstractController implements WindowController {
     }
     
     
+    /**
+     * Käskee kontrolleria näyttämään siihen liitetyn stagen modaalisena
+     */
     public void showModalStage() {
         this.stage.initModality(Modality.APPLICATION_MODAL);
         

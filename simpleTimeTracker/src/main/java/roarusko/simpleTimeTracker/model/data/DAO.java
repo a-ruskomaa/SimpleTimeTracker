@@ -18,7 +18,7 @@ public interface DAO <K, T> {
 //    public List<T> getData();
     
     /**
-     * Lisää pysyvään muistiin uuden T-olion
+     * Lisää pysyvään muistiin uuden T-tyyppisen olion
      * @param object Lisättävä olio
      * @return Palauttaa lisäämänsä olion, jotta esim. päivitetty id-arvo saadaan ohjelman käyttöön
      */

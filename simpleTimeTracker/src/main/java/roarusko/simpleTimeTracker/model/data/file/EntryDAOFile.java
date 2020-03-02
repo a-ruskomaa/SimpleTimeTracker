@@ -8,14 +8,35 @@ import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 
+/**
+ * Merkintöjä tiedostoon tallentava ja lukeva luokka. Tiedostojen käsittely toteutetaan abstraktin yläluokan
+ * tarjoamilla metodeilla. Luokka sisältää tarvittavan logiikan, jolla merkkijonoista saadaan luotua Entry-tyyppisiä
+ * olioita ja Entry-olioista merkkijonoja.
+ * @author aleks
+ * @version 2 Mar 2020
+ *
+ */
 public class EntryDAOFile extends AbstractDAOFile<Entry> implements EntryDAO {
-    private static final String pathToFile = "data/entries.dat";
+    private static final String defaultPath = "data/entries.dat";
     
     
+    /**
+     * Luo uuden EntryDAO:n oletusarvoisella tallennustiedostolla
+     */
     public EntryDAOFile() {
+        super(defaultPath);
+    }
+    
+    /**
+     * Luo uuden EntryDAO:n annetulla tallennustiedostolla
+     * @param pathToFile Merkkijonomuotoinen polku haluttuun tallennustiedostoon
+     * 
+     */
+    public EntryDAOFile(String pathToFile) {
         super(pathToFile);
     }
 
+    
     @Override
     public List<Entry> list(Project project) {
         return super.list(project);

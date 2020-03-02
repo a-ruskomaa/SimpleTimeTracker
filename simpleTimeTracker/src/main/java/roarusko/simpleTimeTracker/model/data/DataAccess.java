@@ -1,38 +1,25 @@
 package roarusko.simpleTimeTracker.model.data;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.ListIterator;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import roarusko.simpleTimeTracker.model.data.file.EntryDAOFile;
-import roarusko.simpleTimeTracker.model.data.file.ProjectDAOFile;
-import roarusko.simpleTimeTracker.model.data.file.UserDAOFile;
-import roarusko.simpleTimeTracker.model.domain.DataObject;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
-import roarusko.simpleTimeTracker.model.utility.EntryTimer;
 
 /**
  * @author aleks
- * @version 28 Jan 2020
+ * @version 02.03.2020
  *
- * Luokka, jonka avulla ohjelman tilaa - kuten valittua projektia tai merkintää - ylläpidetään.
- * Toimii fasilitaattorina näkymää kontrolloivien luokkien ja dataa mallintavien luokkien välilä.
+ * Luokka, jonka avulla muu ohjelma osaa lukea ja kirjoittaa pysyvään muistiin tallennettua dataa. Tarjoaa rajapinnan,
+ * jonka avulla muun ohjelman ei tarvitse välittää valitusta tallennustavasta.
  * 
- * Samanaikaisesti voi olla valittuna vain yksi käyttäjä, yksi tälle käyttäjälle kuuluva projekti
- * sekä yksi projektiin kuuluva merkintä.
+ * Tällä hetkellä toimii lähinnä fasilitaattorina, ja kutsuu DAO-rajapinnan toteuttavien avustavien luokkien metodeja,
+ * jolla varsinainen tiedostoihin kirjoitus ja luku tapahtuu. Jatkossa huolehtii enemmän myös poikkeuskäsittelystä ja
+ * käsiteltävän datan oikeellisuudesta.
  * 
- * Luokka sisältää metodit tietyn käyttäjän, projektin sekä merkinnän valitsemiselle ja hakemiselle.
- * 
- * Luokasta luodaan vain yksi instanssi ohjelman käynnistyksen yhteydessä.
- * Toimii ainoana tiedonkulkuväylänä ohjelman kontrolleriluokkien, käyttöliittymän sekä
- * mallinnettavan datan välillä.
- * 
- * Viitteet attribuutteihin välitetään pääasiallisesti propertyina, jolloin käyttölittymäkomponentit
- * voi sitoa suoraan seuraamaan esim. valittuna olevan projektin merkintöjä.
+ * Metodien määrän kasvaessa siirryttäneen geneerisempään toteutustapaan.
  */
 public class DataAccess {
 
@@ -40,11 +27,10 @@ public class DataAccess {
     private final ProjectDAO projectDAO;
     private final EntryDAO entryDAO;
 
-
     
     /**
      * DataAccessin konstruktori. Saa parametreinaan käyttäjien, projektien ja merkintöjen
-     * tietokantahakuja toteuttavat DAO-rajapinnan toteuttavat oliot.
+     * tietokantahakuja suorittavat DAO-rajapinnan toteuttavat oliot.
      * @param userDAO Olio, joka suorittaa käyttäjiin liittyvät tietokantahaut
      * @param projectDAO Olio, joka suorittaa projekteihin liittyvät tietokantahaut
      * @param entryDAO Olio, joka suorittaa merkintöihin liittyvät tietokantahaut
@@ -53,8 +39,6 @@ public class DataAccess {
         this.userDAO = userDAO;
         this.projectDAO = projectDAO;
         this.entryDAO = entryDAO;
-
-        System.out.println("dataAccess luotu!");
     }
 
 
@@ -113,8 +97,9 @@ public class DataAccess {
      * @return Palauttaa tallennetun merkinnän
      */
     public Entry commitEntry(Entry entry) {
+        // TODO projektiin kenttä, johon tallentuu viimeisimmän luodun merkinnän aikaleima. Tähän kentän päivitys.
         if (entry.getOwnerId() == -1) {
-            // TODO tälle poikkeus joka avaa dialogin
+            // TODO tälle poikkeus jonka avulla voidaan näyttää varoitusdialogi
             System.out.println("Projektin id ei saa olla -1");
         }
         if (entry.getId() == -1) {
@@ -152,28 +137,17 @@ public class DataAccess {
     
     
     
+    /**
+     * Poistaa annetun merkinnän tiedot tietokannasta. EntryDAO etsii merkinnän id:n perusteella poistettavan
+     * merkinnän.
+     * @param entry Merkintä joka halutaan poistaa
+     * @return Palauttaa false jos poisto epäonnistui
+     */
     public boolean deleteEntry(Entry entry) {
         return this.entryDAO.delete(entry.getId());
     }
 
-    /**
-     * Hakee listalta valitun DataObjectin indeksin. Palauttaa -1 jos ei löycy.
-     * @param object Objekti jonka indeksi listalla halutaan selvittää
-     * @param list Lista jolta etsitään
-     * @return Palauttaa indeksin tai -1 jos ei löydy
-     */
-    public int findIndexById(DataObject object,
-            List<? extends DataObject> list) {
-        ListIterator<? extends DataObject> iterator = list.listIterator();
-
-        while (iterator.hasNext()) {
-            int index = iterator.nextIndex();
-            if (iterator.next().getId() == object.getId())
-                return index;
-        }
-
-        return -1;
-    }
+   
 
 
     /**
@@ -181,7 +155,6 @@ public class DataAccess {
      * @return palauttaa käyttäjät ObservableList:llä
      */
     public ObservableList<User> loadUsers() {
-        System.out.println("ladataan käyttäjät");
         ObservableList<User> users = FXCollections
                 .observableArrayList(this.userDAO.list());
         return users;
@@ -194,7 +167,6 @@ public class DataAccess {
      * @return palauttaa projektit ObservableList:llä
      */
     public ObservableList<Project> loadProjects(User user) {
-        System.out.println("ladataan projektit");
         ObservableList<Project> projects = FXCollections
                 .observableArrayList(this.projectDAO.list(user));
         return projects;
@@ -207,7 +179,6 @@ public class DataAccess {
      * @return palauttaa merkinnät ObservableList:llä
      */
     public ObservableList<Entry> loadEntries(Project project) {
-        System.out.println("ladataan merkinnät");
         ObservableList<Entry> entries = FXCollections
                 .observableArrayList(this.entryDAO.list(project));
         return entries;

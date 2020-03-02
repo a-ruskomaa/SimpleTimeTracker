@@ -6,7 +6,6 @@ import javafx.stage.Stage;
 import roarusko.simpleTimeTracker.view.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
-import roarusko.simpleTimeTracker.model.data.SampleData;
 import roarusko.simpleTimeTracker.model.data.file.EntryDAOFile;
 import roarusko.simpleTimeTracker.model.data.file.ProjectDAOFile;
 import roarusko.simpleTimeTracker.model.data.file.UserDAOFile;

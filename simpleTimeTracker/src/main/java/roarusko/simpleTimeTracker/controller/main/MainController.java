@@ -25,7 +25,17 @@ import javafx.stage.Stage;
  * @author aleks
  * @version 27 Jan 2020
  *
- * Pääikkunan kontrolleriluokka.
+ * Päänäkymän kontrolleriluokka. Päänäkymä sisältää alueen, jossa on valittuna olevan käyttäjän
+ * projektit sisältävä alasvetovalikko sekä projektin kokonaiskeston näyttävä tekstikenttä. Myös ajastimen
+ * kesto näytetään tällä alueella.
+ * 
+ * Päänäkymän kontrolleri ylläpitää ohjelman tilaa, ja sisältää propertyt joista muut kontrollerit
+ * voivat selvittää valittuna olevan käyttäjän, projektin ja merkinnän sekä listat jotka sisältävät
+ * valitun käyttäjän projektit sekä valitun projektin merkinnät. Käyttöliittymäkomponentit sidotaan suoraan
+ * näihin propertyihin. Esimerkiksi 
+ * 
+ * Päänäkymään liitetään välilehtiä, joiden kontrollerit tarjoavat spesifimpää toiminnallisuutta omien
+ * vastuualueidensa mukaisesti.
  */
 public class MainController extends AbstractController  {
     
@@ -77,7 +87,8 @@ public class MainController extends AbstractController  {
 
 
     /**
-     * Alustaa pääikkunan näkymän. Asettaa valitun projektin merkinnät näkyville.
+     * Alustaa pääikkunan näkymän. Asettaa valitun projektin merkinnät näkyville ja sitoo käyttöliittymän komponentit
+     * propertyihin tallennettuun dataan.
      */
     public void initialize() {
         
@@ -92,36 +103,35 @@ public class MainController extends AbstractController  {
         projectTab.setContent(ViewFactory.createProjecTab(this, dataAccess));
         
         /*
-         * asetetaan tapahtumankäsittelijä lataamaan kaikki projektiin kuuluvat tapahtumat projektin vaihtuessa.
-         * valitaan automaattisesti projektin ensimmäinen merkintä
-         * päivitetaan myös projektin kokonaiskesto näkyville
-         * 
-         *  
-         *  
+         * Asetetaan tapahtumankäsittelijä lataamaan kaikki projektiin kuuluvat tapahtumat projektin vaihtuessa.
+         * Valitaan automaattisesti projektin ensimmäinen merkintä ja päivitetaan myös projektin kokonaiskesto
          */
         //
         projectChoiceBox.valueProperty().addListener((prop, oldV, newV) -> {
             if (newV != null) {
                 selectedProject_Entries.set(dataAccess.loadEntries(newV));
-                selectedEntry.set(selectedProject_Entries.isEmpty() ? null : selectedProject_Entries.get(0));
+                //selectedEntry.set(selectedProject_Entries.isEmpty() ? null : selectedProject_Entries.get(0));
                 updateTotalTime();
             }
         });
                
+        
+        /* Asetetaan tapahtumankäsittelijä kuuntelemaan projektivälilehden päivitystapahtumia. Tapahtuma
+         * luodaan aina kun olemassa olevaa merkintää muokataan. Tapahtuman perusteella päänäkymän kontrolleri
+         * osaa tarvittaessa päivittää näyttämänsä kokonaiskeston.
+         */
         
         projectTab.getContent().addEventHandler(UpdateEvent.UPDATE_EVENT, (UpdateEvent e) -> {
                 System.out.println("Event handled: " + e.toString());
                 updateTotalTime();
             }
        );
-        
-        
-        
-
-
     }
 
 
+    /**
+     * Päivittää projektiin kuuluvien merkintöjen kokonaiskeston näkyville
+     */
     private void updateTotalTime() {
         
         System.out.println("päivitetään kokonaisaika");
@@ -133,7 +143,12 @@ public class MainController extends AbstractController  {
     }
     
     
-    private Long calculateTotalTime(List<Entry> list) {
+    /**
+     * Laskee annetulla listalla olevien merkintöjen yhteiskeston
+     * @param list Lista jonka merkintöjä tutkitaan
+     * @return Palauttaa kokonaiskeston sekunneissa.
+     */
+    private long calculateTotalTime(List<Entry> list) {
         long totalTime = 0L;
         
         for (Entry entry : list) {

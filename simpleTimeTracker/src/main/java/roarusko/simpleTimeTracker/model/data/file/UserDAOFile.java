@@ -3,12 +3,33 @@ package roarusko.simpleTimeTracker.model.data.file;
 import roarusko.simpleTimeTracker.model.data.UserDAO;
 import roarusko.simpleTimeTracker.model.domain.User;
 
+/**
+ * Käyttäjiä tiedostoon tallentava ja lukeva luokka. Tiedostojen käsittely toteutetaan abstraktin yläluokan
+ * tarjoamilla metodeilla. Luokka sisältää tarvittavan logiikan, jolla merkkijonoista saadaan luotua User-tyyppisiä
+ * olioita ja User-olioista merkkijonoja.
+ * @author aleks
+ * @version 2 Mar 2020
+ *
+ */
 public class UserDAOFile extends AbstractDAOFile<User> implements UserDAO {
-    private static final String pathToFile = "data/users.dat";
+    private static final String defaultPath = "data/users.dat";
      
+    /**
+     * Luo uuden UserDAO:n oletusarvoisella tallennustiedostolla
+     */
      public UserDAOFile() {
-        super(pathToFile);
+        super(defaultPath);
     }
+     
+     
+     /**
+      * Luo uuden UserDAO:n annetulla tallennustiedostolla
+      * @param pathToFile Merkkijonomuotoinen polku haluttuun tallennustiedostoon
+      * 
+      */
+     public UserDAOFile(String pathToFile) {
+         super(pathToFile);
+     }
 
     
     @Override

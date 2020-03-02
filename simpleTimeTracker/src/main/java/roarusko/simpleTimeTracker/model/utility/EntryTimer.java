@@ -1,6 +1,5 @@
 package roarusko.simpleTimeTracker.model.utility;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Timer;
@@ -16,7 +15,10 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
 /**
- * Merkinnän reaaliaikaiseen luomiseen tarkoitettu ajastin.
+ * Merkinnän reaaliaikaiseen luomiseen tarkoitettu ajastin. Käynnistää uudessa säikeessä ajastimen,
+ * joka päivittää sekunnin välein elapsedTime-propertya. Ei osallistu uuden merkinnän luomiseen, mutta
+ * tarjoaa propertyt joihin käyttöliittymäkomponentit voidaan sitoa ja joista luotavan merkinnän alku- 
+ * ja loppuajankohta voidaan selvittää.
  * @author aleks
  * @version 28 Jan 2020
  *
@@ -42,7 +44,8 @@ public class EntryTimer {
 
 
     /**
-     * Käynnistää ajastimen. Luo uudessa säikeessä ajettavan Timer-olion, joka päivittää
+     * Käynnistää ajastimen ja tallentaa alkuajankohdan startTime-propertyyn.
+     * Luo uudessa säikeessä ajettavan Timer-olion, joka päivittää
      * sekunnin välein käynnistyksestä kuluneen ajan elapsedTime-propertyyn.
      */
     public void start() {
@@ -62,7 +65,7 @@ public class EntryTimer {
 
 
     /**
-     * Pysäyttää ajastimen. Tallentaa loppuajan luotuun merkintään.
+     * Pysäyttää ajastimen. Tallentaa loppuajan endTime-propertyyn.
      */
     public void stop() {
         timer.cancel();
@@ -112,8 +115,8 @@ public class EntryTimer {
     
     
     /**
-     * Palauttaa ajastimen käynnistyshetken LocalDateTime-objektina
-     * @return Palauttaa ajastimen käynnistyshetken LocalDateTime-objektina
+     * Palauttaa ajastimen käynnistyshetken LocalDateTime-objektin käärivänä propertyna
+     * @return Palauttaa ajastimen käynnistyshetken LocalDateTime-objektin käärivänä propertyna
      */
     public ObjectProperty<LocalDateTime> startTimeProperty() {
         return this.startTime;
@@ -121,8 +124,8 @@ public class EntryTimer {
     
     
     /**
-     * Palauttaa ajastimen käynnistyshetken LocalDateTime-objektina
-     * @return Palauttaa ajastimen käynnistyshetken LocalDateTime-objektina
+     * Palauttaa ajastimen käynnistyshetken LocalDateTime-objektin käärivänä propertyna
+     * @return Palauttaa ajastimen käynnistyshetken LocalDateTime-objektin käärivänä propertyna
      */
     public ObjectProperty<LocalDateTime> endTimeProperty() {
         return this.endTime;

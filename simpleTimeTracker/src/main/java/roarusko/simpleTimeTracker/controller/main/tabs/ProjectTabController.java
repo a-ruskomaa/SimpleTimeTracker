@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.ListIterator;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.view.ViewFactory;
@@ -14,6 +16,7 @@ import roarusko.simpleTimeTracker.controller.main.UpdateEvent;
 import roarusko.simpleTimeTracker.controller.main.dialogs.DeleteEntryDialogController;
 import roarusko.simpleTimeTracker.controller.main.dialogs.EditEntryDialogController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
+import roarusko.simpleTimeTracker.model.domain.DataObject;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
@@ -104,13 +107,13 @@ public class ProjectTabController extends AbstractController {
      */
     public void initialize() {
 
-        // haetaan valitun projektin merkinnät listalle
+        // haetaan valitun projektin merkinnät listalle, järjestetään päivämäärän mukaan uusin ylimmäksi
         entryListView.setItems(parentController.selectedProject_EntriesProperty().sorted((first, second) -> {
-            return first.getStartDateTime().compareTo(second.getStartDateTime()); 
+            return second.getStartDateTime().compareTo(first.getStartDateTime()); 
         }));
         
         entryListView.valueProperty().bindBidirectional(parentController.selectedEntryProperty());
-        
+
         editEntryButton.disableProperty().bind(entryListView.valueProperty().isNull());
         deleteEntryButton.disableProperty().bind(entryListView.valueProperty().isNull());
         
@@ -178,7 +181,7 @@ public class ProjectTabController extends AbstractController {
         controller.getStage().setOnCloseRequest((e) -> {
             
             if (controller.wasUpdated()) {
-                int index = dataAccess.findIndexById(entry, parentController.selectedProject_EntriesProperty());
+                int index = findIndexById(entry, parentController.selectedProject_EntriesProperty());
                 parentController.selectedProject_EntriesProperty().set(index, entry);
                 parentController.selectedEntryProperty().set(entry);
             }
@@ -210,7 +213,25 @@ public class ProjectTabController extends AbstractController {
     }
     
 
+    /**
+     * Apumetodi, joka hakee listalta valitun DataObjectin indeksin. Palauttaa -1 jos ei löydy. Siirretään myöhemmin
+     * toiseen luokkaan kun projektien ja käyttäjien muokkaaminen mahdollistuu.
+     * @param object Objekti jonka indeksi listalla halutaan selvittää
+     * @param list Lista jolta etsitään
+     * @return Palauttaa indeksin tai -1 jos ei löydy
+     */
+    private int findIndexById(DataObject object,
+            List<? extends DataObject> list) {
+        ListIterator<? extends DataObject> iterator = list.listIterator();
 
+        while (iterator.hasNext()) {
+            int index = iterator.nextIndex();
+            if (iterator.next().getId() == object.getId())
+                return index;
+        }
+
+        return -1;
+    }
 
 
 }
