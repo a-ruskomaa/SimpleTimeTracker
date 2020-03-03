@@ -123,9 +123,9 @@ public class MainController extends AbstractController {
          * merkintää muokataan. Tapahtuman perusteella päänäkymän kontrolleri
          * osaa tarvittaessa päivittää näyttämänsä kokonaiskeston.
          */
-        projectTab.getContent().addEventHandler(UpdateEvent.UPDATE_EVENT,
+        this.getStage().addEventHandler(UpdateEvent.UPDATE_EVENT,
                 (UpdateEvent e) -> {
-                    System.out.println("Event handled: " + e.toString());
+                    System.out.println("Event handled in main controller: " + e.toString());
                     updateTotalTime();
                 });
         
