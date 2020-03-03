@@ -1,9 +1,14 @@
+/**
+ * simpleTimeTracker-projektin ainoa moduuli.
+ * @author aleks
+ *
+ */
 module simpleTimeTracker {
 
     requires javafx.base;
     requires javafx.controls;
     requires javafx.fxml;
-    requires javafx.graphics;
+    requires transitive javafx.graphics;
     
     opens roarusko.simpleTimeTracker.controller to javafx.fxml;
     opens roarusko.simpleTimeTracker.controller.main to javafx.fxml;

@@ -88,7 +88,6 @@ public class TimeField extends TextField {
     /**
      * @param converter converter
      */
-    @SuppressWarnings("exports")
     public void setConverter(LocalTimeStringConverter converter) {
         this.setTextFormatter(new TextFormatter<LocalTime>(converter,
                 LocalTime.now().truncatedTo(ChronoUnit.MINUTES), this.getTextFormatter().getFilter()));

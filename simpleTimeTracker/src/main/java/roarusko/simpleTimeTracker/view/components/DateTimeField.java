@@ -93,7 +93,6 @@ public class DateTimeField extends TextField {
     /**
      * @param converter converter
      */
-    @SuppressWarnings("exports")
     public void setConverter(LocalDateTimeStringConverter converter) {
         this.setTextFormatter(new TextFormatter<LocalDateTime>(converter,
                 LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), this.getTextFormatter().getFilter()));

@@ -9,7 +9,6 @@ import roarusko.simpleTimeTracker.model.domain.User;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 import roarusko.simpleTimeTracker.model.utility.EntryTimer;
 
-import java.util.Comparator;
 import java.util.List;
 
 import javafx.beans.property.ListProperty;
@@ -124,7 +123,6 @@ public class MainController extends AbstractController {
          * merkintää muokataan. Tapahtuman perusteella päänäkymän kontrolleri
          * osaa tarvittaessa päivittää näyttämänsä kokonaiskeston.
          */
-
         projectTab.getContent().addEventHandler(UpdateEvent.UPDATE_EVENT,
                 (UpdateEvent e) -> {
                     System.out.println("Event handled: " + e.toString());
@@ -221,6 +219,10 @@ public class MainController extends AbstractController {
     }
 
 
+    /**
+     * EntryTimerin getteri
+     * @return palauttaa EntryTimerin
+     */
     public EntryTimer getTimer() {
         return this.timer;
     }

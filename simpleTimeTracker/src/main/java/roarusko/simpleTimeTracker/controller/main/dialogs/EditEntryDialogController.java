@@ -1,54 +1,45 @@
 package roarusko.simpleTimeTracker.controller.main.dialogs;
 
-import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import roarusko.simpleTimeTracker.controller.AbstractController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Entry;
-import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 import roarusko.simpleTimeTracker.view.components.EnhancedDatePicker;
 import roarusko.simpleTimeTracker.view.components.TimeField;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.StringBinding;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
-import javafx.util.converter.LocalDateStringConverter;
-import javafx.util.converter.LocalTimeStringConverter;
 
 /**
- * Uuden merkinnän luomiseen käytettävän ikkunan kontrolleriluokka.
+ * Uuden merkinnän sekä muokattavan merkinnän tallentamiseen käytettävän ikkunan
+ * kontrolleriluokka. Luokalle välitetään settereiden avulla muokattava merkintä.
+ * 
+ * Luokan toiminnan kannalta ei ole merkitystä, onko merkintä aiemmin luotu vaiko
+ * uusi.
+ * 
+ * Osaa tallentaa dataAccess:n avulla muokatun merkinnän pysyvään muistiin. Tarjoaa
+ * getterimetodin tallennetun merkinnän hakemiseen muun ohjelman käyttöön.
  * @author aleks
- * @version 8 Feb 2020
+ * @version 2 Mar 2020
  *
  */
-
 public class EditEntryDialogController extends AbstractController {
 
     private Entry entry;
     private List<Entry> entryList;
 
-    private boolean updated = false;
+    private boolean saved = false;
 
     @FXML
     private EnhancedDatePicker startDatePicker;
@@ -73,7 +64,7 @@ public class EditEntryDialogController extends AbstractController {
 
     /**
      * 
-     * @param dataAccess Olio, jonka avulla pidetään ohjelman tilaa yllä ja välitetään valittuja olioita luokalta toiselle.
+     * @param dataAccess dataAccess
      * @param stage stage johon kontrolleri liittyy
      */
     public EditEntryDialogController(DataAccess dataAccess, Stage stage) {
@@ -81,16 +72,19 @@ public class EditEntryDialogController extends AbstractController {
     }
 
 
+    /**
+     * Alustetaan käyttöliittymän komponentit.
+     */
     public void initialize() {
 
         // Sidotaan tallennusnappi aktiiviseksi vain kun kaikilla kentillä on arvot
         saveButton.disableProperty()
                 .bind(startTimeField.valueProperty().isNull()
                         .or(startDatePicker.valueProperty().isNull())
-                        .or(endTimeField.valueProperty().isNull()
-                        .or(endDatePicker.valueProperty().isNull())));
+                        .or(endTimeField.valueProperty().isNull())
+                        .or(endDatePicker.valueProperty().isNull()));
 
-        
+        // sidotaan tekstikenttä näyttämään merkinnän kesto automaattisesti päivittyen
         durationField.textProperty().bind(Bindings.createStringBinding(() -> {
             try {
                 return Entries.getDurationAsString(startDatePicker.getValue(),
@@ -120,6 +114,7 @@ public class EditEntryDialogController extends AbstractController {
 
         if (start.isAfter(end)) {
             showNegativeDurationAlert();
+            return;
         }
 
         Entry existing = checkIfOverlappingEntryExists(start, end, entryList);
@@ -134,7 +129,7 @@ public class EditEntryDialogController extends AbstractController {
 
         this.entry = dataAccess.commitEntry(entry);
 
-        this.updated = true;
+        this.saved = true;
 
         exitStage(event);
     }
@@ -175,7 +170,7 @@ public class EditEntryDialogController extends AbstractController {
 
 
     public boolean wasUpdated() {
-        return updated;
+        return saved;
     }
 
 

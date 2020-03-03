@@ -9,7 +9,8 @@ import javafx.util.converter.LocalDateStringConverter;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 
 /**
- * Lisää DatePickeriin toiminnallisuuden, jossa sen arvo päivitetään aina kun focus poistuu
+ * Lisää DatePickeriin toiminnallisuuden, jossa sen arvo päivitetään aina kun focus poistuu.
+ * Alustava toteutus, mallia quick and dirty.
  * @author aleks
  * @version 2 Mar 2020
  *
@@ -19,13 +20,22 @@ public class EnhancedDatePicker extends DatePicker {
     private LocalDateStringConverter dateConverter = new LocalDateStringConverter(
             dateFormatter, dateFormatter);
 
+    /**
+     * Luo uuden DatePickerin, jonka konvertteri on valmiiksi asetettu ja johon on
+     * liitetty tapahtumankäsittelijä kuuntelemaan fokuksen poistumista.
+     */
     public EnhancedDatePicker() {
         super();
         this.setConverter(dateConverter);
         setListeners();
     }
 
-
+    
+    /**
+     * Luo uuden DatePickerin, jonka konvertteri on valmiiksi asetettu ja johon on
+     * liitetty tapahtumankäsittelijä kuuntelemaan fokuksen poistumista.
+     * @param localDate Oletusarvoinen päivämäärän valinta
+     */
     public EnhancedDatePicker(LocalDate localDate) {
         super(localDate);
         this.setConverter(dateConverter);
