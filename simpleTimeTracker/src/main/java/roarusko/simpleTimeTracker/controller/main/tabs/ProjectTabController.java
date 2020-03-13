@@ -146,8 +146,8 @@ public class ProjectTabController extends AbstractController {
         });
         
         // lisätään tapahtumankäsittelijät reagoimaan rajausehtojen muuttumiseen
-        startDatePicker.valueProperty().addListener((i) -> filterListedEntries());
-        endDatePicker.valueProperty().addListener((i) -> filterListedEntries());
+        startDatePicker.valueProperty().addListener((i) -> setFilter());
+        endDatePicker.valueProperty().addListener((i) -> setFilter());
    
     }
     
@@ -156,16 +156,12 @@ public class ProjectTabController extends AbstractController {
      * Metodia kutsutaan, kun näytettävien merkintöjen rajausehtona käytetyn alku- tai loppupäivämäärän
      * valinta muuttuu. Ensimmäinen toteutus, tätä hiotaan vielä elegantimmaksi.
      */
-    private void filterListedEntries() {
+    private void setFilter() {
         filteredEntries.setPredicate((entry) -> { 
             LocalDate start = startDatePicker.getValue();
             LocalDate end = endDatePicker.getValue();
-            if (start == null || entry.getStartDate().isAfter(start)) {
-                if (end == null || entry.getEndDate().isBefore(end)) {
-                    return true;
-                }
-            }
-            return false;
+            return (start == null || entry.getStartDate().isAfter(start)) &&
+                (end == null || entry.getEndDate().isBefore(end));
         });
     }
     

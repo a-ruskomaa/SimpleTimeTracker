@@ -9,6 +9,7 @@ module simpleTimeTracker {
     requires javafx.controls;
     requires javafx.fxml;
     requires transitive javafx.graphics;
+    requires java.sql;
     
     opens roarusko.simpleTimeTracker.controller to javafx.fxml;
     opens roarusko.simpleTimeTracker.controller.main to javafx.fxml;
