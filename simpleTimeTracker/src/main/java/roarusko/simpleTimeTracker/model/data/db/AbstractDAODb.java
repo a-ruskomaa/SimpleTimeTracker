@@ -1,12 +1,15 @@
 package roarusko.simpleTimeTracker.model.data.db;
 
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import roarusko.simpleTimeTracker.model.data.DAO;
 import roarusko.simpleTimeTracker.model.domain.DataObject;
-import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.ParentObject;
 
 /**
@@ -17,12 +20,18 @@ import roarusko.simpleTimeTracker.model.domain.ParentObject;
  * @param <T> DataObject-rajapinnan toteuttava luokka
  */
 public abstract class AbstractDAODb<T extends DataObject> implements DAO<Integer, T> {
-    private final String path;
+    private final ConnectionManager connectionManager;
+    private final String tableName;
 
     
     
-    public AbstractDAODb(String path) {
-        this.path = path;
+    /**
+     * @param connectionManager Olio, jolla luodaan tietokantayhteys
+     * @param tableName Tämän olion hallinnoiman tietokantataulun nimi
+     */
+    public AbstractDAODb(ConnectionManager connectionManager, String tableName) {
+        this.tableName = tableName;
+        this.connectionManager = connectionManager;
     }
 
 
@@ -64,17 +73,33 @@ public abstract class AbstractDAODb<T extends DataObject> implements DAO<Integer
      * @return Palauttaa luodun olion
      */
     protected abstract T createObject(ResultSet rs);
+
+
+    private boolean makeUpdate(String pst) {
+        try (Connection con = connectionManager
+                .getConnection();
+                PreparedStatement sql = con.prepareStatement(pst)) {
+            sql.executeUpdate();
+            System.out.println("Database updated");
+            return true;
+        } catch (SQLException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+        return false;
+    }
     
-    
-    
-    /**
-     * Suodattaa annetusta listasta halutun omistajan oliot, eli esimerkiksi tietyn käyttäjän projektit
-     * tai tietyn projektin merkinnät.
-     * @param object ParentObject-rajapinnan toteuttava olio (User tai Project), jolle kuuluvat domain-objektit halutaan listata
-     * @return Palauttaa suodatetun listan T-tyyppisiä olioita
-     */
-    protected List<T> list(ParentObject object) {
+    private ResultSet makeQuery(String pst) {
+        try (Connection con = connectionManager
+                .getConnection();
+                PreparedStatement sql = con.prepareStatement(pst)) {
+            ResultSet rs = sql.executeQuery();
+            System.out.println("Database updated");
+            return rs;
+        } catch (SQLException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
         return null;
     }
-
+    
+    
 }

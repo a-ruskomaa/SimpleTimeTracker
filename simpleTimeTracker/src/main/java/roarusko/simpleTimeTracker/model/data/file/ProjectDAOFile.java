@@ -2,7 +2,6 @@ package roarusko.simpleTimeTracker.model.data.file;
 
 import java.util.List;
 
-import roarusko.simpleTimeTracker.model.data.ProjectDAO;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
 
@@ -14,7 +13,7 @@ import roarusko.simpleTimeTracker.model.domain.User;
  * @version 2 Mar 2020
  *
  */
-public class ProjectDAOFile extends AbstractDAOFile<Project> implements ProjectDAO {
+public class ProjectDAOFile extends AbstractChildDAOFile<Project, User> {
     private static final String defaultPath = "data/projects.dat";
 
     /**

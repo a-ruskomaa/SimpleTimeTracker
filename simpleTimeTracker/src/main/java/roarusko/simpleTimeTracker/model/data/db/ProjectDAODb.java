@@ -3,7 +3,6 @@ package roarusko.simpleTimeTracker.model.data.db;
 import java.sql.ResultSet;
 import java.util.List;
 
-import roarusko.simpleTimeTracker.model.data.ProjectDAO;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
 
@@ -15,24 +14,17 @@ import roarusko.simpleTimeTracker.model.domain.User;
  * @version 2 Mar 2020
  *
  */
-public class ProjectDAODb extends AbstractDAODb<Project> implements ProjectDAO {
-    private static final String defaultPath = "data/projects.dat";
+public class ProjectDAODb extends AbstractChildDAODb<Project, User>  {
+    private static final String tableName = "Projects";
+
 
     /**
-     * Luo uuden ProjectDAO:n oletusarvoisella tallennustiedostolla
-     */
-    public ProjectDAODb() {
-        super(defaultPath);
-    }
-    
-    
-    /**
      * Luo uuden ProjectDAO annetulla tallennustiedostolla
-     * @param pathToFile Merkkijonomuotoinen polku haluttuun tallennustiedostoon
+     * @param connectionManager Olio, jolla luodaan tietokantayhteys
      * 
      */
-    public ProjectDAODb(String pathToFile) {
-        super(pathToFile);
+    public ProjectDAODb(ConnectionManager connectionManager) {
+        super(connectionManager, tableName);
     }
 
     

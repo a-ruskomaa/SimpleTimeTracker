@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import roarusko.simpleTimeTracker.model.data.DAO;
-import roarusko.simpleTimeTracker.model.domain.ChildObject;
 import roarusko.simpleTimeTracker.model.domain.DataObject;
-import roarusko.simpleTimeTracker.model.domain.ParentObject;
 import roarusko.simpleTimeTracker.model.utility.IdGenerator;
 
 /**
@@ -166,26 +164,7 @@ public abstract class AbstractDAOFile<T extends DataObject> implements DAO<Integ
         return new ArrayList<T>();
     }
     
-    
-    
-    /**
-     * Suodattaa annetusta listasta halutun omistajan oliot, eli esimerkiksi tietyn käyttäjän projektit
-     * tai tietyn projektin merkinnät.
-     * @param object ParentObject-rajapinnan toteuttava olio (User tai Project), jolle kuuluvat domain-objektit halutaan listata
-     * @return Palauttaa suodatetun listan T-tyyppisiä olioita
-     */
-    protected List<T> list(ParentObject object) {
-        /*
-         * Tuhlaileva toteutus, jossa kaikista tiedostoon tallennetuista riveistä
-         * muodostetaan ensin olio list()-metodin avulla, ja näistä suodataan attribuuttien
-         * perusteella halutut oliot. Tämä kelvatkoon, sillä tiedostoon kirjoitus ja luku
-         * on vain välivaihe ennen tietokantaan siirtymistä harjoitustyön myöhemmässä vaiheessa.
-         */
-        List<T> objects = list().stream()
-                .filter(e -> ((ChildObject) e).getOwnerId() == object.getId())
-                .collect(Collectors.toList());
-            return objects;
-    }
+
     
     
     // Apumetodit

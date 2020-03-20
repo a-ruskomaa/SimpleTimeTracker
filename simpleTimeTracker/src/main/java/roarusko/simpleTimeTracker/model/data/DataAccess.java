@@ -2,7 +2,6 @@ package roarusko.simpleTimeTracker.model.data;
 
 import java.time.LocalDateTime;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
@@ -12,36 +11,9 @@ import roarusko.simpleTimeTracker.model.domain.User;
  * @author aleks
  * @version 02.03.2020
  *
- * Luokka, jonka avulla muu ohjelma osaa lukea ja kirjoittaa pysyvään muistiin tallennettua dataa. Tarjoaa rajapinnan,
- * jonka avulla muun ohjelman ei tarvitse välittää valitusta tallennustavasta.
- * 
- * Tällä hetkellä toimii lähinnä fasilitaattorina, ja kutsuu DAO-rajapinnan toteuttavien avustavien luokkien metodeja,
- * jolla varsinainen tiedostoihin kirjoitus ja luku tapahtuu. Jatkossa huolehtii enemmän myös poikkeuskäsittelystä ja
- * käsiteltävän datan oikeellisuudesta.
- * 
- * Metodien määrän kasvaessa siirryttäneen geneerisempään toteutustapaan.
+ * Rajapinta, jonka avulla muu ohjelma voi lukea ja kirjoittaa pysyvään muistiin tallennettua dataa.
  */
-public class DataAccess {
-
-    private final UserDAO userDAO;
-    private final ProjectDAO projectDAO;
-    private final EntryDAO entryDAO;
-
-    
-    /**
-     * DataAccessin konstruktori. Saa parametreinaan käyttäjien, projektien ja merkintöjen
-     * tietokantahakuja suorittavat DAO-rajapinnan toteuttavat oliot.
-     * @param userDAO Olio, joka suorittaa käyttäjiin liittyvät tietokantahaut
-     * @param projectDAO Olio, joka suorittaa projekteihin liittyvät tietokantahaut
-     * @param entryDAO Olio, joka suorittaa merkintöihin liittyvät tietokantahaut
-     */
-    public DataAccess(UserDAO userDAO, ProjectDAO projectDAO, EntryDAO entryDAO) {
-        this.userDAO = userDAO;
-        this.projectDAO = projectDAO;
-        this.entryDAO = entryDAO;
-        
-    }
-
+public interface DataAccess {
 
     /**
      * Luo uuden kättäjän. Käyttäjä luodaan aluksi väliaikaisella id-numerolla -1. UserDAO:n create-metodi lisää
@@ -50,9 +22,7 @@ public class DataAccess {
      * @param name Nimi, joka käyttäjälle halutaan antaa.
      * @return Palauttaa luodun käyttäjän.
      */
-    public User addUser(String name) {
-        return this.userDAO.create(new User(name));
-    }
+    public User addUser(String name);
 
 
     /**
@@ -63,9 +33,7 @@ public class DataAccess {
      * @param user Käyttäjä, jolle projekti kuuluu
      * @return Palauttaa luodun projektin
      */
-    public Project addProject(String name, User user) {
-        return this.projectDAO.create(new Project(user.getId(), name));
-    }
+    public Project addProject(String name, User user);
 
     
     /**
@@ -73,9 +41,7 @@ public class DataAccess {
      * @param project Projekti jolle merkintä lisätään
      * @return Palauttaa luodun merkinnän.
      */
-    public Entry newEntry(Project project) {
-        return new Entry(project.getId());
-    }
+    public Entry newEntry(Project project);
     
     /**
      * Luo uuden aikamerkinnän tilapäisellä id:llä -1 alustettuna annettuun alku- ja loppuaikaan.
@@ -84,9 +50,7 @@ public class DataAccess {
      * @param end Merkinnän loppuaika
      * @return Palauttaa luodun merkinnän.
      */
-    public Entry newEntry(Project project, LocalDateTime start, LocalDateTime end) {
-        return new Entry(project.getId(), start, end);
-    }
+    public Entry newEntry(Project project, LocalDateTime start, LocalDateTime end);
 
 
     /**
@@ -97,46 +61,9 @@ public class DataAccess {
      * @param entry Merkintä joka tallennetaan
      * @return Palauttaa tallennetun merkinnän
      */
-    public Entry commitEntry(Entry entry) {
-        // TODO projektiin kenttä, johon tallentuu viimeisimmän luodun merkinnän aikaleima. Tähän kentän päivitys.
-        if (entry.getOwnerId() == -1) {
-            // TODO tälle poikkeus jonka avulla voidaan näyttää varoitusdialogi
-            System.out.println("Projektin id ei saa olla -1");
-        }
-        if (entry.getId() == -1) {
-            return saveNewEntry(entry);
-        }
-        if (!saveExistingEntry(entry)) {
-            // TODO poikkeus + dialogilla ilmoitus ohjelman käyttäjälle
-            System.out.println("Merkinnän muokkaaminen epäonnistui!");
-        }
-        return entry;
-    }
+    public Entry commitEntry(Entry entry);
 
 
-    /**
-     * Tallentaa uuden merkinnän tietokantaan. EntryDAO lisää merkinnälle yksilöivän id:n tietokantaan
-     * tallennuksen yhteydessä.
-     * @param entry Merkintä joka halutaan tallentaa
-     * @return Palauttaa lisätyn merkinnän
-     */
-    private Entry saveNewEntry(Entry entry) {
-        return this.entryDAO.create(entry);
-    }
-
-
-    /**
-     * Päivittää aiemmin luodun merkinnän tiedot tietokantaan. EntryDAO etsii merkinnän id:n perusteella
-     * oikean merkinnän ja päivittää sen tietoja.
-     * 
-     * @param entry Merkintä joka halutaan tallentaa
-     * @return Palauttaa false jos muokkaus epäonnistuu
-     */
-    private boolean saveExistingEntry(Entry entry) {
-        return this.entryDAO.update(entry);
-    }
-    
-    
     
     /**
      * Poistaa annetun merkinnän tiedot tietokannasta. EntryDAO etsii merkinnän id:n perusteella poistettavan
@@ -144,10 +71,7 @@ public class DataAccess {
      * @param entry Merkintä joka halutaan poistaa
      * @return Palauttaa false jos poisto epäonnistui
      */
-    public boolean deleteEntry(Entry entry) {
-        return this.entryDAO.delete(entry.getId());
-    }
-
+    public boolean deleteEntry(Entry entry);
    
 
 
@@ -155,11 +79,7 @@ public class DataAccess {
      * Hakee kaikkien käyttäjien tiedot tietokannasta ja tallentaa ne listalle
      * @return palauttaa käyttäjät ObservableList:llä
      */
-    public ObservableList<User> loadUsers() {
-        ObservableList<User> users = FXCollections
-                .observableArrayList(this.userDAO.list());
-        return users;
-    }
+    public ObservableList<User> loadUsers();
 
 
     /**
@@ -167,11 +87,7 @@ public class DataAccess {
      * @param user Käyttäjä jonka tiedot haetaan
      * @return palauttaa projektit ObservableList:llä
      */
-    public ObservableList<Project> loadProjects(User user) {
-        ObservableList<Project> projects = FXCollections
-                .observableArrayList(this.projectDAO.list(user));
-        return projects;
-    }
+    public ObservableList<Project> loadProjects(User user);
 
 
     /**
@@ -179,11 +95,7 @@ public class DataAccess {
      * @param project Projekti jonka merkinnät haetaan
      * @return palauttaa merkinnät ObservableList:llä
      */
-    public ObservableList<Entry> loadEntries(Project project) {
-        ObservableList<Entry> entries = FXCollections
-                .observableArrayList(this.entryDAO.list(project));
-        return entries;
-    }
+    public ObservableList<Entry> loadEntries(Project project);
 
 
 }

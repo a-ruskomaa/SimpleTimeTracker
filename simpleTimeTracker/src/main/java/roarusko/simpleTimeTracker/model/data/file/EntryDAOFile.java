@@ -3,7 +3,6 @@ package roarusko.simpleTimeTracker.model.data.file;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
-import roarusko.simpleTimeTracker.model.data.EntryDAO;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
@@ -16,7 +15,7 @@ import roarusko.simpleTimeTracker.model.utility.Entries;
  * @version 2 Mar 2020
  *
  */
-public class EntryDAOFile extends AbstractDAOFile<Entry> implements EntryDAO {
+public class EntryDAOFile extends AbstractChildDAOFile<Entry, Project> {
     private static final String defaultPath = "data/entries.dat";
     
     

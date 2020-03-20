@@ -2,8 +2,6 @@ package roarusko.simpleTimeTracker.model.data.mock;
 
 import java.util.List;
 
-import roarusko.simpleTimeTracker.model.data.ProjectDAO;
-import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
 import roarusko.simpleTimeTracker.model.utility.IdGenerator;
@@ -15,7 +13,7 @@ import roarusko.simpleTimeTracker.model.utility.IdGenerator;
  * @version 17 Feb 2020
  *
  */
-public class MockProjectDAO extends MockAbstractDAO<Project> implements ProjectDAO {
+public class MockProjectDAO extends MockAbstractChildDAO<Project, User> {
     
     /**
      * Testidataa käyttävä ProjectDAO:n implementaatio

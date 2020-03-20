@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 import roarusko.simpleTimeTracker.view.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
+import roarusko.simpleTimeTracker.model.data.DataAccessImpl;
 import roarusko.simpleTimeTracker.model.data.file.EntryDAOFile;
 import roarusko.simpleTimeTracker.model.data.file.ProjectDAOFile;
 import roarusko.simpleTimeTracker.model.data.file.UserDAOFile;
@@ -24,9 +25,7 @@ public class App extends Application {
             /*
              * Luodaan dataAccess, jonka avulla ohjelman käsittelemää dataa luetaan ja kirjoitetaan tietokantaan
              */
-            DataAccess dataAccess = new DataAccess(new UserDAOFile(), new ProjectDAOFile(), new EntryDAOFile());
-            
-//            SampleData.createFiles();
+            DataAccess dataAccess = new DataAccessImpl(new UserDAOFile(), new ProjectDAOFile(), new EntryDAOFile());
 
             WindowController wc = ViewFactory.createStartView(primaryStage, dataAccess);
             wc.showStage();

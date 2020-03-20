@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.rules.TemporaryFolder;
 import org.junit.Rule;
 
-import roarusko.simpleTimeTracker.model.data.EntryDAO;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 
 public class TestEntryDAO {

@@ -1,13 +1,10 @@
 package roarusko.simpleTimeTracker.model.data.db;
 
 import java.sql.ResultSet;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 
-import roarusko.simpleTimeTracker.model.data.EntryDAO;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
-import roarusko.simpleTimeTracker.model.utility.Entries;
 
 /**
  * Merkintöjä tiedostoon tallentava ja lukeva luokka. Tiedostojen käsittely toteutetaan abstraktin yläluokan
@@ -17,12 +14,19 @@ import roarusko.simpleTimeTracker.model.utility.Entries;
  * @version 2 Mar 2020
  *
  */
-public class EntryDAODb extends AbstractDAODb<Entry> implements EntryDAO {
-    private static final String defaultPath = "data/entries.dat";
+public class EntryDAODb extends AbstractChildDAODb<Entry, Project> {
+    private static final String tableName = "Entries";
+
     
-    public EntryDAODb(String path) {
-        super(path);
+    /**
+     * Luo uuden EntryDAO:n annetulla tallennustiedostolla
+     * @param connectionManager Olio, jolla luodaan tietokantayhteys
+     * 
+     */
+    public EntryDAODb(ConnectionManager connectionManager) {
+        super(connectionManager, tableName);
     }
+
 
 
     @Override
@@ -36,6 +40,8 @@ public class EntryDAODb extends AbstractDAODb<Entry> implements EntryDAO {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    
     
     
 

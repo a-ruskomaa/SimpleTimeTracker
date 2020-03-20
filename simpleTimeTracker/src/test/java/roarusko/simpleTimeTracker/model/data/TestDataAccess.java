@@ -37,12 +37,15 @@ public class TestDataAccess {
     private IdGenerator projectIdGen;
     private IdGenerator entryIdGen;
 
-    private UserDAO uDAO;
-    private ProjectDAO pDAO;
-    private EntryDAO eDAO;
+    private DAO<Integer, User>uDAO;
+    private ChildDAO<Integer, Project, User> pDAO;
+    private ChildDAO<Integer, Entry, Project> eDAO;
 
     private DataAccess da;
 
+    /**
+     * Alustaa testauksessa käytettävät DAO:t
+     */
     @BeforeEach
     public void createTestSetup() {
         users.clear();

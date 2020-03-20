@@ -1,13 +1,9 @@
 package roarusko.simpleTimeTracker.model.data.mock;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import roarusko.simpleTimeTracker.model.data.DAO;
-import roarusko.simpleTimeTracker.model.domain.ChildObject;
 import roarusko.simpleTimeTracker.model.domain.DataObject;
-import roarusko.simpleTimeTracker.model.domain.ParentObject;
-import roarusko.simpleTimeTracker.model.domain.User;
 import roarusko.simpleTimeTracker.model.utility.IdGenerator;
 
 /**
@@ -22,18 +18,39 @@ import roarusko.simpleTimeTracker.model.utility.IdGenerator;
  */
 public abstract class MockAbstractDAO<T extends DataObject> implements DAO<Integer, T> {
     private IdGenerator idGen;
+    /**
+     * Testidataa
+     */
     protected List<T> data;
 
+    
+    /**
+     * Luo uuden MockAbstractDAO:n. Asettaa testidataksi parametrina saamansa listan.
+     * 
+     * Luo yksilöiviä tunnuksia antavan IdGeneraattorin, joka alustetaan
+     * antamaan suurempia arvoja kuin listaan tallennetuista Id-tunnuksista suurin.
+     * @param data Testidataa sisältävä lista
+     */
     public MockAbstractDAO(List<T> data) {
         this.data = data;
         this.idGen = new IdGenerator(findMaxId(data) + 1);
     }
     
+    /**
+     * Luo uuden MockAbstractDAO:n annetuilla parametreilla.
+     * @param data Testidataa sisältävä lista
+     * @param idGen Yksilöiviä id-tunnuksia generoiva olio
+     */
     public MockAbstractDAO(List<T> data, IdGenerator idGen) {
         this.data = data;
         this.idGen = idGen;
     }
     
+    
+    /**
+     * Asettaa DAO:lle uuden id-generaattorin
+     * @param idGen idGen, joka antaa DAO:n luomille olioille yksilöivän id:n
+     */
     public void setIdGenerator(IdGenerator idGen) {
         this.idGen = idGen;
     }
@@ -113,16 +130,7 @@ public abstract class MockAbstractDAO<T extends DataObject> implements DAO<Integ
     public List<T> list() {
         return data;
     }
-    
-    
-    /**
-     * @param object haettujen alkioiden "omistaja", eli projektilla käyttäjä ja merkinnällä projekti
-     * @return palauttaa kaikki tietylle omistajalle kuuluvat alkiot listalla.
-     */
-    protected List<T> list(ParentObject object) {
-        return data.stream().filter(e -> ((ChildObject) e).getOwnerId() == object.getId()).collect(Collectors.toList());
-    }
-    
+
     
     /**
      * Etsii annetulta listalta suurimman käytössä olevan id-numeron

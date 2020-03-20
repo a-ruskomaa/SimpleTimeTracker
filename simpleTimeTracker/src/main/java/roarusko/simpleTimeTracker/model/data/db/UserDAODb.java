@@ -2,7 +2,6 @@ package roarusko.simpleTimeTracker.model.data.db;
 
 import java.sql.ResultSet;
 
-import roarusko.simpleTimeTracker.model.data.UserDAO;
 import roarusko.simpleTimeTracker.model.domain.User;
 
 /**
@@ -13,24 +12,18 @@ import roarusko.simpleTimeTracker.model.domain.User;
  * @version 2 Mar 2020
  *
  */
-public class UserDAODb extends AbstractDAODb<User> implements UserDAO {
-    private static final String defaultPath = "data/users.dat";
+public class UserDAODb extends AbstractDAODb<User> {
+    private static final String tableName = "Users";
      
-    /**
-     * Luo uuden UserDAO:n oletusarvoisella tallennustiedostolla
-     */
-     public UserDAODb() {
-        super(defaultPath);
-    }
-     
+
      
      /**
       * Luo uuden UserDAO:n annetulla tallennustiedostolla
-      * @param pathToFile Merkkijonomuotoinen polku haluttuun tallennustiedostoon
+     * @param connectionManager Olio, jolla luodaan tietokantayhteys
       * 
       */
-     public UserDAODb(String pathToFile) {
-         super(pathToFile);
+     public UserDAODb(ConnectionManager connectionManager) {
+         super(connectionManager, tableName);
      }
 
 

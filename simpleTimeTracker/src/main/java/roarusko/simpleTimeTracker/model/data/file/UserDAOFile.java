@@ -1,6 +1,5 @@
 package roarusko.simpleTimeTracker.model.data.file;
 
-import roarusko.simpleTimeTracker.model.data.UserDAO;
 import roarusko.simpleTimeTracker.model.domain.User;
 
 /**
@@ -11,7 +10,7 @@ import roarusko.simpleTimeTracker.model.domain.User;
  * @version 2 Mar 2020
  *
  */
-public class UserDAOFile extends AbstractDAOFile<User> implements UserDAO {
+public class UserDAOFile extends AbstractDAOFile<User> {
     private static final String defaultPath = "data/users.dat";
      
     /**
