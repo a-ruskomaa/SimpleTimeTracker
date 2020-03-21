@@ -5,14 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import roarusko.simpleTimeTracker.model.domain.Entry;
+import roarusko.simpleTimeTracker.model.data.ConnectionManager;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
-import roarusko.simpleTimeTracker.model.utility.Entries;
 
 /**
  * Projekteja tiedostoon tallentava ja lukeva luokka. Tiedostojen käsittely toteutetaan abstraktin yläluokan
@@ -77,8 +75,8 @@ public class ProjectDAO extends AbstractChildDAO<Project, User>  {
     @Override
     public Project read(Integer key) {
         String query = "SELECT * FROM Projects "
-                + "JOIN UserProject ON Projects.p_id = UserProject.p_id"
-                + "WHERE p_id = ?;";
+                + "JOIN UserProject ON Projects.p_id = UserProject.p_id "
+                + "WHERE Projects.p_id = ?;";
         Project object = null;
         try (Connection con = connectionManager
                 .getConnection();
@@ -94,6 +92,31 @@ public class ProjectDAO extends AbstractChildDAO<Project, User>  {
         return object;
     }
 
+    
+    // TODO joinit
+    @Override
+    public boolean update(Project object) {
+        String query = "UPDATE Projects "
+                + "SET name = ? "
+                + "WHERE p_id = ?;";
+        // TODO tähän toteutus jos projektiin on lisätty uusia käyttäjiä
+        int rows = 0;
+        try (Connection con = connectionManager
+                .getConnection();
+                PreparedStatement sql = con.prepareStatement(query)) {
+            sql.setString(1, object.getName());
+            sql.setInt(2, object.getId());
+            rows = sql.executeUpdate();
+            if (rows == 0) {
+                throw new SQLException("Updating the project failed.");
+            }
+            System.out.println("Inserted " + rows + " rows");
+        } catch (SQLException e) {
+            System.err.println("Error: " + e.getMessage());
+            return false;
+        }
+        return true;
+    }
 
 
     // TODO joinit
@@ -111,7 +134,7 @@ public class ProjectDAO extends AbstractChildDAO<Project, User>  {
             sql1.setInt(1, key);
             sql2.setInt(1, key);
             rows1 = sql1.executeUpdate();
-            rows1 = sql2.executeUpdate();
+            rows2 = sql2.executeUpdate();
             con.commit();
             System.out.println("Deleted " + rows1 + " + " + rows2 + " rows from Projects");
             if (rows1 + rows2 > 1) {
@@ -147,7 +170,7 @@ public class ProjectDAO extends AbstractChildDAO<Project, User>  {
     public List<Project> list(User user) {
         String query = "SELECT * FROM Projects "
                 + "JOIN UserProject ON Projects.p_id = UserProject.p_id "
-                + "WHERE u_id = ?;";
+                + "WHERE UserProject.u_id = ?;";
         List<Project> objects = new ArrayList<>();
         try (Connection con = connectionManager
                 .getConnection();
@@ -162,31 +185,6 @@ public class ProjectDAO extends AbstractChildDAO<Project, User>  {
         return objects;
     }
     
-
-    // TODO joinit
-    @Override
-    public boolean update(Project object) {
-        String query = "UPDATE Projects "
-                + "SET name = ? "
-                + "WHERE p_id = ?;";
-        // TODO tähän toteutus jos projektiin on lisätty uusia käyttäjiä
-        int rows = 0;
-        try (Connection con = connectionManager
-                .getConnection();
-                PreparedStatement sql = con.prepareStatement(query)) {
-            sql.setString(1, object.getName());
-            sql.setInt(2, object.getId());
-            rows = sql.executeUpdate();
-            if (rows == 0) {
-                throw new SQLException("Updating the project failed.");
-            }
-            System.out.println("Inserted " + rows + " rows");
-        } catch (SQLException e) {
-            System.err.println("Error: " + e.getMessage());
-            return false;
-        }
-        return true;
-    }
 
 
     @Override

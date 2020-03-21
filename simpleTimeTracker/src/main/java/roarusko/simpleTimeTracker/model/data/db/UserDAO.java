@@ -5,14 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import roarusko.simpleTimeTracker.model.domain.Entry;
-import roarusko.simpleTimeTracker.model.domain.Project;
+import roarusko.simpleTimeTracker.model.data.ConnectionManager;
 import roarusko.simpleTimeTracker.model.domain.User;
-import roarusko.simpleTimeTracker.model.utility.Entries;
 
 /**
  * Käyttäjiä tiedostoon tallentava ja lukeva luokka. Tiedostojen käsittely toteutetaan abstraktin yläluokan

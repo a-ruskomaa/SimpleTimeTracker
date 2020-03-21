@@ -5,8 +5,6 @@ import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.utility.Entries;
 
-import java.time.Duration;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -16,6 +14,13 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
+
+/**
+ * Merkinnän poistamiseen käytettävä dialogi
+ * @author aleks
+ * @version 2 Mar 2020
+ *
+ */
 public class DeleteEntryDialogController extends AbstractController {
     private Entry entry;
     
@@ -49,6 +54,10 @@ public class DeleteEntryDialogController extends AbstractController {
     }
     
     
+    /**
+     * @param dataAccess dataAccess
+     * @param stage stage johon kontrolleri liittyy
+     */
     public DeleteEntryDialogController(DataAccess dataAccess, Stage stage) {
         super(dataAccess, stage);
     }
@@ -63,6 +72,10 @@ public class DeleteEntryDialogController extends AbstractController {
                 new WindowEvent(window, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
     
+    /**
+     * Asettaa poistettavan merkinnän
+     * @param entry Poistettava merkintä
+     */
     public void setEntry(Entry entry) {
         this.entry = entry;
         
@@ -72,6 +85,9 @@ public class DeleteEntryDialogController extends AbstractController {
         this.durationLabel.setText(Entries.getDurationAsString(entry.getStartDateTime(), entry.getEndDateTime()));
     }
     
+    /**
+     * @return True jos merkintä poistettiin dialogissa
+     */
     public boolean wasDeleted() {
         return deleted;
     }

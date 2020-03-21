@@ -37,7 +37,7 @@ public class TestDataAccess {
     private IdGenerator projectIdGen;
     private IdGenerator entryIdGen;
 
-    private DAO<Integer, User>uDAO;
+    private DAO<Integer, User> uDAO;
     private ChildDAO<Integer, Project, User> pDAO;
     private ChildDAO<Integer, Entry, Project> eDAO;
 

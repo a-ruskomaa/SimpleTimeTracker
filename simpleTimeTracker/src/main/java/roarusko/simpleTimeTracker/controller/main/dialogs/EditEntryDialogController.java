@@ -146,6 +146,10 @@ public class EditEntryDialogController extends AbstractController {
     }
 
 
+    /**
+     * Asettaa muokattavan merkinnän
+     * @param entry muokattava merkintä
+     */
     public void setEntry(Entry entry) {
         this.entry = entry;
 
@@ -159,16 +163,27 @@ public class EditEntryDialogController extends AbstractController {
     }
 
 
+    /**
+     * Asettaa kaikki merkinnät sisältävän listan
+     * @param list Kaikki merkinnät sisältävä lista
+     */
     public void setEntryList(List<Entry> list) {
         this.entryList = list;
     }
 
 
+    /**
+     * Palauttaa muokatun merkinnän
+     * @return Palauttaa muokatun merkinnän
+     */
     public Entry getEntry() {
         return this.entry;
     }
 
 
+    /**
+     * @return Palauttaa true jos merkintää on muokattu dialogissa
+     */
     public boolean wasUpdated() {
         return saved;
     }

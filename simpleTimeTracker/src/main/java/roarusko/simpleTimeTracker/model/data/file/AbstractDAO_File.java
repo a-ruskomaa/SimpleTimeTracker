@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import roarusko.simpleTimeTracker.model.data.DAO;
@@ -84,6 +85,9 @@ public abstract class AbstractDAO_File<T extends DataObject> implements DAO<Inte
                     .findFirst()
                     .get();
             object = parseObject(row);
+        } catch (NoSuchElementException e) {
+            // Tiedostosta ei löytynyt etsittyä alkiota
+            return null;
         } catch (IOException e) {
             // Mahdollinen tilanteessa, jossa käsiteltävä tiedosto on poistettu ohjelman käynnistyksen jälkeen
             System.out.println("File not found! " + e.getMessage());

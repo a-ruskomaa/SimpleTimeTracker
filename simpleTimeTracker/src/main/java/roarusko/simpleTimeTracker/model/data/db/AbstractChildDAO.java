@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import roarusko.simpleTimeTracker.model.data.ChildDAO;
+import roarusko.simpleTimeTracker.model.data.ConnectionManager;
 import roarusko.simpleTimeTracker.model.domain.ChildObject;
 import roarusko.simpleTimeTracker.model.domain.ParentObject;
 
@@ -24,6 +25,12 @@ public abstract class AbstractChildDAO<T extends ChildObject, P extends ParentOb
     private final String parentid;
 
 
+    /**
+     * @param connectionManager Olio, jolla luodaan tietokantayhteys
+     * @param tableName Tämän olion hallinnoiman tietokantataulun nimi
+     * @param id Luokkaa edustavan olion id-sarakkeen nimi tietokantataulussa
+     * @param parentid Luokan omistajaa edustavan olion id-sarakkeen nimi tietokantataulussa
+     */
     public AbstractChildDAO(ConnectionManager connectionManager, String tableName, String id, String parentid) {
         super(connectionManager, tableName, id);
         this.parentid = parentid;

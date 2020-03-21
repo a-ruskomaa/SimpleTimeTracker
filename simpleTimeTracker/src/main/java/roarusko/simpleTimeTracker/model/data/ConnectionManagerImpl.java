@@ -1,42 +1,55 @@
-package roarusko.simpleTimeTracker.model.data.db;
+package roarusko.simpleTimeTracker.model.data;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ConnectionManager {
+/**
+ * Luokka tietokantayhteyden luomiseen
+ * @author aleks
+ * @version 21 Mar 2020
+ *
+ */
+public class ConnectionManagerImpl implements ConnectionManager {
     private static final String defaultPath = "data/data.db";
     private final String path;
 
-    public ConnectionManager(String path) {
+    /**
+     * ConnectionManagerImpl:n konstruktori
+     * @param path Polku tietokannan sijaintiin
+     */
+    public ConnectionManagerImpl(String path) {
         this.path = path;
     }
 
-
-    public ConnectionManager() {
+    /**
+     * ConnectionManagerImpl:n konstruktori. Määrittää tietokannan sijainniksi
+     * oletussijainnin.
+     */
+    public ConnectionManagerImpl() {
         this.path = defaultPath;
     }
 
 
-    public Connection getConnection() throws SQLException {
+    @Override
+    public Connection getConnection() {
         try {
             Class.forName("org.sqlite.JDBC");
+            Connection con = DriverManager.getConnection("jdbc:sqlite:" + path);
+            return con;
         } catch (ClassNotFoundException e) {
             System.out.println("SQLite JDBC driver not found");
             e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println("Failed to get a database connection");
+            e.printStackTrace();
         }
-        Connection con = DriverManager.getConnection("jdbc:sqlite:" + path);
-        return con;
+        return null;
     }
     
+    @Override
     public void initDb() {
-        File file = new File(path);
-        if (file.delete()) {
-            System.out.println("file deleted");
-        }
-
         String query1 = "CREATE TABLE IF NOT EXISTS Users (\n" + 
                 "    u_id INTEGER PRIMARY KEY AUTOINCREMENT,\n" + 
                 "    name VARCHAR(50) NOT NULL );\n" + 

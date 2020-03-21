@@ -21,13 +21,14 @@ public class TestUserList {
     private UserList lista;
     
     
+    @SuppressWarnings("javadoc")
     @BeforeEach
     public void Init() {
         lista = new UserList();
     }
 
     /**
-    * Könttätesti, lisäillään ja poistellaan
+    * Testataan listan luomista anetulla kapasiteetilla
     */
     @Test
     @Order(1)
@@ -36,10 +37,10 @@ public class TestUserList {
         assertEquals(0, lista.size(), "Incorrect size");
         assertTrue(lista.isEmpty(), "The list should be empty");
     }
-    
+
     /**
-     * Könttätesti, lisäillään ja poistellaan
-     */
+    * Testataan listan luomista ilman annettua kapasiteettia
+    */
     @Test
     @Order(2)
     public void testNewListWithoutCapacity() {
@@ -48,7 +49,9 @@ public class TestUserList {
         assertTrue(lista.isEmpty(), "The list should be empty");
     }
 
-    
+    /**
+    * Testataan isEmpty-metodia
+    */
     @Test
     @Order(3)
     public void testIsEmpty() {
@@ -58,7 +61,9 @@ public class TestUserList {
     }
 
     
-    
+    /**
+    * Testataan alkioiden lisäämistä
+    */
     @Test
     @Order(4)
     public void testAddMultiple() {
@@ -69,6 +74,9 @@ public class TestUserList {
     }
     
     
+    /**
+    * Testataan alkioiden lisäämistä määrättyyn indeksiin
+    */
     @Test
     @Order(5)
     public void testAddToIndex() {
@@ -82,7 +90,9 @@ public class TestUserList {
         assertEquals(2, lista.size(), "Incorrect size");
     }
     
-    
+    /**
+    * Testataan contains-metodia
+    */
     @Test
     @Order(6)
     public void testContains() {
@@ -94,7 +104,9 @@ public class TestUserList {
         assertTrue(lista.contains(user2));
     }
     
-    
+    /**
+    * Testataan remove-metodia
+    */
     @Test
     @Order(7)
     public void testRemoveUser() {
@@ -105,7 +117,9 @@ public class TestUserList {
         assertEquals(0, lista.size());
     }
     
-    
+    /**
+    * Testataan että listan järjestys säilyy poiston jälkeen
+    */
     @Test
     @Order(8)
     public void testRemoveUserOrderStays() {
@@ -122,6 +136,9 @@ public class TestUserList {
         assertEquals(2, lista.size());
     }
     
+    /**
+    * Testataan get-metodia
+    */
     @Test
     @Order(9)
     public void testGetUser() {
@@ -137,6 +154,9 @@ public class TestUserList {
         assertSame(user2, user);
     }
     
+    /**
+    * Testataan sekalaista sälää
+    */
     @Test
     @Order(10)
     public void testUserNotFound() {
@@ -149,6 +169,9 @@ public class TestUserList {
         assertEquals(-1, lista.indexOf(user3));
     }
     
+    /**
+     * Testataan että listan koko kasvaa kun käyttäjien määrä ylittää kapasiteetin
+     */
     @Test
     @Order(11)
     public void testListExpansion() {

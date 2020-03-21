@@ -1,7 +1,6 @@
 package roarusko.simpleTimeTracker.model.data;
 
 
-import roarusko.simpleTimeTracker.model.data.db.ConnectionManager;
 import roarusko.simpleTimeTracker.model.data.db.EntryDAO;
 import roarusko.simpleTimeTracker.model.data.db.ProjectDAO;
 import roarusko.simpleTimeTracker.model.data.db.UserDAO;

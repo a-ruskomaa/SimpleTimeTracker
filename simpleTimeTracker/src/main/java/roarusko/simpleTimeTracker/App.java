@@ -5,10 +5,11 @@ import javafx.stage.Stage;
 
 import roarusko.simpleTimeTracker.view.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
+import roarusko.simpleTimeTracker.model.data.ConnectionManager;
+import roarusko.simpleTimeTracker.model.data.ConnectionManagerImpl;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.data.DataAccessImpl;
 import roarusko.simpleTimeTracker.model.data.SampleData;
-import roarusko.simpleTimeTracker.model.data.db.ConnectionManager;
 import roarusko.simpleTimeTracker.model.data.db.EntryDAO;
 import roarusko.simpleTimeTracker.model.data.db.ProjectDAO;
 import roarusko.simpleTimeTracker.model.data.db.UserDAO;
@@ -27,7 +28,7 @@ public class App extends Application {
             /*
              * Luodaan dataAccess, jonka avulla ohjelman käsittelemää dataa luetaan ja kirjoitetaan tietokantaan
              */
-            ConnectionManager cm = new ConnectionManager();
+            ConnectionManager cm = new ConnectionManagerImpl();
             cm.initDb();
             
             SampleData.createTestDb(cm);

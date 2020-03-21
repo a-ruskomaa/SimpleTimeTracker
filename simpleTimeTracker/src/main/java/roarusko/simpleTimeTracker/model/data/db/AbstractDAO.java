@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import roarusko.simpleTimeTracker.model.data.ConnectionManager;
 import roarusko.simpleTimeTracker.model.data.DAO;
 import roarusko.simpleTimeTracker.model.domain.DataObject;
 
@@ -18,6 +19,7 @@ import roarusko.simpleTimeTracker.model.domain.DataObject;
  *
  * @param <T> DataObject-rajapinnan toteuttava luokka
  */
+@SuppressWarnings("javadoc")
 public abstract class AbstractDAO<T extends DataObject> implements DAO<Integer, T> {
     protected final ConnectionManager connectionManager;
     protected final String table;
@@ -115,12 +117,11 @@ public abstract class AbstractDAO<T extends DataObject> implements DAO<Integer, 
 
 
     @SuppressWarnings("unused")
-    private boolean makeUpdate(String pst, String[] arguments) {
+    private boolean makeUpdate(String pst) {
         try (Connection con = connectionManager
                 .getConnection();
                 PreparedStatement sql = con.prepareStatement(pst)) {
             sql.executeUpdate();
-            System.out.println("Database updated");
             return true;
         } catch (SQLException e) {
             System.err.println("Error: " + e.getMessage());
@@ -129,12 +130,11 @@ public abstract class AbstractDAO<T extends DataObject> implements DAO<Integer, 
     }
     
     @SuppressWarnings("unused")
-    private ResultSet makeQuery(String pst, int id) {
+    private ResultSet makeQuery(String pst) {
         try (Connection con = connectionManager
                 .getConnection();
                 PreparedStatement sql = con.prepareStatement(pst)) {
             ResultSet rs = sql.executeQuery();
-            System.out.println("Database updated");
             return rs;
         } catch (SQLException e) {
             System.err.println("Error: " + e.getMessage());

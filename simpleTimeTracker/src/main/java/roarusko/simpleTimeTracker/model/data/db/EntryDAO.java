@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import roarusko.simpleTimeTracker.model.data.ConnectionManager;
 import roarusko.simpleTimeTracker.model.domain.Entry;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.utility.Entries;
@@ -69,7 +70,7 @@ public class EntryDAO extends AbstractChildDAO<Entry, Project> {
     @Override
     public boolean update(Entry object) {
         String query = "UPDATE Entries "
-                + "SET start = ?, end = ?) "
+                + "SET start = ?, end = ? "
                 + "WHERE e_id = ?;";
         int rows = 0;
         try (Connection con = connectionManager

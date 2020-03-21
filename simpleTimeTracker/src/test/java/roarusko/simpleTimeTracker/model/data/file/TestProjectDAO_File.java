@@ -1,26 +1,26 @@
-package roarusko.simpleTimeTracker.model.data.db;
+package roarusko.simpleTimeTracker.model.data.file;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import roarusko.simpleTimeTracker.model.data.ConnectionManager;
-import roarusko.simpleTimeTracker.model.data.ConnectionManagerImpl;
 import roarusko.simpleTimeTracker.model.domain.Project;
 import roarusko.simpleTimeTracker.model.domain.User;
 
+
 /**
- * ProjectDAO:n testit.
+ * ProjectDAO_File:n testit.
  * 
- * Jotta testit eivät olisi riippuvaisia käytetyn tietokannan skeemasta on testit kirjoitettu
- * ainoastaan ProjectDAO:n julkista API:a hyödyntäen.
+ * Testit on kirjoitettu yksinkertaisuuden vuoksi
+ * ainoastaan ProjectDAO_File:n julkista API:a hyödyntäen.
  * 
  * Tämän vuoksi testit ovat riippuvaisia myös muiden kuin testattavan
  * metodin toiminnasta ja siksi testit on ajettava määrätyssä järjestyksessä:
@@ -29,43 +29,27 @@ import roarusko.simpleTimeTracker.model.domain.User;
  * @version 21 Mar 2020
  *
  */
-public class TestProjectDAO {
-    private ConnectionManager cm;
-    private Connection con;
-    private ProjectDAO pDAO;
-
+public class TestProjectDAO_File {
+    private ProjectDAO_File pDAO;
+    @SuppressWarnings("javadoc")
+    @TempDir
+    public Path tempdir;
+    
     
     /**
-     * Luodaan testiasetelma. Testeissä käytetään vain muistissa toimivaa SQLite3-tietokantaa.
-     * 
-     * SQLite poistaa tietokannan muistista kun viimeinen yhteys siihen katkaistaan.
-     * 
-     * Koska testattavat metodit katkaisevat yhteyden automaattisesti jokaisen tietokantakutsun jälkeen, on
-     * jokaisen testin aluksi luotava yksi ylimääräinen yhteys joka tietokantaa häviämästä testin aikana.
-     * 
-     * Yhteys tulee katkaista jokaisen testimetodin suorituksen jälkeen.
+     * Luodaan väliaikainen tallennustiedosto testejä varten
      */
     @BeforeEach
     public void createTestSetup() {
-        this.cm = new ConnectionManagerImpl("file:memorydb.db?mode=memory&cache=shared");
-        //luodaan yhteys, joka estää tietokantaa tyhjenemästä testin aikana
-        this.con = cm.getConnection();
-        cm.initDb();
-        this.pDAO = new ProjectDAO(cm);
-    }
-
-    
-    /**
-     * Katkaistaan tietokantayhteys ja annetaan muistiin luodun tietokannan tuhoutua.
-     */
-    @AfterEach
-    public void closeDb() {
+        Path tempfile;
         try {
-            this.con.close();
-        } catch (SQLException e) {
-            System.out.println("Failed to close the database connection");
+            tempfile = Files.createFile(tempdir.resolve("test.dat"));
+        } catch (IOException e) {
+            System.out.println("Failed to create temporary file");
             e.printStackTrace();
+            return;
         }
+        this.pDAO = new ProjectDAO_File(tempfile.toString());
     }
     
     
