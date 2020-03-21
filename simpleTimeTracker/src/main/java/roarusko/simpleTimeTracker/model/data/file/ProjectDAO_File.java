@@ -13,13 +13,13 @@ import roarusko.simpleTimeTracker.model.domain.User;
  * @version 2 Mar 2020
  *
  */
-public class ProjectDAOFile extends AbstractChildDAOFile<Project, User> {
+public class ProjectDAO_File extends AbstractChildDAO_File<Project, User> {
     private static final String defaultPath = "data/projects.dat";
 
     /**
      * Luo uuden ProjectDAO:n oletusarvoisella tallennustiedostolla
      */
-    public ProjectDAOFile() {
+    public ProjectDAO_File() {
         super(defaultPath);
     }
     
@@ -29,7 +29,7 @@ public class ProjectDAOFile extends AbstractChildDAOFile<Project, User> {
      * @param pathToFile Merkkijonomuotoinen polku haluttuun tallennustiedostoon
      * 
      */
-    public ProjectDAOFile(String pathToFile) {
+    public ProjectDAO_File(String pathToFile) {
         super(pathToFile);
     }
 

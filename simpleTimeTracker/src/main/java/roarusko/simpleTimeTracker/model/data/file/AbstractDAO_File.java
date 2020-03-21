@@ -21,7 +21,7 @@ import roarusko.simpleTimeTracker.model.utility.IdGenerator;
  *
  * @param <T> DataObject-rajapinnan toteuttava luokka
  */
-public abstract class AbstractDAOFile<T extends DataObject> implements DAO<Integer, T> {
+public abstract class AbstractDAO_File<T extends DataObject> implements DAO<Integer, T> {
     private final IdGenerator idGen;
     private final Path path;
     
@@ -32,7 +32,7 @@ public abstract class AbstractDAOFile<T extends DataObject> implements DAO<Integ
      * antamaan suurempia arvoja kuin tiedostoon tallennetuista Id-tunnuksista suurin.
      * @param pathToFile Polku käsiteltävälle tiedostolle.
      */
-    protected AbstractDAOFile(String pathToFile) {
+    protected AbstractDAO_File(String pathToFile) {
         this.path = createIfNotExists(Paths.get(pathToFile));
         this.idGen = new IdGenerator(getMaxId(path) + 1);
     }

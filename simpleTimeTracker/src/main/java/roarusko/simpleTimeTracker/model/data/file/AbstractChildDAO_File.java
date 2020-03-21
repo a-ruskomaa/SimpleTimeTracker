@@ -16,7 +16,7 @@ import roarusko.simpleTimeTracker.model.domain.ParentObject;
  * @param <T> ChildObject-rajapinnan toteuttava luokka
  * @param <P> ParentObject-rajapinnan toteuttava luokka
  */
-public abstract class AbstractChildDAOFile<T extends ChildObject, P extends ParentObject> extends AbstractDAOFile<T> implements ChildDAO<Integer, T, P> {
+public abstract class AbstractChildDAO_File<T extends ChildObject, P extends ParentObject> extends AbstractDAO_File<T> implements ChildDAO<Integer, T, P> {
     
     
     /**
@@ -25,7 +25,7 @@ public abstract class AbstractChildDAOFile<T extends ChildObject, P extends Pare
      * antamaan suurempia arvoja kuin tiedostoon tallennetuista Id-tunnuksista suurin.
      * @param pathToFile Polku käsiteltävälle tiedostolle.
      */
-    protected AbstractChildDAOFile(String pathToFile) {
+    protected AbstractChildDAO_File(String pathToFile) {
         super(pathToFile);
     }
     

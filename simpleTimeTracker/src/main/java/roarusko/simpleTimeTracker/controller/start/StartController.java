@@ -55,6 +55,7 @@ public class StartController extends AbstractController {
      */
     public void initialize() {
 
+        System.out.println("loading users");
         // Haetaan tallennetut käyttäjät ja lisätään valikkoon
         userChoiceBox.setItems(dataAccess.loadUsers());
         
@@ -62,7 +63,8 @@ public class StartController extends AbstractController {
         // oletuksena valitun käyttäjän projektit ladataan automaattisesti
         userChoiceBox.valueProperty().addListener((prop, oldV, newV) -> {
             if (newV != null) {
-                
+
+                System.out.println("loading projects");
                 // Haetaan käyttäjän vaihtuessa tämän tallennetut projektit ja lisätään valikkoon
                 projectChoiceBox.setItems(dataAccess.loadProjects(newV));
                 

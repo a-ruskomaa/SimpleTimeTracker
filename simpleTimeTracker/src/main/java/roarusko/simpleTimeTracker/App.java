@@ -7,9 +7,11 @@ import roarusko.simpleTimeTracker.view.ViewFactory;
 import roarusko.simpleTimeTracker.controller.WindowController;
 import roarusko.simpleTimeTracker.model.data.DataAccess;
 import roarusko.simpleTimeTracker.model.data.DataAccessImpl;
-import roarusko.simpleTimeTracker.model.data.file.EntryDAOFile;
-import roarusko.simpleTimeTracker.model.data.file.ProjectDAOFile;
-import roarusko.simpleTimeTracker.model.data.file.UserDAOFile;
+import roarusko.simpleTimeTracker.model.data.SampleData;
+import roarusko.simpleTimeTracker.model.data.db.ConnectionManager;
+import roarusko.simpleTimeTracker.model.data.db.EntryDAO;
+import roarusko.simpleTimeTracker.model.data.db.ProjectDAO;
+import roarusko.simpleTimeTracker.model.data.db.UserDAO;
 
 /**
  * @author roarusko
@@ -25,7 +27,12 @@ public class App extends Application {
             /*
              * Luodaan dataAccess, jonka avulla ohjelman käsittelemää dataa luetaan ja kirjoitetaan tietokantaan
              */
-            DataAccess dataAccess = new DataAccessImpl(new UserDAOFile(), new ProjectDAOFile(), new EntryDAOFile());
+            ConnectionManager cm = new ConnectionManager();
+            cm.initDb();
+            
+            SampleData.createTestDb(cm);
+            
+            DataAccess dataAccess = new DataAccessImpl(new UserDAO(cm), new ProjectDAO(cm), new EntryDAO(cm));
 
             WindowController wc = ViewFactory.createStartView(primaryStage, dataAccess);
             wc.showStage();

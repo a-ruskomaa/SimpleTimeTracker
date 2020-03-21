@@ -21,8 +21,8 @@ public class Project implements ParentObject, ChildObject {
     /**
      * Luo annetulle käyttäjälle uuden projektin annetulla nimellä. Id:ksi asetetaan tilapäisesti -1.
      * Tämä olio korvataan DAO-luokassa vastaavansisältöisellä oliolla, jolla id-numero on aidosti yksilöivä.
-     * @param name Projektin nimi
      * @param userId Käyttäjä, jolle projekti kuuluu
+     * @param name Projektin nimi
      */
     public Project(int userId, String name) {
         this(-1, userId, name);
@@ -31,8 +31,8 @@ public class Project implements ParentObject, ChildObject {
     /**
      * Luo annetulle käyttäjälle uuden projektin annetulla nimellä sekä yksilöivällä id-tunnisteella.
      * @param id Yksilöivä id-numero
-     * @param name Projektin nimi
      * @param userId Käyttäjä, jolle projekti kuuluu
+     * @param name Projektin nimi
      */
     public Project(int id, int userId, String name) {
         this.projectId = id;

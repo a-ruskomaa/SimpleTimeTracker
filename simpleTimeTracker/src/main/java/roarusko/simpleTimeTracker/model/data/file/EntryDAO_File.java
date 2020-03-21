@@ -15,14 +15,14 @@ import roarusko.simpleTimeTracker.model.utility.Entries;
  * @version 2 Mar 2020
  *
  */
-public class EntryDAOFile extends AbstractChildDAOFile<Entry, Project> {
+public class EntryDAO_File extends AbstractChildDAO_File<Entry, Project> {
     private static final String defaultPath = "data/entries.dat";
     
     
     /**
      * Luo uuden EntryDAO:n oletusarvoisella tallennustiedostolla
      */
-    public EntryDAOFile() {
+    public EntryDAO_File() {
         super(defaultPath);
     }
     
@@ -31,7 +31,7 @@ public class EntryDAOFile extends AbstractChildDAOFile<Entry, Project> {
      * @param pathToFile Merkkijonomuotoinen polku haluttuun tallennustiedostoon
      * 
      */
-    public EntryDAOFile(String pathToFile) {
+    public EntryDAO_File(String pathToFile) {
         super(pathToFile);
     }
 

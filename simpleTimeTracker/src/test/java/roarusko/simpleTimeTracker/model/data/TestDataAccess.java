@@ -63,7 +63,7 @@ public class TestDataAccess {
         pDAO = new MockProjectDAO(projects, projectIdGen);
         eDAO = new MockEntryDAO(entries, entryIdGen);
 
-        da = new DataAccess(uDAO, pDAO, eDAO);
+        da = new DataAccessImpl(uDAO, pDAO, eDAO);
     }
 
 
