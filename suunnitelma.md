@@ -72,17 +72,17 @@ Ohjelma käynnistetään klikkaamalla seuranta.jar-ikonia tai antamalla komentor
 
 Ohjelman käynnistyttyä aukeaa seuraava näkymä:
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/aloitusikkuna2.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/aloitusikkuna2.png)
 
 Käyttäjä voi valita oman nimensä alasvetovalikosta tai lisätä uuden käyttäjän:
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/aloitusikkuna0.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/aloitusikkuna0.png)
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/aloitusikkuna_uusikayttaja.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/aloitusikkuna_uusikayttaja.png)
 
 Vastaava ikkuna aukeaa mikäli käyttäjä haluaa lisätä uuden projektin.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/aloitusikkuna_uusiprojekti.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/aloitusikkuna_uusiprojekti.png)
 
 ## Pääikkuna
 Kun ohjelma on käynnistynyt on näkyvillä ohjelman pääikkuna. Ohjelmassa ei ole
@@ -94,7 +94,7 @@ olevasta alasvetovalikosta voi vaihtaa valittua projektia. Oikeassa yläreunassa
 näkyy projektin yhteenlaskettu ajankäyttö, sekä ajastimen ollessa käynnissä sen
 käynnistämisestä kulunut aika.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/ajastusikkuna0.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/ajastusikkuna0.png)
 ## Ajastin
 
 Ensimmäiseltä välilehdeltä löytyy ajastin, jonka avulla voi lisätä projektiin
@@ -105,24 +105,24 @@ ajastin". Kun ajastin on käynnissä, muuttuu painikkeen teksti ja toiminnallisu
 Ajastimen käynnistyksestä kulunut aika näkyy sekä ajastin-välilehdellä että
 pääikkunan oikeassa yläreunassa olevassa kentässä.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/ajastusikkuna1.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/ajastusikkuna1.png)
 
 Kun työskentely lopetetaan, painetaan painiketta "Pysäytä ajastin".
 
 Tämä aktivoi painikkeet, joilla merkinnän voi tallentaa tai nollata ajastimen
 tallentamatta merkintää.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/ajastusikkuna2.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/ajastusikkuna2.png)
 
 "Tallenna merkintä..." avaa popup-ikkunan jossa merkintää voi vielä muokata
 ennen tallennusta.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/tallennus_popup.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/tallennus_popup.png)
 
 Ajastimen voi käynnistää uudestaan vasta nollaamisen jälkeen. Ennen ajastimen
 nollaamista käyttäjältä varmistetaan haluaako tämä varmasti tehdä niin:
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/nollaa_popup.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/nollaa_popup.png)
 
 Huom! Projektin vaihtaminen ajastimen ollessa käynnissä pysäyttää ajastimen
 ilman että merkintää tallennetaan. Tästä näytetään varoitus käyttäjälle. (TODO)
@@ -133,16 +133,16 @@ Toinen välilehti mahdollistaa projektin ajankäytön tarkastelun
 merkintäkohtaisesti. Vasemmalla olevalta listalta valitaan merkintä, jolloin
 oikeanpuoleisiin kenttiin avautuu merkinnän tiedot.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/tarkasteluikkuna0.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/tarkasteluikkuna0.png)
 
 
 Merkintää voi muokata:
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/tallennus_popup.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/tallennus_popup.png)
 
 Merkinnän voi poistaa:
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/poisto_popup.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/poisto_popup.png)
 ### Merkinnän lisääminen käsin
 
 Uuden merkinnän voi lisätä myös käsin, mikäli ajastinta ei ole käytetty.
@@ -151,13 +151,13 @@ Painike "Lisää uusi..." avaa popup-ikkunan johon merkinnän tiedot syötetää
 
 Ajat syötetään alustavassa toteutuksessa käsin, myöhemmin hyödyntämällä valmista käyttöliittymäkomponenttia.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/tallennus_popup.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/tallennus_popup.png)
 
 
 Ohjelma ilmoittaa virheestä, mikäli yritetään tallentaa merkintää aikavälille,
 jolla on jo olemassa oleva merkintä.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kuvat/tallennusikkuna2.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kuvat/tallennusikkuna2.png)
 ## Suunnitellut ominaisuudet myöhempiin versioihin
 
 Myöhemmässä toteutuksessa ohjelmaan luodaan lisää ominaisuuksia projektin
@@ -174,7 +174,7 @@ yksinkertaistetussa UML-luokkakaaviossa sekä lyhyt sanallinen kuvaus.
 "Tyhmiä" Javabeans-henkisiä olioita, jotka sisältävät ainoastaan propertyt sekä niitä vastaavat getterit
 ja setterit.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kaaviot/Package domain.svg)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kaaviot/Package domain.svg)
 
 ## Dataa käsitelevät luokat ("persistence layer"):
 
@@ -193,9 +193,9 @@ jonka tietoja tulee muokata vai uusi merkintä jolle tulee hakea yksilöivä id 
 
 *DataAccess* käsittelee vain kulloinkin pyydettyä tai välitettyä dataa, ei sisällä tietorakenteita datan tallentamiseen.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kaaviot/Package data.svg)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kaaviot/Package data.svg)
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kaaviot/DataAccess.svg)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kaaviot/DataAccess.svg)
 
 ## Avustavat luokat
 
@@ -215,20 +215,20 @@ sitoa näyttämään valitun merkinnän alku- sekä loppuaikaa.
 ***IdGenerator*** on avustava luokka, joka huolehtii yksilöivän id-tunnisteen antamisesta
 tiedostoon tallennetuille riveille.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kaaviot/Package utility.svg)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kaaviot/Package utility.svg)
 
 ## "Näkymätehdas"
 
 ***ViewFactory*** sisältää staattiset metodit uusien näkymien ja niiden kontrollerien
 luomiseen.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kaaviot/Package view.svg)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kaaviot/Package view.svg)
 
 ## Kontrolleriluokat
 
 Tämänhetkiset kontrolleriluokat. Ei vielä lopullinen rakenne.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kaaviot/Package controller.svg)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kaaviot/Package controller.svg)
 
 ## Merkinnän tallentaminen sekvenssikaaviona
 
@@ -253,4 +253,4 @@ DataAccess:lle, joka palauttaa sen kontrolleriluokalle. Kontrolleri tallentaa sa
 olion propertyynsa, josta dialogin avannut kontrolleri taas voi käydä noutamassa
 luodun merkinnän oliomuotoisena ja lisätä sen sopivaan käyttöliittymän komponenttiin.
 
-![](https://github.com/a-ruskomaa/SimpleTimeTracker/new/master/kaaviot/handleSaveButton.png)
+![](https://github.com/a-ruskomaa/SimpleTimeTracker/blob/master/kaaviot/handleSaveButton.png)
